@@ -1,0 +1,96 @@
+\documentclass[a4paper,twoside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{a4wide}
+
+% umoznuje nastavit margins
+\usepackage[hmargin=1.5cm,vmargin=2cm]{geometry}
+
+% for multicolumn environmnet
+\usepackage{multicol}
+
+% compressed versions of listings, e.g. begin{itemize*} instead of \begin{itemize}
+\usepackage{mdwlist}
+
+\usepackage{url}
+
+% this changes labeling of second level lists
+\renewcommand{\labelenumii}{\arabic{enumii} $\models$ }
+% other counters: \alph, \Alph, \roman
+
+\usepackage{graphicx}
+
+\providecommand{\OO}[1]{\operatorname{O}\bigl(#1\bigr)}
+
+\setlength{\parindent}{0cm} % Default is 15pt.
+
+
+\author{Štěpán~Šindelář}
+\title{Project Description: Static Type Analysis of Dynamically Typed Programming Language}
+
+\begin{document}
+
+  \maketitle
+
+  \subsection*{Introduction}  
+  There are several studies showing poor success rate of software projects, for example \cite{ellis2008impact}. 
+  Not only are software projects delivered late or they fail completely before 
+  they can be even released, but often released software contains errors and 
+  security vulnerabilities. One way we can improve this is providing developers 
+  with tools that are capable of automatic analysis of the software they 
+  are developing for potential errors.
+  
+  \subsection*{Project Aim}  
+  % Most of the software is developed using programming languages.
+  Three out of top ten programming languages in TIOBE index (\cite{tiobe}) fall into 
+  a category called dynamic languages. 
+  When using statically typed languages, as opposed to dynamic languages, 
+  the programmer must choose the data type for each variable and then stick to that type. 
+  So it is not possible to assign a floating point number into a variable that was chosen to be of integral numeric type.
+  Dynamic programming languages allow dynamic type of variables, meaning that the type of the variable 
+  can change depending upon the type of the value we assign to it. 
+  This makes dynamic languages easier to use, 
+  but at the same time can lead to error prone code, which then leads to 
+  problems in later phases of the development and maintenance. 
+  The aim of the project is to provide automatic analysis of variables types and 
+  thus discover possible type related errors in the source code.
+  
+  \subsection*{Research Problem}
+  Because of their dynamic nature, dynamic languages are more difficult to analyse 
+  than statically typed languages, especially if we want the analysis to be 
+  reasonably fast so that it can be used in everyday development.   
+  There is an ongoing research of the static analysis methods for many different 
+  families of programming languages, including dynamic languages. The problem 
+  this project is trying to address is to adapt and apply those methods on 
+  a real world and widely used programming language PHP. Especially to automatically 
+  infer the type information from the source code in order to find possible 
+  type mismatch errors and inconsistencies with the explicit type 
+  documentation in the comments embedded in the source code.
+  
+  % Significance and benefits
+  \subparagraph*{}
+  This kind of analysis can provide a feedback to the developers and can help 
+  them to improve their source code quality as well as the correspondence between 
+  the source code and documentation comments.
+  
+  \subsection*{Methodology}
+  \begin{itemize}
+    \item{} Research into possible methods of static analysis of source code.
+    \item{} Analysis of applicability of those methods to the PHP programming language.
+    \item{} Adaptation and implementation of the selected method(s).
+    \item{} Evaluation on real world open source projects.
+    \item{} Final report including the research and analysis as well as 
+        documentation of the implementation and evaluation results.
+  \end{itemize}
+  
+  \subsection*{Outcomes}
+  Expected outcome of this project is a console application that can process PHP 
+  source code files (several at once), analyse them and print out possible 
+  errors it discovered. This application will form a basis 
+  for a plugin for Visual Studio IDE.
+  
+
+  \bibliographystyle{ieeetr}
+  \bibliography{../../thesis/bibliography}
+
+\end{document} 
+

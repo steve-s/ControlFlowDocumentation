@@ -1,0 +1,190 @@
+
+
+\documentclass{article}
+\usepackage{fancyvrb}
+\usepackage{color}
+\usepackage[latin1]{inputenc}
+
+
+
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+\begin{document}
+
+\hspace{-5pt}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{c+c1}{// Initialization:}
+
+\PY{c+c1}{// instance of IAnalysesRunner defines what analyses will be run}
+\PY{c+c1}{// There are two implementations at the moment: StaticAnalysesRunner and TypeAnalysisRunner}
+\PY{c+c1}{// AnalysesRunnerBase class should be subclassed when implementing new runners.}
+\PY{k+kt}{var} \PY{n}{runner} \PY{p}{=} \PY{k}{new} \PY{n}{StaticAnalysesRunner}\PY{p}{(}
+    \PY{n}{x} \PY{p}{=}\PY{p}{\PYZgt{}} \PY{p}{\PYZob{}} \PY{n}{Console}\PY{p}{.}\PY{n}{WriteLine}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{;} \PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{k}{new} \PY{n}{TypeAnalysisSettings} \PY{p}{\PYZob{}} \PY{n}{WarningsAnalysis} \PY{p}{=} \PY{k}{true}\PY{p}{,} \PY{n}{AnnotateBasicBlocks} \PY{p}{=} \PY{k}{true} \PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// TablesContextManager provides context information for ITypeTable objects.}
+\PY{c+c1}{// There can be several ITypeTable objects that are scanned for referenced code elements.}
+\PY{c+c1}{// The basic implementation of ITypeTable uses the parsed source codes, but custom }
+\PY{c+c1}{// implementations can be provided. All the objects of type ITypeTable need to share the }
+\PY{c+c1}{// same instance of TablesContextManager.}
+\PY{k+kt}{var} \PY{n}{context} \PY{p}{=} \PY{k}{new} \PY{n}{TablesContextManager}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// Driver: manages the analysis process, it needs to know what analyses to }
+\PY{c+c1}{// run (via IAnalysesRunner) and we can also give it additional ITypeTable objects.}
+\PY{k+kt}{var} \PY{n}{driver} \PY{p}{=} \PY{k}{new} \PY{n}{AnalysisDriver}\PY{p}{(}\PY{n}{runner}\PY{p}{,} \PY{n}{context}\PY{p}{,} \PY{k}{new} \PY{n}{MyTables}\PY{p}{(}\PY{n}{context}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// For the common use cases, there are static factory methods in the AnalysisDriver class.}
+\PY{c+c1}{// The code above is equivalent to:}
+\PY{n}{driver} \PY{p}{=} \PY{n}{AnalysisDriver}\PY{p}{.}\PY{n}{CreateStaticAnalysisDriver}\PY{p}{(}
+    \PY{n}{x} \PY{p}{=}\PY{p}{\PYZgt{}} \PY{p}{\PYZob{}} \PY{n}{Console}\PY{p}{.}\PY{n}{WriteLine}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{;} \PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{k}{new} \PY{n}{TypeAnalysisSettings} \PY{p}{\PYZob{}} \PY{n}{WarningsAnalysis} \PY{p}{=} \PY{k}{true}\PY{p}{,} \PY{n}{AnnotateBasicBlocks} \PY{p}{=} \PY{k}{true} \PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{k}{new} \PY{n+nf}{WarningAnalysisSettings}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+    \PY{n}{ctx} \PY{p}{=}\PY{p}{\PYZgt{}} \PY{k}{new} \PY{n}{MyTables}\PY{p}{(}\PY{n}{ctx}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{c+c1}{// Example1: add a file to the manager and analyzes all the code elements it the file}
+\PY{k+kt}{var} \PY{n}{file} \PY{p}{=} \PY{n}{driver}\PY{p}{.}\PY{n}{UpdateAndAnalyze}\PY{p}{(}\PY{l+s}{\PYZdq{}myfile.php\PYZdq{}}\PY{p}{,} \PY{n}{myFileAST}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{c+c1}{// Example2: add a file to the manager, but do not analyze anything yet. We will manually }
+\PY{c+c1}{// start analysis of global function named \PYZdq{}main\PYZdq{}. This analysis may start analyses of }
+\PY{c+c1}{// other functions that \PYZdq{}main\PYZdq{} (transitively) references. Only adding a file to the manager }
+\PY{c+c1}{// (but not analyzing it) is useful when some function foo from another file references }
+\PY{c+c1}{// another function boo from our added (but not yet analyzed) file. If we start analyzing }
+\PY{c+c1}{// foo we will find out we need to analyze boo and because the manager already knows }
+\PY{c+c1}{// about boo, it can start its analysis.}
+\PY{k+kt}{var} \PY{n}{file2} \PY{p}{=} \PY{n}{driver}\PY{p}{.}\PY{n}{UpdateAndAnalyze}\PY{p}{(}\PY{l+s}{\PYZdq{}myfile2.php\PYZdq{}}\PY{p}{,} \PY{n}{myFileAST2}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// the file object represents the code elements found in the file, for example:}
+\PY{c+c1}{// file.Functions \PYZhy{} gives a list of all functions discovered in that file.}
+\PY{k+kt}{var} \PY{n}{func} \PY{p}{=} \PY{n}{file2}\PY{p}{.}\PY{n}{Functions}\PY{p}{.}\PY{n}{First}\PY{p}{(}\PY{n}{x} \PY{p}{=}\PY{p}{\PYZgt{}} \PY{n}{x}\PY{p}{.}\PY{n}{Name}\PY{p}{.}\PY{n}{Equals}\PY{p}{(}\PY{l+s}{\PYZdq{}main\PYZdq{}}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{n}{driver}\PY{p}{.}\PY{n}{AnalyzeRoutine}\PY{p}{(}\PY{k}{new} \PY{n}{RoutineDecl}\PY{p}{(}\PY{n}{func}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// \PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}
+\PY{c+c1}{// Example3: We add a new statement to the \PYZdq{}main\PYZdq{} function and re\PYZhy{}analyze it:}
+\PY{c+c1}{//}
+\PY{c+c1}{// Re\PYZhy{}analysis is possible only when we set AnnotateBasicBlocks = true in the }
+\PY{c+c1}{// TypeAnalysisSettings. If we do this, the type analyzer will add some more }
+\PY{c+c1}{// additional data into the basic block (nodes of the control flow graph). }
+\PY{c+c1}{// These additional data take up some considerable amount of memory }
+\PY{c+c1}{// (64b * number of variables used in the function), but they allow fast re\PYZhy{}analyzing.}
+\PY{c+c1}{// Re\PYZhy{}analyzing is also not as precise as the proper data flow analysis, but has }
+\PY{c+c1}{// guaranteed complexity of O(n) where n is the number of statements we analyze.}
+
+\PY{k+kt}{var} \PY{n}{routineCtx} \PY{p}{=} \PY{n}{func}\PY{p}{.}\PY{n}{GetRoutineContext}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+\PY{c+c1}{// We should know where we want to put the statement, let us say we want to }
+\PY{c+c1}{// put it after the second statement in the second basic block}
+\PY{k+kt}{var} \PY{n}{addedData} \PY{p}{=} \PY{n}{driver}\PY{p}{.}\PY{n}{Reanalyze}\PY{p}{(}
+    \PY{k}{new} \PY{n+nf}{RoutineDecl}\PY{p}{(}\PY{n}{func}\PY{p}{)}\PY{p}{,}
+    \PY{n}{routineCtx}\PY{p}{.}\PY{n}{FlowGraph}\PY{p}{.}\PY{n}{Blocks}\PY{p}{[}\PY{l+m}{2}\PY{p}{]}\PY{p}{,}
+    \PY{c+cm}{/*lastStmtToAnalyzeIndex:*/} \PY{l+m}{2}\PY{p}{,}
+    \PY{n}{myAdditionalStatement}\PY{p}{,}
+    \PY{n}{routineCtx}\PY{p}{)}\PY{p}{;}
+
+\PY{k+kt}{var} \PY{n}{classes} \PY{p}{=} \PY{n}{myAdditionalStatement}\PY{p}{.}\PY{n}{Expression}\PY{p}{.}\PY{n}{GetTypeInfo}\PY{p}{(}\PY{p}{)}\PY{p}{.}\PY{n}{GetTypes}\PY{p}{(}\PY{n}{routineCtx}\PY{p}{.}\PY{n}{TypeInfoContext}\PY{p}{)}\PY{p}{;}
+
+\PY{c+c1}{// Adding a new statement adds a new elements into the RoutineContext, }
+\PY{c+c1}{// namely it may contain new local variables, new types that were not referenced }
+\PY{c+c1}{// anywhere else in the function and possibly other things. To avoid }
+\PY{c+c1}{// unnecessary growth of the RoutineContext, we get instance of RoutineContext.AddedData }
+\PY{c+c1}{// class and when we are done with the re\PYZhy{}analyzing (and processing the results of the }
+\PY{c+c1}{// re\PYZhy{}analysis), we can call RoutineContext.AddedData.RemoveAddedData.}
+\PY{c+c1}{// Note: added data must be removed in the same order as they were added.}
+\PY{n}{addedData}\PY{p}{.}\PY{n}{RemoveAddedData}\PY{p}{(}\PY{p}{)}\PY{p}{;}
+\end{Verbatim}
+
+\end{document}

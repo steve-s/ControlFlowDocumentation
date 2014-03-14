@@ -1,0 +1,41 @@
+Introduction
+    - problem description: static type analysis of a dynamic language
+    - benefits: compiler optimizations, IDE support - bug hunting analysis.
+    - thesis/report structure
+    
+Static Analysis
+    - more detailed description of what static analysis is (as opposed to for example explicit model checking, verification, etc.)
+    - discussion approaches, mainly Data Flow analysis (which was used in the project)
+        - should I describe Data Flow analysis in detail or just refer to the literature?
+        - other approaches (how much detailed description?)
+        
+    - PHP Programming Language (or make this also a first level chapter?)
+        - what makes static analysis in PHP harder than of statically typed language
+        - what are the caveats of PHP we had to deal with
+        - PHPDoc annotations and their significance for type analysis (especially for the bug hunting)
+    
+Existing Software
+    - HipHop by Facebook
+    - Weverca: WEb VERifiCAtion tool for PHP
+    - others? how many? how detailed?
+    
+Implementation
+    - specific constraints: 
+        - must use Phalanger front end and its AST data structures,
+        - should be ready to be connected in between the Phalanger front end and back end as a middle end,
+        - should be ready to be used continuously: interactively re-analyze updated code when used inside IDE,
+    - overall description
+        - Control Flow graph construction
+        - discussion of the choice of intermediate representation (or in fact, why we do not use any intermediate representation).
+        - generic framework for Data Flow analyses
+        - type analysis
+
+Results
+    - analyses of well known OSS PHP projects.    
+    
+Conslusion
+    - future work: 
+        - branched Data Flow analysis, 
+        - integer interval analysis, 
+        - integration with the compiler back-end
+
