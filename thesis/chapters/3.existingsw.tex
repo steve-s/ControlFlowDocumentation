@@ -1,7 +1,24 @@
 \chapter{Existing Software}
-    There are lots of different incomplete solutions to slightly different but relevant problems: 
-    e.g. Weverca focuses on security vulnerabilities. How many other implementations should I mention and 
-    in what detail?
-
-    \section{HipHop}
-    \section{Weverca}
+    This project can be compared to other projects on more levels:
+    \begin{itemize}
+        \item{RPython, Ecstatic (Ruby, \cite{madsen2007ecstatic}):} comparison to approaches used 
+            for type analysis in other dynamic languages, e.g. Python, Ruby. 
+            Probably more interesting from the academic point of view.
+        \item{Weverca \cite{hauzarhunting}, Pixy\cite{jovanovic2006pixy}:} comparison to other tools that analyse PHP, e.g. Weverca, Pixy, 
+            but those tools focus on different aims, namely security vulnerabilities 
+            through user input, XSS attacks, etc.
+        \item{NetBeans, Zend Studio:} comparison to real world tools that analyze PHP for the same 
+            type of bugs (unused variable, use of unassigned variable, etc.), 
+            but those tools usually do not provide any documentation and 
+            any comparison would have to be based either on benchmarking and 
+            evaluation or on detailed study of their source code, which would be 
+            time consuming.
+        \item{HipHop:} its type analysis is meant only for compiler back end, 
+            so it tries to find only one type for a variable, if that fails, 
+            it does not continue with analysis of that variable. 
+            (As far as I understood from the source codes, because there 
+            are no articles or documentation).
+        \item{Phantm \cite{kneuss2010using}:} very similar project, but 
+            uses Scala. What PHP versions it supports? Intra-procedural? 
+            Integration into a compiler/interpreter.
+    \end{itemize}    

@@ -1,20 +1,25 @@
 \chapter{Static Analysis}
 
-    More detailed description of what static analysis is (as opposed to for example explicit model checking, verification, etc.).
-    
-    \section{Existing Approaches}
-    List and short description of existing approaches to static analysis and related terminology 
-    (Data Flow, context-sensitive, path-sensitive, ...).
+    More detailed description of what static analysis is 
+    (as opposed to for example explicit model checking, 
+    verification, etc.). Terminology: context sensitive, 
+    path sensitive, symbolic execution, abstract interpretation, etc.
     
     \section{Data Flow Analysis}
-    Detailed description of Data Flow analysis or just reference to the 
-    literature in the previous chapter and this chapter would be left out.
+    Detailed description of Data Flow analysis?    
+   
+    \subsection{Rapid Analysis}
+    \subsection{Abstract Domain}
 
     \section{The PHP Programming Language}
-    Note: maybe a new chapter?
-    
+    Note: maybe a new chapter?  
     \begin{itemize}
         \item[] What makes static analysis in PHP harder than of statically typed language
-        \item[] what are the caveats of PHP we had to deal with
-        \item[] PHPDoc annotations and their significance for type analysis (especially for the bug hunting)
+        \item[] what are the caveats of PHP we had to deal with:
+            \begin{itemize}
+                \item[] arbitrary expression in continue and break,
+                \item[] conditional declarations,
+                \item[] user defined auto-loading.
+            \end{itemize}
+        \item[] PHPDoc annotations and their significance for type analysis (especially for the bug hunting)        
     \end{itemize}

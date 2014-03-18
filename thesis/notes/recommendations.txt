@@ -1,0 +1,14 @@
+
+
+---------------------------------------------------------------
+KSI mff:
+Úvod charakterizující kontext implementované úlohy
+Přesné vymezení cílů úlohy v daném kontextu
+Struktura práce ve vztahu k vytyčeným cílům
+Analýza možných implementací z různých hledisek
+Návrh implementace s diskusí alternativ
+Popis detailů nestandardních řešení a postupů implementace
+Zhodnocení splnění cílů, otevřené problémy, event. doporučení dalšího směru práce
+Srovnání s jinými známými implementacemi s explicitním zdůrazněním původního přínosu
+Závěr se stručným shrnutím výsledků a přínosu autora
+Seznam citované literatury
