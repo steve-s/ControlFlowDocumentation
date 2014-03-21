@@ -1,12 +1,54 @@
 \chapter{Introduction}
 
     \section{Problem Description}
-    Static type analysis of a dynamic language, benefits: 
-    compiler optimizations, IDE support - bug hunting analysis.
+    
+    Three out of top ten programming languages in TIOBE index\cite{tiobe} 
+    are dynamically typed languages. One of the reasons for their popularity 
+    is that they are usually easier to use and suitable for quick prototyping.
+    But at the same time the possibility to omit type information, which might 
+    be helpful during the early stages of a software project, can lead to more 
+    error prone code, and eventually to problems in later phases of the 
+    development and maintenance. Dynamic typing is also challenging for the 
+    compilers or interpreters designers. With the type information, 
+    a compiler is usually able to emit more efficient code.
+    
+    Programmers are aware of the possible problems with the maintenance of 
+    dynamically typed code and they often document the type information in 
+    documentation comments. However, the correspondence of the documentation 
+    and the actual code is not checked, and moreover the compiler usually 
+    does not take any advantage of having type hints in the comments.
+    
+    The PHP programming language is one of the mentioned popular dynamic 
+    languages and Phalanger is an implementation of a PHP compiler 
+    that compiles PHP code into the .NET intermediate code, which was 
+    developed at the Department of Software Engineering 
+    of the Charles University in Prague. A part of the 
+    Phalanger project is also an implementation of PHP tools 
+    for Visual Studio.
+
+    \subparagraph*{}    
+    Because of its dynamic nature, PHP code is more difficult to analyse 
+    than code written in a statically typed language, especially if we want the 
+    analysis to be reasonably fast so that it can be used 
+    in everyday development.  There is an ongoing research of the 
+    static analysis methods for many different families of programming languages, 
+    including dynamic languages. The problem this project is addressing 
+    is to adapt and apply those methods on a real world and widely 
+    used programming language PHP. The result is a library that is capable of 
+    performing a static analysis of PHP code and can be integrated into 
+    the Phalanger project. The library should allow to plug in any 
+    kind of analysis, for example constant propagation. However, the main goal 
+    is to provide a type analysis in order to discover possible type 
+    related errors and mismatches with the type information in the 
+    documentation comments and possibly to allow the compiler to 
+    emit more efficient code.    
+    
 
     \section{Implementation Constraints}
-    Use Phalanger front end, provide support for compiler back end 
-    and IDE (re-analysis), focus on object oriented PHP 5 style 
-    projects.
+    More detailed description: usage of Phalanger front end, have to 
+    provide support for compiler back end and IDE (re-analysis of once analysed code), 
+    focus on object oriented PHP 5 style projects.
+    
+    \question{Leave this here or put it in the chapter about implementation?}
     
     \section{Thesis structure}

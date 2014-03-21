@@ -5,21 +5,31 @@
     verification, etc.). Terminology: context sensitive, 
     path sensitive, symbolic execution, abstract interpretation, etc.
     
+    \question{
+        Few possibilities here:
+        \begin{itemize}
+            \item describe algorithms and terminology around static analysis, 
+            but this would be all a book work. Then custom modifications and 
+            adaptation of those would be described in chapter Implementation.
+            \item or describe both here (static analysis in general + custom modifications).
+            \item or just reference the literature and describe 
+            only custom modifications.
+        \end{itemize}
+    }
+        
     \section{Data Flow Analysis}
-    Detailed description of Data Flow analysis?    
-   
-    \subsection{Rapid Analysis}
-    \subsection{Abstract Domain}
+        \subsection{Rapid Analysis}
+        \subsection{Abstract Domain}
 
     \section{The PHP Programming Language}
-    Note: maybe a new chapter?  
+    \question{Or as a standalone chapter?}
     \begin{itemize}
         \item[] What makes static analysis in PHP harder than of statically typed language
         \item[] what are the caveats of PHP we had to deal with:
             \begin{itemize}
-                \item[] arbitrary expression in continue and break,
+                \item[] arbitrary expressions in continue and break,
                 \item[] conditional declarations,
-                \item[] user defined auto-loading.
+                \item[] user defined auto-loading, ...
             \end{itemize}
         \item[] PHPDoc annotations and their significance for type analysis (especially for the bug hunting)        
     \end{itemize}
