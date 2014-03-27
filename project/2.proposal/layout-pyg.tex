@@ -1,0 +1,120 @@
+
+%% One page layout:
+% Margins: left 40mm, rigt 25mm, top and bottom 25mm
+% (latex adds extra 1in)
+\documentclass[12pt,a4paper]{report}
+\setlength\textwidth{145mm}
+\setlength\textheight{247mm}
+\setlength\oddsidemargin{15mm}
+\setlength\evensidemargin{15mm}
+\setlength\topmargin{0mm}
+\setlength\headsep{0mm}
+\setlength\headheight{0mm}
+% \openright zar¡d¡, aby n sleduj¡c¡ text zac¡nal na prav‚ strane knihy
+\let\openright=\clearpage
+
+%% Two pages layout:
+% \documentclass[12pt,a4paper,twoside,openright]{report}
+% \setlength\textwidth{145mm}
+% \setlength\textheight{247mm}
+% \setlength\oddsidemargin{15mm}
+% \setlength\evensidemargin{0mm}
+% \setlength\topmargin{0mm}
+% \setlength\headsep{0mm}
+% \setlength\headheight{0mm}
+% \let\openright=\cleardoublepage
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsthm}
+
+% PYGMENTIZE
+%pygmentize_options: -O style=vs
+
+\usepackage[unicode]{hyperref}   % Mus¡ bìt za vsemi ostatn¡mi bal¡cky
+\hypersetup{pdftitle=Implementing control flow resolution in dynamic language}
+\hypersetup{pdfauthor=Step n Sindel r}
+
+%%% Small styling hacks
+
+% Tato makra presvedcuj¡ m¡rne osklivìm trikem LaTeX, aby hlavicky kapitol
+% s zel pr¡cetneji a nevynech val nad nimi spoustu m¡sta. Smele ignorujte.
+\makeatletter
+\def\@makechapterhead#1{
+  {\parindent \z@ \raggedright \normalfont
+   \Huge\bfseries \thechapter. #1
+   \par\nobreak
+   \vskip 20\p@
+}}
+\def\@makeschapterhead#1{
+  {\parindent \z@ \raggedright \normalfont
+   \Huge\bfseries #1
+   \par\nobreak
+   \vskip 20\p@
+}}
+\makeatother
+
+% Toto makro definuje kapitolu, kter  nen¡ oc¡slovan , ale je uvedena v obsahu.
+\def\chapwithtoc#1{
+\chapter*{#1}
+\addcontentsline{toc}{chapter}{#1}
+}
+
+\include{header}
+
+\begin{document}
+
+% Trochu volnejs¡ nastaven¡ delen¡ slov, nez je default.
+\lefthyphenmin=2
+\righthyphenmin=2
+
+%%% Tituln¡ strana pr ce
+
+\pagestyle{empty}
+\begin{center}
+
+\large
+
+Macquarie University
+
+\medskip
+
+Department of Computing
+
+\vfill
+
+{\bf\Large PROJECT PROPOSAL}
+
+\vfill
+
+% N zev pr ce presne podle zad n¡
+{\LARGE\bfseries Static Type Analysis of Dynamically Typed
+Programming Language}
+
+\vfill
+
+\begin{tabular}{rl}
+Author: & Stepan Sindelar \\
+\noalign{\vspace{2mm}}
+Student ID: & 43600220 \\
+\noalign{\vspace{2mm}}
+Supervisor of the project: &  Matthew Roberts \\
+\end{tabular}
+
+\vfill
+
+\end{center}
+
+\newpage
+
+\include{content}
+
+%%% Seznam pouzit‚ literatury
+\def\bibname{Bibliography}
+\addcontentsline{toc}{chapter}{\bibname}
+
+  \bibliographystyle{ieeetr}
+  \bibliography{../../thesis/bibliography}
+
+\openright
+\end{document}
