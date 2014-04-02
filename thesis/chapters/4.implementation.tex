@@ -1,17 +1,28 @@
 \chapter{Implementation}
 
-\begin{itemize}
-    \item[] specific constraints: 
+    \section{Implementation Specific Constraints}
         \begin{itemize}
-            \item[] must use Phalanger front end and its AST data structures,
-            \item[] should be ready to be connected in between the Phalanger front end and back end as a middle end,
-            \item[] should be ready to be used continuously: interactively re-analyze updated code when used inside IDE,
-        \end{itemize}
-    \item[] overall description:
+            \item must use Phalanger front end and its AST data structures,
+            \item should be ready to be connected in between the Phalanger front end and back end as a middle end,
+            \item should be ready to be used continuously: interactively re-analyze updated code when used inside IDE,
+        \end{itemize}    
+    
+    \section{Overall Design}
+    
+    \section{Control Flow Graph and Data-flow Analysis}
         \begin{itemize}
-            \item[] Control Flow graph construction
-            \item[] discussion of the choice of intermediate representation (or in fact, why we do not use any intermediate representation).
-            \item[] generic framework for Data Flow analyses
-            \item[] type analysis
+            \item Control Flow graph construction
+            \item discussion of the choice of intermediate representation (or in fact, why we do not use any intermediate representation).
+            \item generic framework for Data Flow analyses
+            \item support for re-analysing pieces of code
+        \end{itemize}    
+    
+    \section{Tables}
+        Dependencies handling. 
+    
+    \section{Type Analysis}
+        \begin{itemize}
+            \item Type Information representation
+            \item Data Flow representation
+            \item AST annotations
         \end{itemize}
-\end{itemize}

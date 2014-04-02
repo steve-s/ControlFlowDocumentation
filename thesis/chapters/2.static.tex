@@ -1,35 +1,78 @@
-\chapter{Static Analysis}
+%pygmentize_options: -O startinline=True
 
-    More detailed description of what static analysis is 
-    (as opposed to for example explicit model checking, 
-    verification, etc.). Terminology: context sensitive, 
-    path sensitive, symbolic execution, abstract interpretation, etc.
+\chapter{Analysing PHP Code}
+
+    The PHP programming language first appeared in 1995\cite{phphist}. Over the years 
+    the language has involved and so have the ways how programmers were using it. 
+    This project focuses on PHP version 5.5\footnote{From this point, 
+    if the PHP version is not stated explicitly, it is implicitly 5.5.} 
+    and the aim for the analysis 
+    is to work well on PHP source code written in an object oriented manner, 
+    using modern PHP patterns and idioms that are described later in 
+    this text. The analysis, however, should work reasonably good on 
+    any valid PHP code. We do not focus only on websites, but also on 
+    PHP libraries and frameworks that by themselves do not contain 
+    any PHP files that produce HTML or any other output for the user.
     
-    \question{
-        Few possibilities here:
-        \begin{itemize}
-            \item describe algorithms and terminology around static analysis, 
-            but this would be all a book work. Then custom modifications and 
-            adaptation of those would be described in chapter Implementation.
-            \item or describe both here (static analysis in general + custom modifications).
-            \item or just reference the literature and describe 
-            only custom modifications.
-        \end{itemize}
-    }
-        
-    \section{Data Flow Analysis}
+    \section{PHP semantics}
+    This section describes some important parts of the semantics of 
+    the PHP programming language, especially those that represent a 
+    challenge for static analysis.
+    
+    \subparagraph*{}    
+    In PHP, local or global variables, object fields and function or 
+    method parameters are dynamically typed, which means that they 
+    can hold values of completely different types at different 
+    times of execution.
+    
+    \subsection{Local Variables}
+    Local variables in PHP do not need to be declared explicitly. 
+    Instead the first usage of a variable is also its declaration. 
+    If a variable's value is used before the variable got any 
+    value assigned, then the interpreter generates a notice, 
+    however the execution continues and value \code{null} is 
+    used instead. A variable can get a value assigned to it when it 
+    appears on a left hand side of an assignment or when a 
+    reference to that variable is created, in which case it gets value 
+    \code{null}. Note: references are discussed in one of the following 
+    subsections.
+
+    The scope of a local variable is always its parent function not the 
+    parent code block as in other languages like C or Java. So in the following 
+    example, the usage of variable \code{\$y} at the end of the function 
+    can generate uninitialized variable notice, however, if \code{\$x} 
+    was equal to \code{3}, \code{\$y} will have a value although it 
+    was declared in the nested code block.
+
+    %pygmentize_begin php
+    % function foo($x) {
+    %   if ($x == 3) { $y = 2; }
+    %   echo $y; // uninitialized variable if x != 3
+    % }
+    %pygmentize_end
+    
+    \subsection{Global and Local Scope}
+
+    \subsection{Closures}
+    PHP also supports anonymous functions. An anonymous function has its 
+    own scope as any other function and its local variables are not visible 
+    to the scope where it was declared
+
+    \subsection{Interesting Control Flow Structures}
+    Arbitrary expressions in continue and break.
+    
+    \subsection{Conditional Declarations}
+                
+    \subsection{Auto-loading}
+    
+    \subsection{PHPDoc Annotations}
+    
+    \section{Static Code Analysis}
+        More detailed description of what static analysis is 
+        (as opposed to for example explicit model checking, 
+        verification, etc.). Terminology: context sensitive, 
+        path sensitive, symbolic execution, abstract interpretation, etc.    
+    
+        \subsection{Data Flow Analysis}
         \subsection{Rapid Analysis}
         \subsection{Abstract Domain}
-
-    \section{The PHP Programming Language}
-    \question{Or as a standalone chapter?}
-    \begin{itemize}
-        \item[] What makes static analysis in PHP harder than of statically typed language
-        \item[] what are the caveats of PHP we had to deal with:
-            \begin{itemize}
-                \item[] arbitrary expressions in continue and break,
-                \item[] conditional declarations,
-                \item[] user defined auto-loading, ...
-            \end{itemize}
-        \item[] PHPDoc annotations and their significance for type analysis (especially for the bug hunting)        
-    \end{itemize}

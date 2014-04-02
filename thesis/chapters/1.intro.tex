@@ -1,6 +1,6 @@
 \chapter{Introduction}
 
-    \section{Problem Description}
+    \section{The Problem}
     
     Three out of top ten programming languages in TIOBE index\cite{tiobe} 
     are dynamically typed languages. One of the reasons for their popularity 
@@ -19,8 +19,8 @@
     does not take any advantage of having type hints in the comments.
     
     The PHP programming language is one of the mentioned popular dynamic 
-    languages and Phalanger is an implementation of a PHP compiler 
-    that compiles PHP code into the .NET intermediate code, which was 
+    languages and Phalanger \cite{benda2006phalanger} is an implementation of a PHP compiler 
+    that compiles PHP code into the .NET intermediate code. Phalanger was 
     developed at the Department of Software Engineering 
     of the Charles University in Prague. A part of the 
     Phalanger project is also an implementation of PHP tools 
@@ -40,15 +40,15 @@
     kind of analysis, for example constant propagation. However, the main goal 
     is to provide a type analysis in order to discover possible type 
     related errors and mismatches with the type information in the 
-    documentation comments and possibly to allow the compiler to 
-    emit more efficient code.    
-    
-
-    \section{Implementation Constraints}
-    More detailed description: usage of Phalanger front end, have to 
-    provide support for compiler back end and IDE (re-analysis of once analysed code), 
-    focus on object oriented PHP 5 style projects.
-    
-    \question{Leave this here or put it in the chapter about implementation?}
+    documentation comments. Furthermore, in the future the library 
+    might be integrated into the Phalanger back-end.        
     
     \section{Thesis structure}
+    
+    The following chapter describes the challenges connected with analysing source code 
+    written in the PHP programming language and also approaches to static analysis of 
+    source code in general. In chapter 3, we briefly discuss existing software of 
+    this kind. Chapter 4 provides more detailed description of our implementation. 
+    The analysis has been evaluated on several middle to large sized open source 
+    PHP projects and the results are presented in chapter 5.
+    
