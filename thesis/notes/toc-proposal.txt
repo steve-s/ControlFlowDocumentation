@@ -1,3 +1,6 @@
+
+OBSOLETE: 02:58 04/04/2014
+
 Introduction
     - problem description: static type analysis of a dynamic language
     - benefits: compiler optimizations, IDE support - bug hunting analysis.

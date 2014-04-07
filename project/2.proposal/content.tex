@@ -67,8 +67,9 @@ was declared in a nested code block.
 
 %pygmentize_begin php
 % function foo($x) {
-%   if ($x == 3) { $y = 2; }
-%   echo $y; // uninitialized variable if x != 3
+%   $y = 4;    
+%   if ($x == 3) $y = 'string';
+%   return $y;
 % }
 %pygmentize_end
 
@@ -128,14 +129,14 @@ blocks of code and edges representing the possible execution flow as
 depicted in the figure \ref{cfg}.
 
 \begin{table}[h]
-  \begin{tabular}{ l | p{3cm} }
+  \begin{tabular}{ l | p }
   \centering
     \includegraphics[scale=0.7]{cfg.png}
   &
  
  
-\begin{minipage}{1in} 
 \vspace{0pt}
+%\begin{minipage}[t] 
 %pygmentize_begin php
 %echo $x;
 %do {
@@ -148,7 +149,7 @@ depicted in the figure \ref{cfg}.
 %    
 %echo 'the end';
 %pygmentize_end
-\end{minipage}
+%\end{minipage}
 
   \\
   \end{tabular}

@@ -65,7 +65,7 @@
     to the scope where it was declared
 
     \subsection{Interesting Control Flow Structures}
-    Arbitrary expressions in continue and break.
+    \note{Arbitrary expressions in continue and break.}
     
     \subsection{Conditional Declarations}
                 
@@ -87,8 +87,8 @@
         a dynamically typed language, to find out expressions that have constant 
         value through constant propagation and many other problems. 
         Static analyses usually do not give accurate solution, but 
-        its approximation, which can be over-approximation or 
-        under-approximation and it is up to the designer and user of the analysis 
+        its approximation, which can be an over-approximation or 
+        an under-approximation and it is up to the designer and user of the analysis 
         which one is acceptable for his or her\footnote{``His'' or ``he'' 
         should be read as ``his or her'' or ``he or she'' through the rest of the text.} 
         purposes.                
@@ -122,12 +122,29 @@
         \paragraph{Path Sensitivity.}
         If we admit conditional control flow statements, like if-then-else, 
         we can have more possible paths through the program. In our example, 
-        let us say that there is an if statement before the expression $e_1$ 
-        is to be evaluated. The expression $e_1$ can evaluate to different 
+        let us say that there is an if statement before the expression $e_1$
+        and the expression $e_1$ can evaluate to different 
         type if the then branch of the if-then-else statement is taken than 
-        if the else branch is taken. If the inference rules do not model 
-        this, like in our example, we say that the inference system is 
-        \emph{path insensitive}, otherwise we say that it is \emph{path sensitive}.
+        if the else branch is taken. This is illustrated in the following code listing. 
+        If the inference rules do not model this, like our example rule, 
+        we say that the inference system is 
+        \emph{path insensitive}, otherwise we say 
+        that it is \emph{path sensitive}.
+        
+%pygmentize_begin php
+% if (...) $x = 3;
+% else $x = 'string';
+% $e_1 = $x;
+% $e_2 = 4;
+% $e_1 + $e_2;
+%pygmentize_end        
+\begin{Verbatim}[commandchars=\\\{\}]
+ \PY{k}{if} \PY{p}{(}\PY{o}{...}\PY{p}{)} \PY{n+nv}{\PYZdl{}x} \PY{o}{=} \PY{l+m+mi}{3}\PY{p}{;}
+ \PY{k}{else} \PY{n+nv}{\PYZdl{}x} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}string\PYZsq{}}\PY{p}{;}
+ \PY{n+nv}{\PYZdl{}e\PYZus{}1} \PY{o}{=} \PY{n+nv}{\PYZdl{}x}\PY{p}{;}
+ \PY{n+nv}{\PYZdl{}e\PYZus{}2} \PY{o}{=} \PY{l+m+mi}{4}\PY{p}{;}
+ \PY{n+nv}{\PYZdl{}e\PYZus{}1} \PY{o}{+} \PY{n+nv}{\PYZdl{}e\PYZus{}2}\PY{p}{;}
+\end{Verbatim}
         
         \paragraph{Abstraction.}
         Another example of problem that can be partly solved with static analysis 
@@ -143,7 +160,13 @@
         type \code{unsigned integer} will always be positive, we can count on that 
         even if we do not know the actual value. What we 
         can do is to abstract the possible integral values with set 
-        $\{0, \ominus, \oplus\}$ and rewrite the inference rules as follows.
+        $\{0, \ominus, \oplus\}$ with the following meanings         
+        \begin{itemize}
+            \item $\ominus$ represents all negative integers,
+            \item $\oplus$ represents all positive integers,
+            \item $0$ represents zero,
+        \end{itemize}                
+        and rewrite the inference rules as follows:
         $$
         \infer{\vdash v_1+v_2 : \ominus}
         {\vdash v_1 : \ominus & \vdash v_2 : \ominus}
@@ -154,14 +177,12 @@
         \infer{\vdash v_1+v_2 : ?}
         {\vdash v_1 : \ominus & \vdash v_2 : \oplus}
         $$
-        The solution is to extend the domain so that it is closed under all operations.
+        The solution is to extend the domain so that it is closed under all operations. 
+        We add another element to our set:
         \begin{itemize}
-            \item $\ominus$ represents all negative integers,
-            \item $\oplus$ represents all positive integers,
-            \item $0$ represents zero,
             \item $\top$ represents an unknown value (either positive, negative, or zero).
         \end{itemize}
-        The the rule will be:
+        Then the rule will be:
         $$
         \infer{\vdash v_1+v_2 : \top}
         {\vdash v_1 : \ominus & \vdash v_2 : \oplus}
@@ -173,11 +194,139 @@
         $$               
     
         \subsection{Data Flow Analysis}
+        Data Flow Analysis (DFA) is a static analysis framework 
+        for compiler optimizations and verification that 
+        scales to large code bases 
+        \cite{nielson1999principles}, \cite{aho1985compilers}.
+        
+        \paragraph{Control Flow Graph.} 
+        DFA is typically performed on a control flow graph, 
+        although there are also existing approaches to DFA 
+        without explicit control flow graph 
+        construction \cite{mohnen2002graph}.
+        
+        Control flow graph nodes, also called basic blocks, 
+        are program statements that are always sequentially executed. 
+        Directed edges represent the control flow between basic blocks, 
+        i.e. jumps in the control flow due to conditionals, 
+        goto statements or any other statements that can change 
+        the flow of the program.        
+        Control flow graphs usually contain two special nodes: 
+        entry node and exit node. Entry node does not have any 
+        incoming edges and all the paths lead to the exit node.        
+        An example of a control flow graph is given in figure \ref{cfg}.
+        
+\begin{table}[h]
+  \begin{tabular}{ l | m{6cm} }
+  \centering
+    \includegraphics[scale=0.7]{img/cfg.png}
+  &
+ 
+\begin{minipage}{6cm}
+%pygmentize_begin php
+%   echo 'entry';
+%   if ($x == 3)
+%       $y = 4;
+%   else
+%       return 5;
+%        
+%   while ($y < 7) {
+%       echo $y;
+%       $y++;
+%   }
+%
+%   return 3;
+%pygmentize_end
+\begin{Verbatim}[commandchars=\\\{\}]
+   \PY{k}{echo} \PY{l+s+s1}{\PYZsq{}entry\PYZsq{}}\PY{p}{;}
+   \PY{k}{if} \PY{p}{(}\PY{n+nv}{\PYZdl{}x} \PY{o}{==} \PY{l+m+mi}{3}\PY{p}{)}
+       \PY{n+nv}{\PYZdl{}y} \PY{o}{=} \PY{l+m+mi}{4}\PY{p}{;}
+   \PY{k}{else}
+       \PY{k}{return} \PY{l+m+mi}{5}\PY{p}{;}
+        
+   \PY{k}{while} \PY{p}{(}\PY{n+nv}{\PYZdl{}y} \PY{o}{\PYZlt{}} \PY{l+m+mi}{7}\PY{p}{)} \PY{p}{\PYZob{}}
+       \PY{k}{echo} \PY{n+nv}{\PYZdl{}y}\PY{p}{;}
+       \PY{n+nv}{\PYZdl{}y}\PY{o}{++}\PY{p}{;}
+   \PY{p}{\PYZcb{}}
 
-        \subsection{Intra Procedural Analysis}
-        Wikipedia: context-sensitive analysis is an interprocedural analysis that considers the calling context when analyzing the target of a function call. In particular, using context information one can jump back to the original call site, whereas without that information, the analysis information has to be propagated back to all possible call sites, potentially losing precision.        
-        TODO: rewrite it, more details, relevance the other things like path-sensitivity etc.
+   \PY{k}{return} \PY{l+m+mi}{3}\PY{p}{;}
+\end{Verbatim}
+\end{minipage}
+
+  \\
+  \end{tabular}
+  \caption{Control flow graph\label{cfg}}  
+\end{table}          
+        
+        \paragraph*{Lattices.}
+        The reasoning behind correctness and termination of DFA 
+        is based on an algebraic structures called lattices. 
+        A lattice is a partially ordered set in which every 
+        two elements have a least upper bound, called supremum, 
+        and a greatest lower bound, called infimum.
+        
+        \emph{Bounded lattice} is a lattice that has 
+        a greatest element and a least element, 
+        usually denoted as $\top$ and $\bot$. 
+        A bounded lattice is depicted in figure \ref{lattice}.       
+        
+\begin{figure}[h]  
+  \centering
+    \includegraphics{img/lattice.pdf}
+  \caption{Bounded lattice with 5 elements.\label{lattice}}    
+\end{figure}
+
+        What is important about lattices for 
+        DFA analysis is that if we have a 
+        lattice $(S, \leq_{s})$ and a function 
+        $f:S\rightarrow{S}$ that is monotonous, 
+        i.e. $\forall{a\in{S}}: a\leq_s{f(a)}$, then 
+        $f$ has a fixpoint. That is a point $x\in{S}$ for 
+        which $f(x)=x$.
+        
+        Intuitively, $f$ has to have a fixpoint because 
+        for every argument $y$, it must either return 
+        $y$ itself, but then $y$ is a fixpoint, or it 
+        returns an element that is greater than $y$, 
+        but this cannot go on forever, because eventually 
+        $f$ will be given $\top$ for which it does not have 
+        any other option but returning $\top$ and we 
+        have a fixpoint again.
+        
+        
+        \paragraph*{}
+        \note{The following few paragraphs will finish the description 
+        of Data Flow Analysis.}
+
+        \subsection{Intraprocedural Analysis}
+        So far we have been discussing an analysis of a 
+        single function or method\footnote{We will use term 
+        routine to designate a function, static or instance method}. 
+        However, if we want to analyse whole program or 
+        a library, the interaction between the routines 
+        can be takend into account to make it more precise.
+        
+        \paragraph{Context Sensitive Intraprocedural Analysis.}
+        The most precise solution would be take into account 
+        the calling context when analysing a function. 
+        In different contexts, the function can be, 
+        for example, given different parameters values 
+        which may then influence the result of the analysis. 
+        More precise result for a specific call site context 
+        can be propagated to that call site, 
+        yielding another gain in precision when 
+        analysing the function that realises the call.
+        
+        \paragraph*{}
+        \note{The following few paragraphs will discuss 
+        feasibility of Context Sensitive Intraprocedural Analysis, 
+        because call sites are not always known, 
+        practical consequences and usual approaches to 
+        make Context Sensitive Intraprocedural Analysis 
+        more scalable.}
     
     \section{Control Flow for Phalanger Approach}
-        Description of the analysis used in our case using the terminology 
-        built up in the previous section.
+        \note{Description of the analysis used in our case using the terminology 
+        built up in the previous section. It will be more 
+        abstract description, without technical details 
+        about implementation.}

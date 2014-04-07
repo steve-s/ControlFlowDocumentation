@@ -1,0 +1,6 @@
+
+Standford: class on static analysis
+http://www.stanford.edu/class/cs295/
+
+Abstract interpretation and static analysis
+http://santos.cis.ksu.edu/schmidt/Escuela03/home.html
