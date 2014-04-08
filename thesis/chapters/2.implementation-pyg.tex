@@ -3,15 +3,67 @@
     \section{Implementation Specific Constraints}
     
     One of the requirements was that the project should be implemented 
-    in the context of Phalanger. 
+    in the context of the Phalanger project. It should be ready 
+    to be plugged in between the Phalanger's front-end and back-end and 
+    it should also provide public interface useful for the 
+    Phalanger PHP Visual Studio tools.
     
-        \begin{itemize}
-            \item must use Phalanger front end and its AST data structures,
-            \item should be ready to be connected in between the Phalanger front end and back end as a middle end,
-            \item should be ready to be used continuously: interactively re-analyze updated code when used inside IDE,
-        \end{itemize}    
+    \paragraph{Abstract Syntax Tree.} Phalanger front-end parses PHP code 
+    into a Abstract Syntax Tree (AST) \cite{aho1985compilers} structure. 
+    This structure is then traversed by the back-end using the 
+    visitor design pattern \cite{gamma1994design}. Phalanger does not 
+    use any other intermediate representation than AST.
+    
+    In order to reduce the memory consumption and provide better 
+    modularity, Phalanger code went through small architecture 
+    refactoring before this project was started. 
+    
+    The classes representing the AST nodes originally contained 
+    the code and data needed for emitting the corresponding MSIL code. 
+    That is, however, not necessary.
+    What this coupling meant is wherever a programmer wanted 
+    to use just the parser, she needed to reference the 
+    back-end part of the compiler. Said in other words, the 
+    front-end and back-end were not divided into separate units.
+    
+    \paragraph{Integrated Development Environment Integration.}
+    The PHP Tools for Visual Studio use Phalanger front-end in order to 
+    parse PHP code into AST and then the AST is again traversed to provide 
+    code completion and other features. All the AST nodes hold necessary 
+    pieces of information, e.g. the position in the source file or 
+    documentation comments.
+    
+    The aim of this project is to provide the results of type analysis 
+    and other analyses to the integrated development environment so 
+    that the possible errors and warnings can be visualised, e.g. underlined.
+    
+    The longer term aim of this project, not in the scope of this thesis, 
+    is to replace the existing algorithms for code completion, 
+    ``jump to definition'' and ``find usages'' features. Because 
+    with a dynamic language like PHP, it is not trivial to 
+    find all the usages of e.g. a class or determine 
+    a definition of e.g. a field accessed on a some local variable. 
+    In order to provide more precise results, 
+    type analysis is needed.
+    
+    One of the challenging parts of integrated development 
+    environment integration is also dealing with incomplete code 
+    that is being typed in by the user. Therefore one of the requirements 
+    was also that the analysis should be capable of 
+    performing an ad-hoc re-analysis of once analysed 
+    code with a new statement added. This ad-hoc re-analysis 
+    should be, if possible, more effective that doing the 
+    whole analysis again.
     
     \section{Overall Design}
+    The project can be divided into several parts:
+    \begin{itemize}
+        \item Control Flow Graph construction,
+        \item Data Flow Analysis framework, 
+        \item Dead Code Elimination,         
+        \item Aliasing Analysis,
+        \item Constant Propagation Analysis, 
+        
     
     \section{Control Flow Graph and Data-flow Analysis}
         \begin{itemize}
