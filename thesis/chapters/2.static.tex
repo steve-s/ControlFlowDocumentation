@@ -3,14 +3,14 @@
 \chapter{Analysing PHP Code}
 
     The PHP programming language first appeared in 1995\cite{phphist}. Over the years 
-    the language has involved and so have the ways how programmers were using it. 
+    the language has evolved and so have the ways how programmers were using it. 
     This project focuses on PHP version 5.5\footnote{From this point, 
     if the PHP version is not stated explicitly, it is implicitly 5.5.} 
     and the aim for the analysis 
-    is to work well on PHP source code written in an object oriented manner, 
+    is to work well on PHP source code written in an object oriented style, 
     using modern PHP patterns and idioms that are described later in 
-    this text. The analysis, however, should work reasonably good on 
-    any valid PHP code. We do not focus only on websites, but also on 
+    this text. The analysis, however, should provide correct results for 
+    any valid PHP code of any PHP version. We do not focus only on websites, but also on 
     PHP libraries and frameworks that by themselves do not contain 
     any PHP files that produce HTML or any other output for the user.
     
@@ -23,7 +23,7 @@
     In PHP, local or global variables, object fields and function or 
     method parameters are dynamically typed, which means that they 
     can hold values of completely different types at different 
-    times of execution.
+    times of the execution.
     
     \subsection{Local Variables}
     Local variables in PHP do not need to be declared explicitly. 
@@ -34,14 +34,16 @@
     used instead. A variable can get a value assigned to it when it 
     appears on a left hand side of an assignment or when a 
     reference to that variable is created, in which case it gets value 
-    \code{null}. Note: references are discussed in one of the following 
-    subsections.
+    \code{null}, but no notice is generated. References are 
+    discussed in one of the following subsections.
 
     The scope of a local variable is always its parent function not the 
-    parent code block as in other languages like C or Java. So in the following 
-    example, the usage of variable \code{\$y} at the end of the function 
-    can generate uninitialized variable notice, however, if \code{\$x} 
-    was equal to \code{3}, \code{\$y} will have a value although it 
+    parent code block as in other languages like C or Java. 
+    So in the following 
+    example, the usage of variable \code{\$y} at the end 
+    of the function can generate uninitialized variable notice, 
+    however, if \code{\$x} was equal to \code{3}, 
+    \code{\$y} will have a value although it 
     was declared in the nested code block.
 
 %pygmentize_begin php
@@ -52,20 +54,204 @@
 %pygmentize_end
     
     \subsection{Global and Local Scope}
+    PHP distinguishes two scopes for variables: global scope and 
+    local scope. Local scope is a scope of local variables 
+    within a user defined routine.         
+    Variables that are declared 
+    in global scope, that is outside of a user defined routine, 
+    are available anywhere in global scope and are called 
+    global variables. Global variables are also available 
+    in user defined routines as long as they are imported 
+    into the routine's scope using the keyword \code{global}.
+    
+%pygmentize_begin php
+% $g1 = 1;  // global variables g1 and g2
+% $g2 = 2;
+% function foo() {
+%   global $g1;
+%   echo $g1;   // prints the value of global variable g1
+%   $g2 = 4;   // sets the value of local variable g2,
+%   // because global variable g2 was not imported, 
+%   // its value does not change
+% }
+%pygmentize_end
+
+    Global variables can be imported and used in any user defined 
+    routine. This means that even if we know some type information 
+    about a global variable's value at some point in the analysed 
+    code (e.g. straight after assignment to that variable), 
+    any time another user defined routine is invoked, we 
+    have to take into account that the other routine can 
+    change the value of the global variable even if we do not 
+    pass the global variable to the invoked routine 
+    as an argument passed by reference.
 
     \subsection{Closures}
     PHP also supports anonymous functions. An anonymous function has its 
     own scope as any other function and its local variables are not visible 
-    to the scope where it was declared
+    to the scope where it was declared. Variables from the parent 
+    scope are available in the closure scope only if they are 
+    explicitly imported to its scope and they can be captured 
+    by value or by reference. Only the later represents a 
+    challenge for the analysis, because any code that can 
+    access the closure can invoke it and thus change the 
+    values of variables imported to the closure's scope 
+    by reference. By invoking a closure, we can influence 
+    the values of variables in a completely different 
+    and otherwise inaccessible scope.
+    
+    \subsection{References}
+    References in PHP are similar, but not same, as pointers 
+    in the C programming language. PHP has a special 
+    operator \code{=\&} (assign by reference) that turns 
+    the variable on the 
+    left hand side into a reference to the 
+    variable on right hand side. For example \code{\$a=\&\$b}, 
+    after this, any assignment 
+    to \code{\$a} will in fact change the 
+    value of \code{\$b} and wherever 
+    the value of \code{\$a} is used (e.g. in an expression), 
+    the value of \code{\$b} is used instead.
+    
+    The variable where the reference is pointing to is determined 
+    in a transitive fashion, which means that if we assign 
+    by reference another reference, the new reference will 
+    point to where the other reference was pointing to, 
+    but the intermediate link is lost. The following example 
+    illustrates this.
+    
+%pygmentize_begin php
+% $a =& $b;       // a points to b
+% $c =& $a;       // c points to where a points, that is b
+% $a =& $d;       // a points to d, but c still points to b
+%pygmentize_end    
+
+    \subsection{Arrays}
+    Arrays in PHP do not have to be homogenous and 
+    they can be indexed by either integers or strings.
+    In fact, PHP arrays are hash maps rather than arrays 
+    in the usual sense and that is also how they are 
+    implemented internally. 
+    
+    String indexed heterogenous arrays are often used 
+    as flexible ad-hoc structured data type. 
+    Instead of defining a class 
+    with required fields, one can use what would be a 
+    field name as an index into an array. Such arrays 
+    are usually indexed only with finite number of 
+    constant string values. 
+    
+    In this light, it is no 
+    surprise that using the subscribe operator 
+    \code{[]} with string index on an object instance will 
+    access the field with the same name as the index value.
 
     \subsection{Interesting Control Flow Structures}
-    \note{Arbitrary expressions in continue and break.}
+    The \code{break} and \code{continue} statements with 
+    optional numeric argument are supported in PHP in a 
+    similar way as in other standard imperative programming 
+    languages. There are however important differences 
+    to be noted.
+    
+    Firstly, The numeric argument can be an arbitrary 
+    expression in some of the older versions of PHP, in which 
+    case we cannot statically determine the target of 
+    the jump for the control flow resolution.
+    
+    Secondly, the \code{switch} statement is considered 
+    a loop for the purposes of both \code{break} and 
+    \code{continue}. The semantics of \code{break} 
+    is intuitive. One of the meaningful use cases is to 
+    break a loop from within a \code{switch} by 
+    using \code{break 2}. The semantics of 
+    \code{continue} statement 
+    is perhaps not so intuitive: within a \code{switch} 
+    it works the same way as \code{break}.
     
     \subsection{Conditional Declarations}
+    User defined functions, classes, etc. are declared in 
+    a global scope in PHP, that is a scope where one can 
+    as well place any arbitrary code. Therefore a 
+    the declaration can be wrapped in any control structure. 
+    It is not allowed to redeclare once declared symbol, however.
+    
+    A typical use case is to dynamically import a file 
+    that may provide some functions and then check 
+    using \code{function\_exists} whether the functions where 
+    indeed declared and if not, provide default implementation.
+    This is a pre object oriented way of doing overriding and 
+    is usually not to be found in modern projects. Nonetheless, 
+    popular system WordPress\cite{wordpress} still relies 
+    on this pattern in parts of its code base.
+    
+    Although the mentioned pattern could be deemed as 
+    reasonable and useful. This feature allows 
+    to write very tricky code as in the following example 
+    that may or may not crash on fatal errors ``Cannot 
+    redeclare foo()'' or ``Call to undefined function foo()'' 
+    depending upon the user input.
+    
+%pygmentize_begin php
+%while ($_POST['a'] != 3) {
+%   function foo() { return 5; }
+%   $_POST['a'] = $_POST['b'];
+%}
+%echo foo();
+%pygmentize_end        
+    
                 
     \subsection{Auto-loading}
+    Historically, in PHP in order to reference any symbol 
+    from a different file, one had to import that 
+    file explicitly. Newer versions of PHP allow to define 
+    custom auto-loading routine that is invoked by the 
+    runtime at any time an undefined class is referenced. 
+    The auto-loading routine is then responsible for 
+    importing the file(s) that contain the code of the 
+    required class. 
+    
+    Auto-loading routine can use arbitrary logic to 
+    determine what file(s) to import, in fact, it can 
+    execute arbitrary code. Typical 
+    pattern used for example in 
+    Zend Framework\cite{zendframework} before namespaces were 
+    introduced to PHP is to have a file per class and use 
+    class names in form of 
+    \code{CodeFolder1\_SubFolderName\_FileName} for 
+    a class placed in file 
+    \filepath{CodeFolder1\SubFolderName\FileName.php}.
     
     \subsection{PHPDoc Annotations}
+    Although not part of the official PHP syntax, 
+    there is widely recognized format for documentation 
+    comments of JavaDoc style called PHPDoc. PHPDoc comments 
+    may contain type information that cannot be expressed using 
+    PHP syntax. For example, PHP allows ``type hints'' 
+    for routine parameters, but only for class types, 
+    not for primitive types like \code{int}. However, 
+    primitive type expectations can be included in the 
+    documentation comments. The important difference 
+    is that PHP will throw an exception at runtime if 
+    a routine is invoked with a parameter of different 
+    type than what its ``type hint'' is. The documentation
+    comments, on the other hand, are of course not checked 
+    by the runtime.
+    
+    The PHPDoc defines a fairly advanced syntax for expressing 
+    type information. It allows to include multiple 
+    primitive and class types, description of homogenous and heterogenous arrays as well 
+    multidimensional arrays, and some constants like \code{false}.
+    For example, in the following code the documentation 
+    comment tells us that function \code{foo} can return 
+    either \code{null}, or \code{false} (but should never 
+    return \code{true}), or an array of \code{integer} values.
+    
+%pygmentize_begin php
+% /**
+%  * @return null|false|int[]
+%  */
+% function foo() { ...
+%pygmentize_end
     
     \section{Static Code Analysis}       
         Static analysis of source code is an analysis that is performed without 
@@ -188,7 +374,7 @@
         
         \paragraph{Control Flow Graph.} 
         DFA is typically performed on a control flow graph, 
-        although there are also existing approaches to DFA 
+        although there are exist approaches to DFA 
         without explicit control flow graph 
         construction \cite{mohnen2002graph}.
         
@@ -251,16 +437,17 @@
 
         What is important about lattices for 
         DFA analysis is that if we have a 
-        lattice $(S, \leq_{s})$ and a function 
+        bounded lattice $(S, \leq_{s})$ and a function 
         $f:S\rightarrow{S}$ that is monotonous, 
         i.e. $\forall{a\in{S}}: a\leq_s{f(a)}$, then 
-        $f$ has a fixpoint. That is a point $x\in{S}$ for 
-        which $f(x)=x$.
+        $\forall{x\in{S}}$ $\exists{k\in\mathbb{N}}$, such that 
+        $f^k(x)=f^{(k+1)}(x)$. $f^k(x)$ is called a fixpoint.
         
         Intuitively, $f$ has to have a fixpoint because 
         for every argument $y$, it must either return 
         $y$ itself, but then $y$ is a fixpoint, or it 
-        returns an element that is greater than $y$, 
+        returns another element that is strictly 
+        greater than $y$, 
         but this cannot go on forever, because eventually 
         $f$ will be given $\top$ for which it does not have 
         any other option but returning $\top$ and we 
