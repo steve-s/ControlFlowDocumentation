@@ -60,12 +60,14 @@
     whole analysis again.
     
     \section{Overall Design}
-    The project can be divided into several parts:
+    
+    The project is divided into several modules.
     \begin{itemize}
-        \item Control Flow Graph construction,
-        \item Data Flow Analysis framework, 
-        \item Code Tables maintenance, 
-        \item The analyses:
+        \item Control Flow Graph,
+        \item Intermediate Representation of PHP Code (Phil, RPhil),
+        \item Generic Data Flow Analysis Framework, 
+        \item Tables with Type and Other Information, 
+        \item Concrete Analyses:
         \begin{itemize}
             \item Dead Code Elimination, 
             \item Aliasing Analysis, 
@@ -74,38 +76,92 @@
         \end{itemize}
     \end{itemize}
     
-    The Data Flow Analysis is performed on a Control Flow Graph. 
-    However, the Data Flow Analysis is an abstract algorithm and 
-    in order to implement a concrete Data Flow Analysis, 
-    one must provide implementation of required missing operations. 
+    The interactions between those modules on a conceptual level 
+    are depicted in diagram \ref{overalldiagram}. 
     
-    An analysis is a concrete Data Flow Analysis or any 
-    other analysis, because the analysis can be 
-    performed, for example, only on the Control Flow Graph 
-    (Dead Code Elimination) 
-    or only on the function body (Aliasing Analysis) 
-    without using the Data Flow Analysis algorithm. 
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio,viewport=0 55 532 590]{img/ControlFlowModules.pdf}  
+    \caption{Control Flow for Phalanger Design Overview\label{overalldiagram}}
+\end{figure}    
+
+    \subparagraph*{Intermediate Language.}
+    
+    
+    \subparagraph*{Analyses.}
+    The Data Flow Analysis is performed on Control Flow Graph 
+    nodes called basic blocks. Each basic block contains 
+    a list of Abstract Syntax Tree elements. This list is 
+    then, usually on the fly, transformed to corresponding PHP 
+    Intermediate Language elements before its elements are given 
+    to the flow function of a concrete Data Flow Analysis 
+    implementation. 
+    
+    Basic block can also contain already transformed PHP 
+    Intermediate Language elements. However, the interface 
+    does not change from the point of view of a concrete 
+    Data Flow Analysis implementation.
+    
+    The Control Flow for Phalanger also contains and allows to 
+    plug-in simple analyses that are performed for all 
+    basic blocks sequentially without taking the control 
+    flow into account. Each basic block is then analysed 
+    only once. An example of such analysis is Aliasing Analysis.
+    
+    The last analysis type, which stands aside, is Dead Code 
+    Elimination. It is performed on the Control Flow Graph, 
+    but traverses it on its own as opposed to a concrete 
+    Data Flow Analysis that only visits basic blocks 
+    in order determined by the Data Flow Framework, 
+    i.e. does not perform the graph traversal 
+    on its own. Control Flow for Phalanger also allows 
+    to add custom analyses that are performed on the raw 
+    Control Flow Graph.
+    
+    \subparagraph*{Analyses Results.}
     The results of an analysis can be annotations added 
-    into the AST node objects, or annotations of the Control Flow Graph 
-    nodes, which support extensible attributes the way AST nodes do. 
+    to the AST node objects, or annotations of basic blocks, 
+    which support extensible attributes in the same way as 
+    AST nodes.
     
     The results of an analysis can also be pushed into 
-    the Code Tables. Code Tables gather relevant information about 
-    code elements like classes, functions and others. 
-    This information is mainly type related information, 
-    for example, a return type of a function. Code Tables can 
-    be also queried by an analysis, for example, when 
-    the Type Analysis reaches a function call and needs to 
-    find out what types the given function may return.
+    the Code Tables. Code Tables gather relevant information 
+    about code elements like classes, functions, etc. 
+    It is mainly type related information, 
+    for example, a return type of a function, 
+    but also which parameters are passed by reference or 
+    whether the function returns a reference.
     
-    The whole project is designed as a class library with 
-    many extension points where some of the functionality 
-    can be used independently. 
-    However, in order to provide better usability, 
-    it also contains a Facade class \code{AnalysisDriver} 
+    \subparagraph*{Type Tables.} This module provides 
+    almost the same information about routines, types, 
+    global variables and constants as Code Tables. 
+    However, in this case the information 
+    is abstract, because it might not be directly related 
+    to an actual element that can be found in the source code. 
+    This is the case of library functions and classes, 
+    but it also gives a possibility to merge the information 
+    of two or more conditionally declared elements. 
+    
+    Although this kind of support for conditional declarations 
+    has not been implemented, the design is prepared for it, 
+    shall it be considered an important feature in the future. 
+    At the moment, if two or more declarations are found, 
+    the Type Tables behave as if they did not know the 
+    element at all, which preserves correctness for the 
+    price of loosing precision.
+    
+    \subparagraph*{Extensibility.}
+    The whole project is designed as a class library and 
+    framework with many extension points. Some of the 
+    functionality can be used independently. For example, 
+    Control Flow Graph builder to generate diagrams.
+    
+    Nonetheless, in order to provide better usability, 
+    Control Flow for Phalanger also contains 
+    a Facade class \code{AnalysisDriver} 
     that plugs in together all the necessary objects 
     and provides a simple interface to perform a defined 
-    analysis of a file or a given piece of code.    
+    analysis of a file or a given piece of code.
     
     \section{Control Flow Graph}
         \note{Description of the Control Flow graph construction. 
