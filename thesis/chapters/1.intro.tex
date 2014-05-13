@@ -2,18 +2,18 @@
 
     \section{The Problem}
     
-    Three out of top ten programming languages in TIOBE index\cite{tiobe} 
+    Three out of the top ten programming languages in TIOBE index\cite{tiobe} 
     are dynamically typed languages. One of the reasons for their popularity 
-    is that they are usually easier to use and suitable for fast prototyping.
+    is that they can be easier to use and suitable for fast prototyping.
     But at the same time the possibility to omit type information, which might 
     be helpful during the early stages of a software project, can lead to more 
     error prone code, and eventually to problems in later phases of the 
     development and maintenance. Dynamic typing is also challenging for the 
-    compilers or interpreters designers. With the type information, 
+    compiler's or interpreter's designers. With the type information, 
     a compiler is usually able to emit more efficient code.
     
     Programmers are aware of the possible problems with the maintenance of 
-    dynamically typed code and they often document the type information in 
+    dynamically typed code and they often include the type information in 
     documentation comments. However, the correspondence of the documentation 
     and the actual code is not checked, and moreover the compiler usually 
     does not take any advantage of having type hints in the comments.
@@ -30,13 +30,13 @@
     Because of its dynamic nature, PHP code is more difficult to analyse 
     than code written in a statically typed language, especially if we want the 
     analysis to be reasonably fast so that it can be used 
-    in everyday development.  There is an ongoing research of the 
+    in everyday development.  There is ongoing research of the 
     static analysis methods for many different families of programming languages, 
     including dynamic languages. The problem this project is addressing 
     is to adapt and apply those methods on a real world and widely 
     used programming language PHP. The result is a library that is capable of 
-    performing a static analysis of PHP code and can be integrated into 
-    the Phalanger project. The library should allow to plug in any 
+    performing static analysis of PHP code and can be integrated into 
+    the Phalanger project. The library should be capable of supporting any 
     kind of analysis, for example constant propagation. However, the main goal 
     is to provide a type analysis in order to discover possible type 
     related errors and mismatches with the type information in the 
@@ -44,7 +44,7 @@
     can be integrated into the Phalanger as a middle-end to provide 
     optimizations for the compiler.
 
-    This project and the library has a code name Control Flow for Phalanger 
+    This project and the library has a code name \emph{Control Flow for Phalanger} 
     and we refer to it using this name in the following text.
     
     \section{Thesis structure}

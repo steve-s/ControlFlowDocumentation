@@ -12,14 +12,15 @@
     into an Abstract Syntax Tree (AST) \cite{aho1985compilers} structure. 
     This structure is then traversed by the back-end using the 
     visitor design pattern \cite{gamma1994design}. Phalanger does not 
-    use any other intermediate representation than AST.
+    use any other intermediate representation than AST and the 
+    back end transforms the AST directly to Microsoft Intermediate Language (MSIL).
     
     In order to reduce the memory consumption and provide better 
     modularity, Phalanger code went through small architecture 
     refactoring before this project was started.     
     The classes representing the AST nodes originally contained 
     the code and data needed for emitting the corresponding 
-    Microsoft Intermediate Language opcodes. This, however, represents 
+    MSIL opcodes. This, however, represents 
     a coupling between the front-end and back-end and the 
     front-end cannot be used just on its own. In the new 
     version, the classes representing AST nodes are capable 
@@ -45,8 +46,8 @@
     is to replace the existing algorithms for code completion, 
     ``jump to definition'' and ``find usages'' features. Because 
     with a dynamic language like PHP, it is not trivial to 
-    find all the usages of e.g. a class or determine 
-    a definition of e.g. a field accessed on some local variable. 
+    find all the usages of, for example, a class or determine 
+    a definition of, for instance, a field accessed on some local variable. 
     In order to provide more precise results, 
     type analysis is needed.
     
@@ -77,7 +78,9 @@
     \end{itemize}
     
     The interactions between those modules on a conceptual level 
-    are depicted in diagram \ref{overalldiagram}. 
+    when performing an analysis are depicted in diagram \ref{overalldiagram}. 
+    Green elements represent extension points. Red arrows represent the 
+    core flow of the algorithm.
     
 \begin{figure}[h]  
   \centering
@@ -86,7 +89,45 @@
 \end{figure}    
 
     \subparagraph*{Intermediate Language.}
+    One of the goals of the design was to stay as close as possible 
+    to the original AST representation, so that the results of the 
+    analysis can be easily propagated to an IDE and that the 
+    Phalanger back-end does not have to be rewritten in order to 
+    leverage the this project.
     
+    Control Flow for Phalanger uses two intermediate representations 
+    on a conceptual level, however, they are usually not explicitly 
+    constructed as described later in the text. The purpose of the 
+    intermediate representations is to simplify the design of the 
+    analyses.
+    
+    \emph{Phil} stands for \emph{PHP Intermediate Language} and is very abstract 
+    representations close to the original AST. Phil contains 
+    only statements and expressions that can be in a Basic Block, 
+    therefore it does not contain most of the control flow 
+    changing statements like if, switch, or loops. 
+    A Phil statement represents the smallest single step 
+    of an execution that can change state of variables 
+    or global state or throw an exception. Syntactic 
+    constructs like \code{\$i++} are unfolded to 
+    \code{\$i = \$i + 1}, which is then split to 
+    evaluation of binary expression and assignment expression 
+    that uses the result of the binary expression. In some sense, 
+    Phil can be viewed as a three address code.
+    
+    \emph{RPhil} stands for \emph{Resolved PHP Intermediate Language}. 
+    RPhil is basically a Phil with resolved symbols where possible. 
+    By resolved symbols, we mean references to the elements 
+    of Type Tables discussed in one of the following paragraphs. 
+    In order to resolve the symbols, the module building RPhil 
+    can use names explicitly expressed in the code, for example, 
+    for direct local variable access \code{\$a}, or the results of 
+    an analysis, for instance, the results of type analysis to 
+    resolve method calls and fields references. 
+    RPhil itself is typically consumed by the analyses, 
+    so the accuracy of RPhil and subsequently of the 
+    analyses results can be improved by iterative execution 
+    of the analyses.
     
     \subparagraph*{Analyses.}
     The Data Flow Analysis is performed on Control Flow Graph 
@@ -163,26 +204,34 @@
     and provides a simple interface to perform a defined 
     analysis of a file or a given piece of code.
     
+    \section{The Intermediate Language}    
+        \note{The aim of the intermediate representation is... 
+        The three address code can be built by traversing the AST in 
+        the order of execution... Some AST elements represent more 
+        than one execution step...}
+        
+        \note{RPhil: the symbols are resolved using defined AST 
+        nodes annotations for constant values and type information...
+        \code{VarLikeConstructInfo} abstracts variables accesses...}
+    
     \section{Control Flow Graph}
-        \note{Description of the Control Flow graph construction. 
-            Discussion of the choice of intermediate representation: 
-            in fact, why we do not use any intermediate representation, 
-            because we wanted to keep simple correspondence between 
-            the AST nodes and analyses results and because the 
-            back-end emits MSIL code from AST nodes}.
+        \note{Description of the Control Flow graph construction}.
         
     \section{Data Flow Analysis}
         \note{Architecture of the generic algorithm implementation 
             using generics in C\# in a way that the graph the analysis 
-            is performed upon can be arbitrary graph (not only CFG), 
+            can be performed upon an arbitrary graph (not only CFG), 
             which can be useful if in the future some of the analyses 
             will be performed, for example, on a definition-use graph.}
         
     \section{Tables}
-        \note{Intra-procedural dependencies handling.}
+        \note{Intra-procedural dependencies handling \code{DependencyResolver}.}
     
-    \section{Aliasing and Constant Propagation Analysis}   
-    
+    \section{Analyses}
+        \subsection{Dead Code Elimination}
+        \subsection{Aliasing Analysis}        
+        \subsection{Constant Propagation}
+
     \section{Type Analysis}
         \note{
         \begin{itemize}

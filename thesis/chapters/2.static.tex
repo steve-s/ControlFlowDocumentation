@@ -3,7 +3,7 @@
 \chapter{Analysing PHP Code}
 
     The PHP programming language first appeared in 1995\cite{phphist}. Over the years 
-    the language has evolved and so have the ways how programmers were using it. 
+    the language has evolved and so have the ways how programmers use it. 
     This project focuses on PHP version 5.5\footnote{From this point, 
     if the PHP version is not stated explicitly, it is implicitly 5.5.} 
     and the aim for the analysis 
@@ -150,7 +150,7 @@
     The \code{break} and \code{continue} statements with 
     optional numeric argument are supported in PHP in a 
     similar way as in other standard imperative programming 
-    languages. There are however important differences 
+    languages. There are, however, important differences 
     to be noted.
     
     Firstly, The numeric argument can be an arbitrary 
@@ -168,25 +168,77 @@
     is perhaps not so intuitive: within a \code{switch} 
     it works the same way as \code{break}.
     
+    \subparagraph*{Switch Statement Semantics.} 
+    The basic semantics of the \code{switch} statement in PHP is 
+    again very similar to that of other standard imperative 
+    programming languages. The \code{switch} statement in PHP 
+    permits an arbitrary expression as the value to be used 
+    for comparison with values of its \code{case} labels. Furthermore, 
+    the values of \code{case} labels can also be arbitrary 
+    expressions and because we are in a context of dynamic 
+    programming language, they can again evaluate to a value 
+    of any type.
+    
+    At runtime, the switch expression is evaluated only once 
+    at the beginning, and if it has an undefined value (undefined variable, 
+    void function call), then the control flow goes directly 
+    to the default item, without evaluating the expressions 
+    in the case items. If the value is defined, then it is 
+    one by one compared to the values that the 
+    \code{case} labels evaluate to. If a \code{case} label evaluates 
+    to \code{boolean} value, then it is used to decide whether to 
+    jump to that \code{case} item or continue with evaluating 
+    the value of the next \code{case} label. Note that the value of 
+    switch expression is not compared to the \code{case} label value. 
+    If a \code{case} label evaluates to a complex type (\code{object} or \code{array}), 
+    it is ignored and evaluation continues with the next \code{case} label. 
+    And finally, if a \code{case} label evaluates to an 
+    \code{integer}, \code{float} or \code{string} value, it is 
+    compared to the switch expression. All these expressions can 
+    have side effects due to usage of assignments as expressions 
+    or calls of functions with side effects. 
+    
+    PHP also allows to place the \code{default} label anywhere in between 
+    the other \code{case} labels. This can be used for fall-back 
+    to or from a \code{case} item as in the following code sample 
+    that is abbreviated version of actual code taken from the 
+    WordPress\cite{wordpress} code base.
+    
+%pygmentize_begin php
+%switch ( $status ) {
+%    default:
+%    case 'install':
+%        $actions[] = '<a class="install-now" ...';
+%        break;
+%    case 'update_available':
+%        $actions[] = '<a class="install-now" ...';
+%        break;
+%    case 'newer_installed':
+%    case 'latest_installed':
+%        $actions[] = '<span class="install-now" ...';
+%        break;
+%}
+%pygmentize_end    
+    
+    
     \subsection{Conditional Declarations}
     User defined functions, classes, etc. are declared in 
     a global scope in PHP, that is a scope where one can 
-    as well place any arbitrary code. Therefore a 
-    the declaration can be wrapped in any control structure. 
+    as well place any arbitrary code. Therefore a declaration 
+    can be wrapped in any control structure. 
     It is not allowed to redeclare once declared symbol, however.
     
     A typical use case is to dynamically import a file 
-    that may provide some functions and then check 
-    using \code{function\_exists} whether the functions where 
+    that may provide some functions and then check, 
+    using \code{function\_exists}, whether the functions were 
     indeed declared and if not, provide default implementation.
-    This is a pre object oriented way of doing overriding and 
+    This is a pre-object-oriented way of doing overriding and 
     is usually not to be found in modern projects. Nonetheless, 
-    popular system WordPress\cite{wordpress} still relies 
-    on this pattern in parts of its code base.
+    WordPress still relies on this pattern in parts of its code base.
     
     Although the mentioned pattern could be deemed as 
     reasonable and useful. This feature allows 
-    to write very tricky code as in the following example 
+    to write very problematic code as in the following example 
     that may or may not crash on fatal errors ``Cannot 
     redeclare foo()'' or ``Call to undefined function foo()'' 
     depending upon the user input.
@@ -203,9 +255,10 @@
     \subsection{Auto-loading}
     Historically, in PHP in order to reference any symbol 
     from a different file, one had to import that 
-    file explicitly. Newer versions of PHP allow to define 
-    custom auto-loading routine that is invoked by the 
-    runtime at any time an undefined class is referenced. 
+    file explicitly. Newer versions of PHP support  
+    customized auto-loading. A used defined routine 
+    can be invoked by the runtime every time an 
+    undefined class is referenced. 
     The auto-loading routine is then responsible for 
     importing the file(s) that contain the code of the 
     required class. 
@@ -223,7 +276,7 @@
     
     \subsection{PHPDoc Annotations}
     Although not part of the official PHP syntax, 
-    there is widely recognized format for documentation 
+    there is a widely recognized format for documentation 
     comments of JavaDoc style called PHPDoc. PHPDoc comments 
     may contain type information that cannot be expressed using 
     PHP syntax. For example, PHP allows ``type hints'' 
@@ -234,12 +287,12 @@
     is that PHP will throw an exception at runtime if 
     a routine is invoked with a parameter of different 
     type than what its ``type hint'' is. The documentation
-    comments, on the other hand, are of course not checked 
+    comments, on the other hand, are of course ignored 
     by the runtime.
     
     The PHPDoc defines a fairly advanced syntax for expressing 
-    type information. It allows to include multiple 
-    primitive and class types, description of homogenous and heterogenous arrays as well 
+    type information. It supports multiple 
+    primitive and class types, homogenous and heterogenous arrays as well 
     multidimensional arrays, and some constants like \code{false}.
     For example, in the following code the documentation 
     comment tells us that function \code{foo} can return 
@@ -255,13 +308,13 @@
     
     \section{Static Code Analysis}       
         Static analysis of source code is an analysis that is performed without 
-        executing the code. This means that we do not have to have a
-        web server for example in order to analyse code of a web application. 
-        We can also guarantee some properties that would not be possible to 
-        guarantee if we executed the code. Namely the halting property and 
+        executing the code. This means that we do not need to have a
+        web server, for example, in order to analyse code of a web application. 
+        We can also guarantee some properties of the analysis that would not 
+        be possible to guarantee if we executed the code. Namely the halting property and 
         upper bounds on time and space complexity. Arbitrary code may not 
         halt if executed, but static analysis of such code can still halt 
-        and give us some results.
+        and give results.
         
         Static analysis can be used to get possible types of an expression in 
         a dynamically typed language, to find out expressions that have constant 
@@ -288,7 +341,7 @@
         \infer{\vdash e_1+e_2 : Integer}{\vdash e_1 : Integer & \vdash e_2 : Integer}
         $$        
         where above the horizontal line we have hypothesis and below is 
-        the conclusion. The exact notation is not important we will be using it 
+        the conclusion. The exact notation is not important, we will be using it 
         intuitively to illustrate the ideas that we describe.
         
         \paragraph{Flow Sensitivity.}
@@ -296,32 +349,27 @@
         expression $e_1$ can influence the type of expression $e_2$ or vice versa. 
         In such case, the ordering of the expressions is important, but not captured 
         in the inference rule. Therefore this rule is \emph{flow insensitive}. If we make 
-        the hypotheses more complex to capture the ordering 
-        it will be \emph{flow sensitive}.
+        the hypotheses more complex using additional constraints to capture the ordering 
+        and dependency of the expressions, it will be \emph{flow sensitive}.
         
-        \paragraph{Path Sensitivity.}
+        \paragraph{Path Sensitivity.}        
         If we admit conditional control flow statements, like if-then-else, 
         we can have more possible paths through the program. In our example, 
         let us say that there is an if statement before the expression $e_1$
         and the expression $e_1$ can evaluate to different 
         type if the then branch of the if-then-else statement is taken than 
-        if the else branch is taken. This is illustrated in the following code listing. 
-        If the inference rules do not model this, like our example rule, 
-        we say that the inference system is 
+        if the else branch is taken. If the inference rules do not model this, 
+        like our example rule, we say that the inference system is 
         \emph{path insensitive}, otherwise we say 
         that it is \emph{path sensitive}.
         
-%pygmentize_begin php
-% if (...) $x = 3;
-% else $x = 'string';
-% $e_1 = $x;
-% $e_2 = 4;
-% $e_1 + $e_2;
-%pygmentize_end        
+        \note{TODO: I should do some more reading about path sensitivity, 
+        is this a correct description? Add an example of how such inference rule 
+        would look like?}
         
         \paragraph{Abstraction.}
         Another example of problem that can be partly solved with static analysis 
-        is the sing of integral variables. We can have inference rules of the 
+        is the sign of integral variables. We can have inference rules of the 
         following form.
         $$
         \infer{\vdash v_1+v_2 : -7 (sign: \ominus)}
@@ -329,7 +377,8 @@
         $$
         However, the implementation would not be very efficient and we sometimes 
         do not have the full information about variables values, but in some cases 
-        we can deduce another useful piece of information by other means. For example, variable of 
+        we can deduce another less precise, but still useful piece of information 
+        by other means. For example, variable of 
         type \code{unsigned integer} will always be positive, we can count on that 
         even if we do not know the actual value. What we 
         can do is to abstract the possible integral values with set 
@@ -381,11 +430,11 @@
         Control flow graph nodes, also called basic blocks, 
         are program statements that are always sequentially executed. 
         Directed edges represent the control flow between basic blocks, 
-        i.e. jumps in the control flow due to conditionals, 
-        goto statements or any other statements that can change 
+        for example, jumps in the control flow due to conditionals, 
+        \code{goto} statements or any other statements that can change 
         the flow of the program.        
         Control flow graphs usually contain two special nodes: 
-        entry node and exit node. Entry node does not have any 
+        entry node and exit node. The entry node does not have any 
         incoming edges and all the paths lead to the exit node.        
         An example of a control flow graph is given in figure \ref{cfg}.
         
@@ -461,7 +510,7 @@
         \subsection{Intraprocedural Analysis}
         So far we have been discussing an analysis of a 
         single function or method\footnote{We will use term 
-        routine to designate a function, static or instance method}. 
+        routine to designate a global function, static or instance method}. 
         However, if we want to analyse whole program or 
         a library, the interaction between the routines 
         can be taken into account to make it more precise.
