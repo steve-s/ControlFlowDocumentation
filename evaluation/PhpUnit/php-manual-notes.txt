@@ -1,0 +1,3 @@
+
+ReflectionClass::newInstance expects variable number of arguments.
+\Util\Test.php:360:26 (routine getProvidedData)

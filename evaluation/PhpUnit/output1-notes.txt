@@ -1,0 +1,5 @@
+
+last warning report that was categorized:
+
+\Util\Test.php:360:26 (routine getProvidedData)
+The routine newInstance is missing some of its mandatory parameters.

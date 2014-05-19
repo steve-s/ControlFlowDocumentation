@@ -1,0 +1,35 @@
+
+CATEGORY: false positive
+NOTE: support for overloads of library methods, ReflectionProperty::setValue has two versions, 
+one with 1 parameter and one with 2 parameters.
+\Util\GlobalState.php:351:16 (routine restoreStaticAttributes)
+
+        
+=========================================
+FIXED:
+
+CATEGORY: false positive
+NOTE: allow conversions from object, string, phparray to boolean, it is a common pattern
+\Extensions\PhptTestCase.php:148:17 (routine run)
+        
+CATEGORY: false positive
+NOTE: support conversion from null to string when checking type mismatch
+\Util\GlobalState.php:213:35 (routine getIniSettingsAsString)
+
+CATEGORY: false positive
+NOTE: expected PhpArray, rejected null, why? PhpArray should be compatible with null be default.
+\Framework\TestCase.php:1264:56 (routine setLocale)
+
+CATEGORY: false positive
+NOTE: conversion from array to PhpCallable.
+\Framework\TestResult.php:634:14 (routine run)
+
+CATEGORY: false positive
+NOTE: expected PhpCallable, rejected string, but it should be compatible: 
+add this conversion. Also array -> PhpCallable.
+\Framework\TestCase.php:1266:40 (routine setLocale)
+
+CATEGORY: false positive
+NOTE: assigning null to a field that has some class as its expected type. 
+I.e. conversion null -> concrete class type should be OK>
+\Framework\TestCase.php:761:15 (routine run)
