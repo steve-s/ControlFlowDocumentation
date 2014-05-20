@@ -166,6 +166,19 @@ The error is related to the following code (shortened).
 %           /*...*/);
 % }
 %pygmentize_end
+\begin{Verbatim}[commandchars=\\\{\}]
+ \PY{k}{function} \PY{n+nf}{assertEqualXMLStructure}\PY{p}{(}
+   \PY{n+nx}{DOMElement} \PY{n+nv}{\PYZdl{}expectedElement}\PY{c+cm}{/*, ...*/}\PY{p}{)} \PY{p}{\PYZob{}}
+   \PY{c+c1}{///...}
+   \PY{n+nx}{PHPUnit\PYZus{}Util\PYZus{}XML}\PY{o}{::}\PY{n+na}{removeCharacterDataNodes}\PY{p}{(}\PY{n+nv}{\PYZdl{}expectedElement}\PY{p}{);}
+   \PY{n+nx}{PHPUnit\PYZus{}Util\PYZus{}XML}\PY{o}{::}\PY{n+na}{removeCharacterDataNodes}\PY{p}{(}\PY{n+nv}{\PYZdl{}actualElement}\PY{p}{);}
+   \PY{c+c1}{//...}
+   \PY{k}{for} \PY{p}{(}\PY{n+nv}{\PYZdl{}i} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{;} \PY{n+nv}{\PYZdl{}i} \PY{o}{\PYZlt{}} \PY{n+nv}{\PYZdl{}expectedElement}\PY{o}{\PYZhy{}\PYZgt{}}\PY{n+na}{childNodes}\PY{o}{\PYZhy{}\PYZgt{}}\PY{n+na}{length}\PY{p}{;} \PY{n+nv}{\PYZdl{}i}\PY{o}{++}\PY{p}{)} \PY{p}{\PYZob{}}
+       \PY{n+nx}{self}\PY{o}{::}\PY{n+na}{assertEqualXMLStructure}\PY{p}{(}
+           \PY{n+nv}{\PYZdl{}expectedElement}\PY{o}{\PYZhy{}\PYZgt{}}\PY{n+na}{childNodes}\PY{o}{\PYZhy{}\PYZgt{}}\PY{n+na}{item}\PY{p}{(}\PY{n+nv}{\PYZdl{}i}\PY{p}{)} \PY{c+cm}{/*\PYZlt{}\PYZlt{}\PYZlt{} error */}
+           \PY{c+cm}{/*...*/}\PY{p}{);}
+ \PY{p}{\PYZcb{}}
+\end{Verbatim}
 
 The method \code{assertEqualXMLStructure} accepts only instances 
 of \code{DOMElement}, but it invokes itself recursively with first 
