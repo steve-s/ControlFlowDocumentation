@@ -1,0 +1,128 @@
+CATEGORY: style
+NOTE: unnecessary use of $key in foreach
+\Framework\TestCase.php:1722:26 (routine dataToString)
+Variable $key is not used.
+--
+CATEGORY: style
+NOTE: the fact that count generates notice is probably the aim of invoking it, 
+but do we have to same the result to an unused variable?
+\Framework\TestCase.php:1726:16 (routine dataToString)
+--
+CATEGORY: error
+NOTE: In standard DOM implementation DOMElement is the only subclass of DOMNode. However, anyone can 
+create another subclass of DOMNode and add it as a child of another DOMElement in which case 
+this function would throw an exception because of being invoked with wrong parameter type
+--
+CATEGORY: documentation
+CATEGORY: missing false
+\Util\XML.php:544:23 (routine findNodes)
+The routine is expected to return type PhpArray|Null, the the expression false is of type False.
+        /**
+--
+CATEGORY: documentation
+NOTE: They count on $count being not only number, but boolean and array too, 
+however, this is not stated in the documentation.
+\Framework\Assert.php:1960:23 (routine assertSelectEquals)
+--
+CATEGORY: documentation
+NOTE: assertSelectEquals uses the value as a parameter for PHPUnit_Util_XML::cssSelect that 
+uses the value (without touching it at all) as a parameter for convertSelectToTag that 
+has in its API documentation correctly stated that the parameter in question can be 'mixed', 
+--
+CATEGORY: documentation
+CATEGORY: missing false   
+\Util\Test.php:294:15 (routine getExpectedException)
+The routine is expected to return type PhpArray|Null, the the expression false is of type False.
+         * @param  string $className
+--
+CATEGORY: false positive
+NOTE: support for overloads of library methods, ReflectionProperty::setValue has two versions, 
+one with 1 parameter and one with 2 parameters.
+\Util\GlobalState.php:351:16 (routine restoreStaticAttributes)
+--
+CATEGORY: documentation
+NOTE: class field mockObjectGenerator is documented to be of type array, but 
+instance of PHPUnit_Framework_MockObject_Generator is assigned to it. It is not 
+used anywhere else, so the array doc should be changed to PHPUnit_Framework_MockObject_Generator
+--
+CATEGORY: style
+CATEGORY: false positive
+NOTE: may or may not be considered as false positive, the argument can be omitted, however, 
+is used to preserve the same function signature.
+\Util\Test.php:46:38 (routine trait_exists)
+--
+CATEGORY: false positive
+CATEGORY: inaccurate PHP manual
+NOTE: ReflectionClass::newInstance expects variable number of arguments.
+\Util\Test.php:360:26 (routine getProvidedData)
+The routine newInstance is missing some of its mandatory parameters.
+
+==> TO BE CONTINUED
+
+--
+CATEGORY: documentation
+CATEGORY: missing false
+\Framework\TestSuite.php:737:19 (routine testAt)
+The routine is expected to return type Null|PHPUnit_Framework_Test, the the expression false is of type False.
+         * Returns the test at the given index.
+--
+CATEGORY: style
+NOTE: they are counting on default return value when the function does not return.
+\Framework\Constraint\Count.php:90:23 (routine getCountOf)
+The routine getCountOf is supposed to return a value of type 1000000000110000, but some of the possible execution paths do not return.
+--
+CATEGORY: false positive
+NOTE: to be fixed.
+\Framework\Constraint\Count.php:100:28 (routine getCountOf)
+Variable $other is used before it got assigned any value. This can generate a notice at runtime.
+--
+CATEGORY: documentation
+NOTE: wrong documentation says it returns boolean, but it returns integer.
+\Framework\Constraint\Count.php:115:19 (routine getCountOf)
+The routine is expected to return type , the the expression $count is of type Integer.
+--
+CATEGORY: false positive
+NOTE: to be fixed.
+\Framework\Constraint\ExceptionMessage.php:69:15 (routine __construct)
+Expression expectedMessage is expected to be of type Integer, but it is of type String|Null.
+--
+CATEGORY: false positive
+CATEGORY: unused iface param
+\Framework\Constraint\IsAnything.php:76:37 (routine evaluate)
+Variable $description is not used.
+         * @param  string                                       $description  Additional information about the test
+--
+CATEGORY: documentation
+NOTE: PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider::determineJsonError has 
+wrong parameter type documentation, it should be integer
+\Framework\Constraint\IsJson.php:88:10 (routine failureDescription)
+--
+CATEGORY: style
+NOTE: they count on default return value
+\Framework\Constraint\IsType.php:127:23 (routine matches)
+The routine matches is supposed to return a value of type 1000000000110000, but some of the possible execution paths do not return.
+--
+CATEGORY: false positive
+NOTE: php manual does not support overloads of methods for now.
+\TextUI\Command.php:791:23 (routine handlePrinter)
+The routine newInstance is missing some of its mandatory parameters.
+--
+CATEGORY: style
+NOTE: ini_set expects string, but boolean is converted to string at runtime.
+\TextUI\Command.php:339:45 (routine handleArguments)
+The routine ini_set expects type String|Null as its parameter number 1, but the expression is of type True.
+--
+CATEGORY: documentation
+NOTE: the return type should be false|integer
+\Util\Configuration.php:991:19 (routine getInteger)
+The routine is expected to return type , the the expression (int) $value is of type Integer.
+--
+CATEGORY: documentation
+NOTE: $currentTest should be documented as PHPUnit_Framework_TestCase
+\Util\DeprecatedFeature\Logger.php:198:8 (routine startTest)
+Expression self::$currentTest is expected to be of type Null|PHPUnit_Framework_TestCase, but it is of type PHPUnit_Framework_Test.
+--
+CATEGORY: false positive
+NOTE: might be fixed...
+\Util\TestDox\ResultPrinter.php:266:31 (routine startTest)
+Variable $test is used before it got assigned any value. This can generate a notice at runtime.

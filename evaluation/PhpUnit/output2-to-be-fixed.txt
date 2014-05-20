@@ -1,0 +1,116 @@
+
+\Framework\Constraint\Count.php:100:28 (routine getCountOf)
+Variable $other is used before it got assigned any value. This can generate a notice at runtime.
+        /**
+         * @param  mixed   $other
+         * @return boolean
+         */
+        protected function getCountOf($other)
+        {
+            if ($other instanceof Countable || is_array($other)) {
+                return count($other);
+            }
+    
+            else if ($other instanceof Traversable) {
+                if ($other instanceof IteratorAggregate) {
+                    $iterator = $other->getIterator();
+                } else {
+>>>>                $iterator = $other;
+                }
+    
+                $key = $iterator->key();
+                $count = iterator_count($iterator);
+    
+                // manually rewind $iterator to previous key, since iterator_count
+                // moves pointer
+                if ($key !== null) {
+                    $iterator->rewind();
+                    while ($key !== $iterator->key()) {
+                        $iterator->next();
+                    }
+                }
+    
+                return $count;
+            }
+        }
+
+CATEGORY: false positive
+NOTE: to be fixed.
+\Framework\Constraint\ExceptionMessage.php:69:15 (routine __construct)
+Expression expectedMessage is expected to be of type Integer, but it is of type String|Null.
+
+        /**
+         * @var string
+         */
+        protected $expectedMessage;
+    
+        /**
+         * @param string $expected
+         */
+        public function __construct($expected)
+        {
+            parent::__construct();
+>>>>        $this->expectedMessage = $expected;
+        }
+        
+        
+CATEGORY: false positive
+CATEGORY: unused iface param
+\Framework\Constraint\IsAnything.php:76:37 (routine evaluate)
+Variable $description is not used.
+         * @param  string                                       $description  Additional information about the test
+         * @param  bool                                         $returnResult Whether to return a result or throw an exception
+         * @return mixed
+         * @throws PHPUnit_Framework_ExpectationFailedException
+         */
+>>>>    public function evaluate($other, $description = '', $returnResult = false)
+        {
+            return $returnResult ? true : null;
+        }
+        
+
+CATEGORY: false positive
+NOTE: might be fixed...
+\Util\TestDox\ResultPrinter.php:266:31 (routine startTest)
+Variable $test is used before it got assigned any value. This can generate a notice at runtime.
+        /**
+         * A test started.
+         *
+         * @param PHPUnit_Framework_Test $test
+         */
+        public function startTest(PHPUnit_Framework_Test $test)
+        {
+            if ($test instanceof $this->testTypeOfInterest) {
+                $class = get_class($test);
+    
+                if ($this->testClass != $class) {
+                    if ($this->testClass != '') {
+                        $this->doEndClass();
+                    }
+    
+                    $this->currentTestClassPrettified = $this->prettifier->prettifyTestClass($class);
+                    $this->startClass($class);
+    
+                    $this->testClass = $class;
+                    $this->tests     = array();
+                }
+    
+                $prettified = false;
+    
+                if ($test instanceof PHPUnit_Framework_TestCase &&
+                   !$test instanceof PHPUnit_Framework_Warning) {
+>>>>                $annotations = $test->getAnnotations();
+    
+                    if (isset($annotations['method']['testdox'][0])) {
+                        $this->currentTestMethodPrettified = $annotations['method']['testdox'][0];
+                        $prettified                        = true;
+                    }
+                }
+    
+                if (!$prettified) {
+                    $this->currentTestMethodPrettified = $this->prettifier->prettifyTestMethod($test->getName(false));
+                }
+    
+                $this->testStatus = PHPUnit_Runner_BaseTestRunner::STATUS_PASSED;
+            }
+        }

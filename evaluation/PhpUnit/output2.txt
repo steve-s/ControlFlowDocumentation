@@ -1,0 +1,1296 @@
+<?php
+CATEGORY: style
+NOTE: unnecessary use of $key in foreach
+\Framework\TestCase.php:1722:26 (routine dataToString)
+Variable $key is not used.
+        /**
+         * @param  mixed  $data
+         * @return string
+         * @since  Method available since Release 3.2.1
+         */
+        protected function dataToString($data)
+        {
+            $result = array();
+    
+            set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+                throw new ErrorException($errstr, $errno, $errno, $errfile, $errline);
+            }, E_WARNING);
+    
+>>>>        foreach ($data as $key => $_data) {
+                try {
+                    // Detect array-recursions by using count
+                    // http://php.net/manual/en/function.count.php
+                    $iRecursiveCheck = count($_data, COUNT_RECURSIVE);
+    
+                    if (is_array($_data)) {
+                        $result[] = 'array(' . $this->dataToString($_data) . ')';
+                    } elseif (is_object($_data)) {
+                        $object = new ReflectionObject($_data);
+    
+                        if ($object->hasMethod('__toString')) {
+                            $result[] = (string) $_data;
+                        } else {
+                            $result[] = get_class($_data);
+                        }
+                    } elseif (is_resource($_data)) {
+                        $result[] = '<resource>';
+                    } else {
+                        $result[] = var_export($_data, true);
+                    }
+                } catch (ErrorException $e) {
+                    $result[] = '*RECURSION*';
+                }
+            }
+    
+            restore_error_handler();
+    
+            return join(', ', $result);
+        }
+        
+CATEGORY: style
+NOTE: the fact that count generates notice is probably the aim of invoking it, 
+but do we have to same the result to an unused variable?
+\Framework\TestCase.php:1726:16 (routine dataToString)
+Variable $iRecursiveCheck is not used.
+        /**
+         * @param  mixed  $data
+         * @return string
+         * @since  Method available since Release 3.2.1
+         */
+        protected function dataToString($data)
+        {
+            $result = array();
+    
+            set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+                throw new ErrorException($errstr, $errno, $errno, $errfile, $errline);
+            }, E_WARNING);
+    
+            foreach ($data as $key => $_data) {
+                try {
+                    // Detect array-recursions by using count
+                    // http://php.net/manual/en/function.count.php
+>>>>                $iRecursiveCheck = count($_data, COUNT_RECURSIVE);
+    
+                    if (is_array($_data)) {
+                        $result[] = 'array(' . $this->dataToString($_data) . ')';
+                    } elseif (is_object($_data)) {
+                        $object = new ReflectionObject($_data);
+    
+                        if ($object->hasMethod('__toString')) {
+                            $result[] = (string) $_data;
+                        } else {
+                            $result[] = get_class($_data);
+                        }
+                    } elseif (is_resource($_data)) {
+                        $result[] = '<resource>';
+                    } else {
+                        $result[] = var_export($_data, true);
+                    }
+                } catch (ErrorException $e) {
+                    $result[] = '*RECURSION*';
+                }
+            }
+    
+            restore_error_handler();
+    
+            return join(', ', $result);
+        }
+        
+CATEGORY: error
+NOTE: In standard DOM implementation DOMElement is the only subclass of DOMNode. However, anyone can 
+create another subclass of DOMNode and add it as a child of another DOMElement in which case 
+this function would throw an exception because of being invoked with wrong parameter type
+\Framework\Assert.php:1861:14 (routine assertEqualXMLStructure)
+The routine PHP.Core.AST.DirectStMtdCall expects type DOMElement as its parameter number 0, but the expression is of type Null|DOMNode.
+         * @param boolean    $checkAttributes
+         * @param string     $message
+         * @author Mattis Stordalen Flister <mattis@xait.no>
+         * @since  Method available since Release 3.3.0
+         */
+        public static function assertEqualXMLStructure(DOMElement $expectedElement, DOMElement $actualElement, $checkAttributes = false, $message = '')
+        {
+            self::assertEquals(
+              $expectedElement->tagName,
+              $actualElement->tagName,
+              $message
+            );
+    
+            if ($checkAttributes) {
+                self::assertEquals(
+                  $expectedElement->attributes->length,
+                  $actualElement->attributes->length,
+                  sprintf(
+                    '%s%sNumber of attributes on node "%s" does not match',
+                    $message,
+                    !empty($message) ? "\n" : '',
+                    $expectedElement->tagName
+                  )
+                );
+    
+                for ($i = 0 ; $i < $expectedElement->attributes->length; $i++) {
+                    $expectedAttribute = $expectedElement->attributes->item($i);
+                    $actualAttribute   = $actualElement->attributes->getNamedItem(
+                      $expectedAttribute->name
+                    );
+    
+                    if (!$actualAttribute) {
+                        self::fail(
+                          sprintf(
+                            '%s%sCould not find attribute "%s" on node "%s"',
+                            $message,
+                            !empty($message) ? "\n" : '',
+                            $expectedAttribute->name,
+                            $expectedElement->tagName
+                          )
+                        );
+                    }
+                }
+            }
+    
+            PHPUnit_Util_XML::removeCharacterDataNodes($expectedElement);
+            PHPUnit_Util_XML::removeCharacterDataNodes($actualElement);
+    
+            self::assertEquals(
+              $expectedElement->childNodes->length,
+              $actualElement->childNodes->length,
+              sprintf(
+                '%s%sNumber of child nodes of "%s" differs',
+                $message,
+                !empty($message) ? "\n" : '',
+                $expectedElement->tagName
+              )
+            );
+    
+            for ($i = 0; $i < $expectedElement->childNodes->length; $i++) {
+                self::assertEqualXMLStructure(
+>>>>              $expectedElement->childNodes->item($i),
+                  $actualElement->childNodes->item($i),
+                  $checkAttributes,
+                  $message
+                );
+            }
+        }
+
+NOTE: the same as previous
+\Framework\Assert.php:1862:14 (routine assertEqualXMLStructure)
+The routine PHP.Core.AST.DirectStMtdCall expects type DOMElement as its parameter number 1, but the expression is of type Null|DOMNode.
+
+
+CATEGORY: documentation
+CATEGORY: missing false
+\Util\XML.php:544:23 (routine findNodes)
+The routine is expected to return type PhpArray|Null, the the expression false is of type False.
+        /**
+         * Parse out the options from the tag using DOM object tree.
+         *
+         * @param  DOMDocument $dom
+         * @param  array       $options
+         * @param  boolean     $isHtml
+         * @return array
+         * @since  Method available since Release 3.3.0
+         * @author Mike Naberezny <mike@maintainable.com>
+         * @author Derek DeVries <derek@maintainable.com>
+         * @author Tobias Schlitt <toby@php.net>
+         */
+        public static function findNodes(DOMDocument $dom, array $options, $isHtml = true)
+        {
+            $valid = array(
+              'id', 'class', 'tag', 'content', 'attributes', 'parent',
+              'child', 'ancestor', 'descendant', 'children', 'adjacent-sibling'
+            );
+    
+            $filtered = array();
+            $options  = self::assertValidKeys($options, $valid);
+    
+            // find the element by id
+            if ($options['id']) {
+                $options['attributes']['id'] = $options['id'];
+            }
+    
+            if ($options['class']) {
+                $options['attributes']['class'] = $options['class'];
+            }
+    
+            // find the element by a tag type
+            if ($options['tag']) {
+                if ($isHtml) {
+                    $elements = self::getElementsByCaseInsensitiveTagName(
+                      $dom, $options['tag']
+                    );
+                } else {
+                    $elements = $dom->getElementsByTagName($options['tag']);
+                }
+    
+                foreach ($elements as $element) {
+                    $nodes[] = $element;
+                }
+    
+                if (empty($nodes)) {
+>>>>                return false;
+                }
+            }
+    
+            // no tag selected, get them all
+            else {
+                $tags = array(
+                  'a', 'abbr', 'acronym', 'address', 'area', 'b', 'base', 'bdo',
+                  'big', 'blockquote', 'body', 'br', 'button', 'caption', 'cite',
+                  'code', 'col', 'colgroup', 'dd', 'del', 'div', 'dfn', 'dl',
+                  'dt', 'em', 'fieldset', 'form', 'frame', 'frameset', 'h1', 'h2',
+                  'h3', 'h4', 'h5', 'h6', 'head', 'hr', 'html', 'i', 'iframe',
+                  'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'link',
+                  'map', 'meta', 'noframes', 'noscript', 'object', 'ol', 'optgroup',
+                  'option', 'p', 'param', 'pre', 'q', 'samp', 'script', 'select',
+                  'small', 'span', 'strong', 'style', 'sub', 'sup', 'table',
+                  'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'title',
+                  'tr', 'tt', 'ul', 'var',
+                  // HTML5
+                  'article', 'aside', 'audio', 'bdi', 'canvas', 'command',
+                  'datalist', 'details', 'dialog', 'embed', 'figure', 'figcaption',
+                  'footer', 'header', 'hgroup', 'keygen', 'mark', 'meter', 'nav',
+                  'output', 'progress', 'ruby', 'rt', 'rp', 'track', 'section',
+                  'source', 'summary', 'time', 'video', 'wbr'
+                );
+    
+                foreach ($tags as $tag) {
+                    if ($isHtml) {
+                        $elements = self::getElementsByCaseInsensitiveTagName(
+                          $dom, $tag
+                        );
+                    } else {
+                        $elements = $dom->getElementsByTagName($tag);
+                    }
+    
+                    foreach ($elements as $element) {
+                        $nodes[] = $element;
+                    }
+                }
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by attributes
+            if ($options['attributes']) {
+                foreach ($nodes as $node) {
+                    $invalid = false;
+    
+                    foreach ($options['attributes'] as $name => $value) {
+                        // match by regexp if like "regexp:/foo/i"
+                        if (preg_match('/^regexp\s*:\s*(.*)/i', $value, $matches)) {
+                            if (!preg_match($matches[1], $node->getAttribute($name))) {
+                                $invalid = true;
+                            }
+                        }
+    
+                        // class can match only a part
+                        else if ($name == 'class') {
+                            // split to individual classes
+                            $findClasses = explode(
+                              ' ', preg_replace("/\s+/", " ", $value)
+                            );
+    
+                            $allClasses = explode(
+                              ' ',
+                              preg_replace("/\s+/", " ", $node->getAttribute($name))
+                            );
+    
+                            // make sure each class given is in the actual node
+                            foreach ($findClasses as $findClass) {
+                                if (!in_array($findClass, $allClasses)) {
+                                    $invalid = true;
+                                }
+                            }
+                        }
+    
+                        // match by exact string
+                        else {
+                            if ($node->getAttribute($name) != $value) {
+                                $invalid = true;
+                            }
+                        }
+                    }
+    
+                    // if every attribute given matched
+                    if (!$invalid) {
+                        $filtered[] = $node;
+                    }
+                }
+    
+                $nodes    = $filtered;
+                $filtered = array();
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by content
+            if ($options['content'] !== null) {
+                foreach ($nodes as $node) {
+                    $invalid = false;
+    
+                    // match by regexp if like "regexp:/foo/i"
+                    if (preg_match('/^regexp\s*:\s*(.*)/i', $options['content'], $matches)) {
+                        if (!preg_match($matches[1], self::getNodeText($node))) {
+                            $invalid = true;
+                        }
+                    }
+    
+                    // match empty string
+                    else if ($options['content'] === '') {
+                        if (self::getNodeText($node) !== '') {
+                            $invalid = true;
+                        }
+                    }
+    
+                    // match by exact string
+                    else if (strstr(self::getNodeText($node), $options['content']) === false) {
+                        $invalid = true;
+                    }
+    
+                    if (!$invalid) {
+                        $filtered[] = $node;
+                    }
+                }
+    
+                $nodes    = $filtered;
+                $filtered = array();
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by parent node
+            if ($options['parent']) {
+                $parentNodes = self::findNodes($dom, $options['parent'], $isHtml);
+                $parentNode  = isset($parentNodes[0]) ? $parentNodes[0] : null;
+    
+                foreach ($nodes as $node) {
+                    if ($parentNode !== $node->parentNode) {
+                        continue;
+                    }
+    
+                    $filtered[] = $node;
+                }
+    
+                $nodes    = $filtered;
+                $filtered = array();
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by child node
+            if ($options['child']) {
+                $childNodes = self::findNodes($dom, $options['child'], $isHtml);
+                $childNodes = !empty($childNodes) ? $childNodes : array();
+    
+                foreach ($nodes as $node) {
+                    foreach ($node->childNodes as $child) {
+                        foreach ($childNodes as $childNode) {
+                            if ($childNode === $child) {
+                                $filtered[] = $node;
+                            }
+                        }
+                    }
+                }
+    
+                $nodes    = $filtered;
+                $filtered = array();
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by adjacent-sibling
+            if ($options['adjacent-sibling']) {
+                $adjacentSiblingNodes = self::findNodes($dom, $options['adjacent-sibling'], $isHtml);
+                $adjacentSiblingNodes = !empty($adjacentSiblingNodes) ? $adjacentSiblingNodes : array();
+    
+                foreach ($nodes as $node) {
+                    $sibling = $node;
+    
+                    while ($sibling = $sibling->nextSibling) {
+                        if ($sibling->nodeType !== XML_ELEMENT_NODE) {
+                            continue;
+                        }
+    
+                        foreach ($adjacentSiblingNodes as $adjacentSiblingNode) {
+                            if ($sibling === $adjacentSiblingNode) {
+                                $filtered[] = $node;
+                                break;
+                            }
+                        }
+    
+                        break;
+                    }
+                }
+    
+                $nodes    = $filtered;
+                $filtered = array();
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by ancestor
+            if ($options['ancestor']) {
+                $ancestorNodes = self::findNodes($dom, $options['ancestor'], $isHtml);
+                $ancestorNode  = isset($ancestorNodes[0]) ? $ancestorNodes[0] : null;
+    
+                foreach ($nodes as $node) {
+                    $parent = $node->parentNode;
+    
+                    while ($parent && $parent->nodeType != XML_HTML_DOCUMENT_NODE) {
+                        if ($parent === $ancestorNode) {
+                            $filtered[] = $node;
+                        }
+    
+                        $parent = $parent->parentNode;
+                    }
+                }
+    
+                $nodes    = $filtered;
+                $filtered = array();
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by descendant
+            if ($options['descendant']) {
+                $descendantNodes = self::findNodes($dom, $options['descendant'], $isHtml);
+                $descendantNodes = !empty($descendantNodes) ? $descendantNodes : array();
+    
+                foreach ($nodes as $node) {
+                    foreach (self::getDescendants($node) as $descendant) {
+                        foreach ($descendantNodes as $descendantNode) {
+                            if ($descendantNode === $descendant) {
+                                $filtered[] = $node;
+                            }
+                        }
+                    }
+                }
+    
+                $nodes    = $filtered;
+                $filtered = array();
+    
+                if (empty($nodes)) {
+                    return false;
+                }
+            }
+    
+            // filter by children
+            if ($options['children']) {
+                $validChild   = array('count', 'greater_than', 'less_than', 'only');
+                $childOptions = self::assertValidKeys(
+                                  $options['children'], $validChild
+                                );
+    
+                foreach ($nodes as $node) {
+                    $childNodes = $node->childNodes;
+    
+                    foreach ($childNodes as $childNode) {
+                        if ($childNode->nodeType !== XML_CDATA_SECTION_NODE &&
+                            $childNode->nodeType !== XML_TEXT_NODE) {
+                            $children[] = $childNode;
+                        }
+                    }
+    
+                    // we must have children to pass this filter
+                    if (!empty($children)) {
+                        // exact count of children
+                        if ($childOptions['count'] !== null) {
+                            if (count($children) !== $childOptions['count']) {
+                                break;
+                            }
+                        }
+    
+                        // range count of children
+                        else if ($childOptions['less_than']    !== null &&
+                                $childOptions['greater_than'] !== null) {
+                            if (count($children) >= $childOptions['less_than'] ||
+                                count($children) <= $childOptions['greater_than']) {
+                                break;
+                            }
+                        }
+    
+                        // less than a given count
+                        else if ($childOptions['less_than'] !== null) {
+                            if (count($children) >= $childOptions['less_than']) {
+                                break;
+                            }
+                        }
+    
+                        // more than a given count
+                        else if ($childOptions['greater_than'] !== null) {
+                            if (count($children) <= $childOptions['greater_than']) {
+                                break;
+                            }
+                        }
+    
+                        // match each child against a specific tag
+                        if ($childOptions['only']) {
+                            $onlyNodes = self::findNodes(
+                              $dom, $childOptions['only'], $isHtml
+                            );
+    
+                            // try to match each child to one of the 'only' nodes
+                            foreach ($children as $child) {
+                                $matched = false;
+    
+                                foreach ($onlyNodes as $onlyNode) {
+                                    if ($onlyNode === $child) {
+                                        $matched = true;
+                                    }
+                                }
+    
+                                if (!$matched) {
+                                    break 2;
+                                }
+                            }
+                        }
+    
+                        $filtered[] = $node;
+                    }
+                }
+    
+                $nodes = $filtered;
+    
+                if (empty($nodes)) {
+                    return;
+                }
+            }
+    
+            // return the first node that matches all criteria
+            return !empty($nodes) ? $nodes : array();
+        }
+        
+NOTE: the same as previous
+\Util\XML.php:585:23 (routine findNodes)
+\Util\XML.php:640:23 (routine findNodes)
+\Util\XML.php:677:23 (routine findNodes)
+\Util\XML.php:698:23 (routine findNodes)
+\Util\XML.php:721:23 (routine findNodes)
+\Util\XML.php:753:23 (routine findNodes)
+\Util\XML.php:778:23 (routine findNodes)
+\Util\XML.php:801:23 (routine findNodes)
+
+
+CATEGORY: documentation
+NOTE: They count on $count being not only number, but boolean and array too, 
+however, this is not stated in the documentation.
+\Framework\Assert.php:1960:23 (routine assertSelectEquals)
+Expression $count is of scalar type and cannot be subscribed to with [] operator.
+        /**
+         * assertSelectEquals("#binder .name", "Chuck", true,  $xml);  // any?
+         * assertSelectEquals("#binder .name", "Chuck", false, $xml);  // none?
+         *
+         * @param array                 $selector
+         * @param string                $content
+         * @param integer|boolean|array $count
+         * @param mixed                 $actual
+         * @param string                $message
+         * @param boolean               $isHtml
+         * @since  Method available since Release 3.3.0
+         * @author Mike Naberezny <mike@maintainable.com>
+         * @author Derek DeVries <derek@maintainable.com>
+         */
+        public static function assertSelectEquals($selector, $content, $count, $actual, $message = '', $isHtml = true)
+        {
+            $tags = PHPUnit_Util_XML::cssSelect(
+              $selector, $content, $actual, $isHtml
+            );
+    
+            // assert specific number of elements
+            if (is_numeric($count)) {
+                $counted = $tags ? count($tags) : 0;
+                self::assertEquals($count, $counted, $message);
+            }
+    
+            // assert any elements exist if true, assert no elements exist if false
+            else if (is_bool($count)) {
+                $any = count($tags) > 0 && $tags[0] instanceof DOMNode;
+    
+                if ($count) {
+                    self::assertTrue($any, $message);
+                } else {
+                    self::assertFalse($any, $message);
+                }
+            }
+    
+            // check for range number of elements
+            else if (is_array($count) &&
+>>>>                (isset($count['>']) || isset($count['<']) ||
+                    isset($count['>=']) || isset($count['<=']))) {
+                $counted = $tags ? count($tags) : 0;
+    
+                if (isset($count['>'])) {
+                    self::assertTrue($counted > $count['>'], $message);
+                }
+    
+                if (isset($count['>='])) {
+                    self::assertTrue($counted >= $count['>='], $message);
+                }
+    
+                if (isset($count['<'])) {
+                    self::assertTrue($counted < $count['<'], $message);
+                }
+    
+                if (isset($count['<='])) {
+                    self::assertTrue($counted <= $count['<='], $message);
+                }
+            } else {
+                throw new PHPUnit_Framework_Exception;
+            }
+        }
+        
+NOTE: the same as previous
+\Framework\Assert.php:1960:45 (routine assertSelectEquals)
+\Framework\Assert.php:1961:22 (routine assertSelectEquals)
+\Framework\Assert.php:1961:45 (routine assertSelectEquals)
+
+
+CATEGORY: documentation
+NOTE: assertSelectEquals uses the value as a parameter for PHPUnit_Util_XML::cssSelect that 
+uses the value (without touching it at all) as a parameter for convertSelectToTag that 
+has in its API documentation correctly stated that the parameter in question can be 'mixed', 
+i.e. false is acceptable value.
+\Framework\Assert.php:1896:21 (routine assertSelectCount)
+The routine PHP.Core.AST.DirectStMtdCall expects type String|Null as its parameter number 1, but the expression is of type True.
+         * @param boolean               $isHtml
+         * @since  Method available since Release 3.3.0
+         * @author Mike Naberezny <mike@maintainable.com>
+         * @author Derek DeVries <derek@maintainable.com>
+         */
+        public static function assertSelectCount($selector, $count, $actual, $message = '', $isHtml = true)
+        {
+            self::assertSelectEquals(
+>>>>          $selector, true, $count, $actual, $message, $isHtml
+            );
+        }
+        
+
+CATEGORY: documentation
+CATEGORY: missing false   
+\Util\Test.php:294:15 (routine getExpectedException)
+The routine is expected to return type PhpArray|Null, the the expression false is of type False.
+         * @param  string $className
+         * @param  string $methodName
+         * @return array
+         * @since  Method available since Release 3.3.6
+         */
+        public static function getExpectedException($className, $methodName)
+        {
+            $reflector  = new ReflectionMethod($className, $methodName);
+            $docComment = $reflector->getDocComment();
+            $docComment = substr($docComment, 3, -2);
+    
+            if (preg_match(self::REGEX_EXPECTED_EXCEPTION, $docComment, $matches)) {
+                $annotations = self::parseTestMethodAnnotations(
+                  $className, $methodName
+                );
+    
+                $class   = $matches[1];
+                $code    = null;
+                $message = '';
+    
+                if (isset($matches[2])) {
+                    $message = trim($matches[2]);
+                } elseif (isset($annotations['method']['expectedExceptionMessage'])) {
+                    $message = self::parseAnnotationContent(
+                        $annotations['method']['expectedExceptionMessage'][0]
+                    );
+                }
+    
+                if (isset($matches[3])) {
+                    $code = $matches[3];
+                } elseif (isset($annotations['method']['expectedExceptionCode'])) {
+                    $code = self::parseAnnotationContent(
+                        $annotations['method']['expectedExceptionCode'][0]
+                    );
+                }
+    
+                if (is_numeric($code)) {
+                    $code = (int) $code;
+                } elseif (is_string($code) && defined($code)) {
+                    $code = (int) constant($code);
+                }
+    
+                return array(
+                  'class' => $class, 'code' => $code, 'message' => $message
+                );
+            }
+    
+>>>>        return false;
+        }
+        
+        
+
+CATEGORY: false positive
+NOTE: support for overloads of library methods, ReflectionProperty::setValue has two versions, 
+one with 1 parameter and one with 2 parameters.
+\Util\GlobalState.php:351:16 (routine restoreStaticAttributes)
+The routine setValue is missing some of its mandatory parameters.
+        public static function restoreStaticAttributes()
+        {
+            foreach (self::$staticAttributes as $className => $staticAttributes) {
+                foreach ($staticAttributes as $name => $value) {
+                    $reflector = new ReflectionProperty($className, $name);
+                    $reflector->setAccessible(true);
+>>>>                $reflector->setValue(unserialize($value));
+                }
+            }
+    
+            self::$staticAttributes = array();
+        }
+        
+        
+        
+CATEGORY: documentation
+NOTE: class field mockObjectGenerator is documented to be of type array, but 
+instance of PHPUnit_Framework_MockObject_Generator is assigned to it. It is not 
+used anywhere else, so the array doc should be changed to PHPUnit_Framework_MockObject_Generator
+\Framework\TestCase.php:1941:19 (routine getMockObjectGenerator)
+Expression mockObjectGenerator is expected to be of type PhpArray|Null, but it is of type PHPUnit_Framework_MockObject_Generator.
+        /**
+         * Get the mock object generator, creating it if it doesn't exist.
+         *
+         * @return   PHPUnit_Framework_MockObject_Generator
+         */
+        protected function getMockObjectGenerator()
+        {
+            if (null === $this->mockObjectGenerator) {
+>>>>            $this->mockObjectGenerator = new PHPUnit_Framework_MockObject_Generator;
+            }
+    
+            return $this->mockObjectGenerator;
+        }
+        
+        
+CATEGORY: style
+CATEGORY: false positive
+NOTE: may or may not be considered as false positive, the argument can be omitted, however, 
+is used to preserve the same function signature.
+\Util\Test.php:46:38 (routine trait_exists)
+Variable $autoload is not used.
+     * @link       http://www.phpunit.de/
+     * @since      File available since Release 3.0.0
+     */
+    
+    if (!function_exists('trait_exists')) {
+>>>>    function trait_exists($traitname, $autoload = true)
+        {
+            return false;
+        }
+        
+        
+CATEGORY: false positive
+CATEGORY: inaccurate PHP manual
+NOTE: ReflectionClass::newInstance expects variable number of arguments.
+\Util\Test.php:360:26 (routine getProvidedData)
+The routine newInstance is missing some of its mandatory parameters.
+         *         false          when a data provider is specified but does not exist
+         *         null           when no data provider is specified
+         * @throws PHPUnit_Framework_Exception
+         * @since  Method available since Release 3.2.0
+         */
+        public static function getProvidedData($className, $methodName)
+        {
+            $reflector  = new ReflectionMethod($className, $methodName);
+            $docComment = $reflector->getDocComment();
+            $data       = null;
+    
+            if (preg_match(self::REGEX_DATA_PROVIDER, $docComment, $matches)) {
+                $dataProviderMethodNameNamespace = explode('\\', $matches[1]);
+                $leaf                            = explode('::', array_pop($dataProviderMethodNameNamespace));
+                $dataProviderMethodName          = array_pop($leaf);
+    
+                if (!empty($dataProviderMethodNameNamespace)) {
+                    $dataProviderMethodNameNamespace = join('\\', $dataProviderMethodNameNamespace) . '\\';
+                } else {
+                    $dataProviderMethodNameNamespace = '';
+                }
+    
+                if (!empty($leaf)) {
+                    $dataProviderClassName = $dataProviderMethodNameNamespace . array_pop($leaf);
+                } else {
+                    $dataProviderClassName = $className;
+                }
+    
+                $dataProviderClass  = new ReflectionClass($dataProviderClassName);
+                $dataProviderMethod = $dataProviderClass->getMethod(
+                  $dataProviderMethodName
+                );
+    
+                if ($dataProviderMethod->isStatic()) {
+                    $object = null;
+                } else {
+>>>>                $object = $dataProviderClass->newInstance();
+                }
+    
+                if ($dataProviderMethod->getNumberOfParameters() == 0) {
+                    $data = $dataProviderMethod->invoke($object);
+                } else {
+                    $data = $dataProviderMethod->invoke($object, $methodName);
+                }
+            }
+    
+            if ($data !== null) {
+                if (is_object($data)) {
+                    $data = iterator_to_array($data);
+                }
+    
+                foreach ($data as $key => $value) {
+                    if (!is_array($value)) {
+                        throw new PHPUnit_Framework_Exception(
+                          sprintf(
+                            'Data set %s is invalid.',
+                            is_int($key) ? '#' . $key : '"' . $key . '"'
+                          )
+                        );
+                    }
+                }
+            }
+    
+            return $data;
+        }
+        
+
+CATEGORY: documentation
+CATEGORY: missing false
+\Framework\TestSuite.php:737:19 (routine testAt)
+The routine is expected to return type Null|PHPUnit_Framework_Test, the the expression false is of type False.
+         * Returns the test at the given index.
+         *
+         * @param  integer
+         * @return PHPUnit_Framework_Test
+         */
+        public function testAt($index)
+        {
+            if (isset($this->tests[$index])) {
+                return $this->tests[$index];
+            } else {
+>>>>            return false;
+            }
+        }
+        
+
+CATEGORY: style
+NOTE: they are counting on default return value when the function does not return.
+\Framework\Constraint\Count.php:90:23 (routine getCountOf)
+The routine getCountOf is supposed to return a value of type 1000000000110000, but some of the possible execution paths do not return.
+    
+        /**
+         * @param  mixed   $other
+         * @return boolean
+         */
+>>>>    protected function getCountOf($other)
+        {
+            if ($other instanceof Countable || is_array($other)) {
+                return count($other);
+            }
+    
+            else if ($other instanceof Traversable) {
+                if ($other instanceof IteratorAggregate) {
+                    $iterator = $other->getIterator();
+                } else {
+                    $iterator = $other;
+                }
+    
+                $key = $iterator->key();
+                $count = iterator_count($iterator);
+    
+                // manually rewind $iterator to previous key, since iterator_count
+                // moves pointer
+                if ($key !== null) {
+                    $iterator->rewind();
+                    while ($key !== $iterator->key()) {
+                        $iterator->next();
+                    }
+                }
+    
+                return $count;
+            }
+        }
+        
+CATEGORY: false positive
+NOTE: to be fixed.
+\Framework\Constraint\Count.php:100:28 (routine getCountOf)
+Variable $other is used before it got assigned any value. This can generate a notice at runtime.
+    
+        /**
+         * @param  mixed   $other
+         * @return boolean
+         */
+        protected function getCountOf($other)
+        {
+            if ($other instanceof Countable || is_array($other)) {
+                return count($other);
+            }
+    
+            else if ($other instanceof Traversable) {
+                if ($other instanceof IteratorAggregate) {
+                    $iterator = $other->getIterator();
+                } else {
+>>>>                $iterator = $other;
+                }
+    
+                $key = $iterator->key();
+                $count = iterator_count($iterator);
+    
+                // manually rewind $iterator to previous key, since iterator_count
+                // moves pointer
+                if ($key !== null) {
+                    $iterator->rewind();
+                    while ($key !== $iterator->key()) {
+                        $iterator->next();
+                    }
+                }
+    
+                return $count;
+            }
+        }
+        
+        
+CATEGORY: documentation
+NOTE: wrong documentation says it returns boolean, but it returns integer.
+\Framework\Constraint\Count.php:115:19 (routine getCountOf)
+The routine is expected to return type , the the expression $count is of type Integer.
+    
+        /**
+         * @param  mixed   $other
+         * @return boolean
+         */
+        protected function getCountOf($other)
+        {
+            if ($other instanceof Countable || is_array($other)) {
+                return count($other);
+            }
+    
+            else if ($other instanceof Traversable) {
+                if ($other instanceof IteratorAggregate) {
+                    $iterator = $other->getIterator();
+                } else {
+                    $iterator = $other;
+                }
+    
+                $key = $iterator->key();
+                $count = iterator_count($iterator);
+    
+                // manually rewind $iterator to previous key, since iterator_count
+                // moves pointer
+                if ($key !== null) {
+                    $iterator->rewind();
+                    while ($key !== $iterator->key()) {
+                        $iterator->next();
+                    }
+                }
+    
+>>>>            return $count;
+            }
+        }
+
+        
+CATEGORY: false positive
+NOTE: to be fixed.
+\Framework\Constraint\ExceptionMessage.php:69:15 (routine __construct)
+Expression expectedMessage is expected to be of type Integer, but it is of type String|Null.
+
+        /**
+         * @var string
+         */
+        protected $expectedMessage;
+    
+        /**
+         * @param string $expected
+         */
+        public function __construct($expected)
+        {
+            parent::__construct();
+>>>>        $this->expectedMessage = $expected;
+        }
+        
+CATEGORY: false positive
+CATEGORY: unused iface param
+\Framework\Constraint\IsAnything.php:76:37 (routine evaluate)
+Variable $description is not used.
+         * @param  string                                       $description  Additional information about the test
+         * @param  bool                                         $returnResult Whether to return a result or throw an exception
+         * @return mixed
+         * @throws PHPUnit_Framework_ExpectationFailedException
+         */
+>>>>    public function evaluate($other, $description = '', $returnResult = false)
+        {
+            return $returnResult ? true : null;
+        }
+        
+
+CATEGORY: documentation
+NOTE: PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider::determineJsonError has 
+wrong parameter type documentation, it should be integer
+\Framework\Constraint\IsJson.php:88:10 (routine failureDescription)
+The routine PHP.Core.AST.DirectStMtdCall expects type String|Null as its parameter number 0, but the expression is of type Integer.
+         * cases. This method should return the second part of that sentence.
+         *
+         * @param  mixed  $other Evaluated value or object.
+         * @return string
+         */
+        protected function failureDescription($other)
+        {
+            json_decode($other);
+            $error = PHPUnit_Framework_Constraint_JsonMatches_ErrorMessageProvider::determineJsonError(
+>>>>          json_last_error()
+            );
+    
+            return sprintf(
+              '%s is valid JSON (%s)',
+    
+              $this->exporter->shortenedExport($other),
+              $error
+            );
+        }
+        
+        
+CATEGORY: style
+NOTE: they count on default return value
+\Framework\Constraint\IsType.php:127:23 (routine matches)
+The routine matches is supposed to return a value of type 1000000000110000, but some of the possible execution paths do not return.
+         * constraint is met, false otherwise.
+         *
+         * @param  mixed $other Value or object to evaluate.
+         * @return bool
+         */
+>>>>    protected function matches($other)
+        {
+            switch ($this->type) {
+                case 'numeric': {
+                    return is_numeric($other);
+                }
+    
+                case 'integer':
+                case 'int': {
+                    return is_integer($other);
+                }
+    
+                case 'float': {
+                    return is_float($other);
+                }
+    
+                case 'string': {
+                    return is_string($other);
+                }
+    
+                case 'boolean':
+                case 'bool': {
+                    return is_bool($other);
+                }
+    
+                case 'null': {
+                    return is_null($other);
+                }
+    
+                case 'array': {
+                    return is_array($other);
+                }
+    
+                case 'object': {
+                    return is_object($other);
+                }
+    
+                case 'resource': {
+                    return is_resource($other);
+                }
+    
+                case 'scalar': {
+                    return is_scalar($other);
+                }
+    
+                case 'callable': {
+                    return is_callable($other);
+                }
+            }
+        }
+        
+CATEGORY: false positive
+NOTE: php manual does not support overloads of methods for now.
+\TextUI\Command.php:791:23 (routine handlePrinter)
+The routine newInstance is missing some of its mandatory parameters.
+
+\TextUI\Command.php:745:23 (routine handleLoader)
+The routine newInstance is missing some of its mandatory parameters.
+
+
+CATEGORY: style
+NOTE: ini_set expects string, but boolean is converted to string at runtime.
+\TextUI\Command.php:339:45 (routine handleArguments)
+The routine ini_set expects type String|Null as its parameter number 1, but the expression is of type True.
+        protected function handleArguments(array $argv)
+        {
+            if (defined('__PHPUNIT_PHAR__')) {
+                $this->longOptions['selfupdate']  = null;
+                $this->longOptions['self-update'] = null;
+            }
+    
+            try {
+                $this->options = PHPUnit_Util_Getopt::getopt(
+                  $argv,
+                  'd:c:hv',
+                  array_keys($this->longOptions)
+                );
+            } catch (PHPUnit_Framework_Exception $e) {
+                $this->showError($e->getMessage());
+            }
+    
+            foreach ($this->options[0] as $option) {
+                switch ($option[0]) {
+                    case '--colors': {
+                        $this->arguments['colors'] = true;
+                    }
+                    break;
+    
+                    case '--bootstrap': {
+                        $this->arguments['bootstrap'] = $option[1];
+                    }
+                    break;
+    
+                    case 'c':
+                    case '--configuration': {
+                        $this->arguments['configuration'] = $option[1];
+                    }
+                    break;
+    
+                    case '--coverage-clover': {
+                        $this->arguments['coverageClover'] = $option[1];
+                    }
+                    break;
+    
+                    case '--coverage-crap4j': {
+                        $this->arguments['coverageCrap4J'] = $option[1];
+                    }
+                    break;
+    
+                    case '--coverage-html': {
+                        $this->arguments['coverageHtml'] = $option[1];
+                    }
+                    break;
+    
+                    case '--coverage-php': {
+                        $this->arguments['coveragePHP'] = $option[1];
+                    }
+                    break;
+    
+                    case '--coverage-text': {
+                        if ($option[1] === null) {
+                            $option[1] = 'php://stdout';
+                        }
+    
+                        $this->arguments['coverageText'] = $option[1];
+                        $this->arguments['coverageTextShowUncoveredFiles'] = false;
+                        $this->arguments['coverageTextShowOnlySummary'] = false;
+                    }
+                    break;
+    
+                    case '--coverage-xml': {
+                        $this->arguments['coverageXml'] = $option[1];
+                    }
+                    break;
+    
+                    case 'd': {
+                        $ini = explode('=', $option[1]);
+    
+                        if (isset($ini[0])) {
+                            if (isset($ini[1])) {
+                                ini_set($ini[0], $ini[1]);
+                            } else {
+>>>>                            ini_set($ini[0], true);
+                            }
+                        }
+                    }
+
+                    
+CATEGORY: documentation
+NOTE: the return type should be false|integer
+\Util\Configuration.php:991:19 (routine getInteger)
+The routine is expected to return type , the the expression (int) $value is of type Integer.
+         * @param  string  $value
+         * @param  boolean $default
+         * @return boolean
+         * @since  Method available since Release 3.6.0
+         */
+        protected function getInteger($value, $default)
+        {
+            if (is_numeric($value)) {
+>>>>            return (int) $value;
+            }
+    
+            return $default;
+        }
+        
+CATEGORY: documentation
+NOTE: $currentTest should be documented as PHPUnit_Framework_TestCase
+\Util\DeprecatedFeature\Logger.php:198:8 (routine startTest)
+Expression self::$currentTest is expected to be of type Null|PHPUnit_Framework_TestCase, but it is of type PHPUnit_Framework_Test.
+        /**
+         * A test started.
+         *
+         * @param PHPUnit_Framework_Test $test
+         */
+        public function startTest(PHPUnit_Framework_Test $test)
+        {
+>>>>        self::$currentTest = $test;
+        }
+        
+
+CATEGORY: false positive
+NOTE: might be fixed...
+\Util\TestDox\ResultPrinter.php:266:31 (routine startTest)
+Variable $test is used before it got assigned any value. This can generate a notice at runtime.
+        /**
+         * A test started.
+         *
+         * @param PHPUnit_Framework_Test $test
+         */
+        public function startTest(PHPUnit_Framework_Test $test)
+        {
+            if ($test instanceof $this->testTypeOfInterest) {
+                $class = get_class($test);
+    
+                if ($this->testClass != $class) {
+                    if ($this->testClass != '') {
+                        $this->doEndClass();
+                    }
+    
+                    $this->currentTestClassPrettified = $this->prettifier->prettifyTestClass($class);
+                    $this->startClass($class);
+    
+                    $this->testClass = $class;
+                    $this->tests     = array();
+                }
+    
+                $prettified = false;
+    
+                if ($test instanceof PHPUnit_Framework_TestCase &&
+                   !$test instanceof PHPUnit_Framework_Warning) {
+>>>>                $annotations = $test->getAnnotations();
+    
+                    if (isset($annotations['method']['testdox'][0])) {
+                        $this->currentTestMethodPrettified = $annotations['method']['testdox'][0];
+                        $prettified                        = true;
+                    }
+                }
+    
+                if (!$prettified) {
+                    $this->currentTestMethodPrettified = $this->prettifier->prettifyTestMethod($test->getName(false));
+                }
+    
+                $this->testStatus = PHPUnit_Runner_BaseTestRunner::STATUS_PASSED;
+            }
+        }
