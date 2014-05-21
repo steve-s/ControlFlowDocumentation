@@ -6,8 +6,13 @@ websites.
 
 \begin{itemize}
     \item PHPUnit: a port of JUnit unit testing framework for PHP. 
-    \item Zend Framework: popular general purpose PHP framework.
+    \item Zend Framework: popular general purpose PHP framework. 
+        \note{over 3000 problems reported. Quite a big bite to chew with analysing and categorizing all of them.}
     \item Nette: another popular PHP framework for building websites.
+        \note{Findings not so impressive: 1 (probably only) documentation error :(}
+    \item Piwik: open source version of Google Analytics. \note{few hundred problems found}
+    \item PrestaShop: open source e-commerce solution. \note{few hundred problems found}
+    \item Composer: popular dependency management system for PHP libraries. \note{few hundred problems found}
     \item WordPress: on of the most popular content management systems.
 \end{itemize}
 
@@ -16,6 +21,14 @@ latest source code of given PHP project. Than the analysis was run and
 all the discovered problems were collected and categorized.
 Actual errors were rectified and recorded as commits in the 
 git repository. 
+
+Often one real issue in the source code caused several 
+warnings to be reported by the tool. For instance, if a documentation 
+of a type of a field was not correct, most the lines where 
+a value was assigned to that field were reported, however, the 
+root of the cause was actually the only one line with the 
+wrong type documentation. Such cases were counted as a 
+single problem.
 
 \section{Problems Taxonomy}
 
@@ -94,18 +107,27 @@ cause some actual positives to be missed.
 
 \section{Summary}
 
-\newcommand{\subcat}[1]{\small{\textit{#1}}} 
+\newcommand{\subcat}[1]{\hspace{0.5cm}\small{\textit{#1}}} 
 \newcommand{\reldefret}{\subcat{default return value}}
-\newcommand{\vturn}[1]{\begin{turn}{60}#1\end{turn}}
+
+\newcommand{\sumh}[1]{\textbf{#1}}
+%\newcommand{\sumh}[1]{\begin{turn}{60}#1\end{turn}}
 
 \begin{center}
-    \begin{tabular}{| p{5cm} | l | l | l | l | l |}
+    \begin{tabular}{| p{5cm} | r | r | r | r | r |}
     \hline
-    Category                &   \vturn{PHPUnit}     &   \vturn{Zend Framework}      &   \vturn{Nette}   &   \vturn{WordPress}   &   \vturn{total}   \\ \hline
+    \sumh{Category}         &   \sumh{PHPUnit}      &   \sumh{Zend}       &   \sumh{Nette}    &   \sumh{WP}    &   \sumh{total}   \\ \hline
     Style                   &   6                   &       NA                      &   NA              &   NA                  &   6       \\ \hline
     \reldefret              &   2                   &       NA                      &   NA              &   NA                  &   2       \\ \hline        
     Documentation           &   10                  &       NA                      &   NA              &   NA                  &   10      \\ \hline    
-    \subcat{missing false}  &   3                   &       NA                      &   NA              &   NA                  &   3      \\ \hline    
+    \subcat{missing false}  &   3                   &       NA                      &   NA              &   NA                  &   3       \\ \hline
+    Actual Error            &   1                   &       NA                      &   NA              &   NA                  &   1      \\ \hline    
+    False positive          &   8                   &       NA                      &   NA              &   NA                  &   8      \\ \hline    
+   \subcat{unused arguments}&   1                   &       NA                      &   NA              &   NA                  &   1      \\ \hline        
+    \subcat{amendable}      &   4                   &       NA                      &   NA              &   NA                  &   4      \\ \hline            
+ \subcat{built-in doc error}&   3                   &       NA                      &   NA              &   NA                  &   3      \\ \hline
+    \textbf{Total} 
+    (excl. false positives) &17                   &       NA                      &   NA              &   NA                  &   17      \\ \hline                
     \end{tabular}
 \end{center}
 

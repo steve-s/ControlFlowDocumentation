@@ -1,0 +1,148 @@
+
+CATEGORY: false positive
+CATEGORY: to be fixed
+CATEGORY: namespace in PHPDoc
+Loaders\NetteLoader.php:92:3 (routine getInstance)
+Expression self::$instance is expected to be of type Null|NetteLoader, but it is of type Nette\Loaders\NetteLoader.
+    
+    	/**
+    	 * Returns singleton instance with lazy instantiation.
+    	 * @return NetteLoader
+    	 */
+    	public static function getInstance()
+    	{
+    		if (self::$instance === NULL) {
+>>>>			self::$instance = new static;
+    		}
+    		return self::$instance;
+    	}
+        
+        
+CATEGORY: false positive
+CATEGORY: to be fixed
+NOTE: callable can be indexed... lets say for fields, or better would be data flow for fields...
+deprecated\Callback.php:123:45 (routine toReflection)
+Expression cb is of scalar type and cannot be subscribed to with [] operator.
+    
+    	/**
+    	 * Returns callback reflection.
+    	 * @return Nette\Reflection\GlobalFunction|Nette\Reflection\Method
+    	 */
+    	public function toReflection()
+    	{
+    		if (is_string($this->cb) && strpos($this->cb, '::')) {
+    			return new Nette\Reflection\Method($this->cb);
+    		} elseif (is_array($this->cb)) {
+>>>>			return new Nette\Reflection\Method($this->cb[0], $this->cb[1]);
+    		} elseif (is_object($this->cb) && !$this->cb instanceof \Closure) {
+    			return new Nette\Reflection\Method($this->cb, '__invoke');
+    		} else {
+    			return new Nette\Reflection\GlobalFunction($this->cb);
+    		}
+    	}
+        
+NOTE: the same as previous
+deprecated\Callback.php:123:59 (routine toReflection)
+Expression cb is of scalar type and cannot be subscribed to with [] operator.
+
+CATEGORY: false positive
+CATEGORY: to be fixed
+NOTE: closure can be object. Summary: closure can be object, 
+can be array (so it can be indexed) and can be string...
+deprecated\Callback.php:124:44 (routine toReflection)
+The routine PHP.Core.AST.InstanceOfEx expects type Object as its parameter number 0, but the expression is of type PhpCallable|Null.
+    
+    	/**
+    	 * Returns callback reflection.
+    	 * @return Nette\Reflection\GlobalFunction|Nette\Reflection\Method
+    	 */
+    	public function toReflection()
+    	{
+    		if (is_string($this->cb) && strpos($this->cb, '::')) {
+    			return new Nette\Reflection\Method($this->cb);
+    		} elseif (is_array($this->cb)) {
+    			return new Nette\Reflection\Method($this->cb[0], $this->cb[1]);
+>>>>		} elseif (is_object($this->cb) && !$this->cb instanceof \Closure) {
+    			return new Nette\Reflection\Method($this->cb, '__invoke');
+    		} else {
+    			return new Nette\Reflection\GlobalFunction($this->cb);
+    		}
+    	}
+        
+NOTE: the same as previous
+deprecated\Callback.php:137:48 (routine isStatic)
+Expression cb is of scalar type and cannot be subscribed to with [] operator.
+
+deprecated\Callback.php:152:37 (routine bindTo)
+Expression cb is of scalar type and cannot be subscribed to with [] operator.
+
+deprecated\Callback.php:161:13 (routine __toString)
+The routine PHP.Core.AST.InstanceOfEx expects type Object as its parameter number 0, but the expression is of type PhpCallable|Null.
+
+deprecated\Callback.php:163:43 (routine __toString)
+Expression cb is of scalar type and cannot be subscribed to with [] operator.
+
+CATEGORY: documentation
+NOTE: field latter should have documentation: string|Latte\Engine or maybe only Latte\Engine?
+deprecated\Templating\Template.php:189:18 (routine getLatte)
+The routine PHP.Core.AST.InstanceOfEx expects type Object as its parameter number 0, but the expression is of type String|Null.
+    	/**
+    	 * @return Latte\Engine
+    	 */
+    	public function getLatte()
+    	{
+    		if (!$this->latte) {
+    			return NULL;
+    		}
+>>>>		$latte = $this->latte instanceof Latte\Engine ? $this->latte : new Latte\Engine;
+    
+    		foreach ($this->helpers as $key => $callback) {
+    			$latte->addFilter($key, $callback);
+    		}
+    
+    		foreach ($this->helperLoaders as $callback) {
+    			$latte->addFilter(NULL, function($name) use ($callback, $latte) {
+    				if ($res = call_user_func($callback, $name)) {
+    					$latte->addFilter($name, $res);
+    				}
+    			});
+    		}
+    
+    		if ($this->cacheStorage instanceof Nette\Caching\Storages\PhpFileStorage) {
+    			$latte->setTempDirectory($this->cacheStorage->getDir());
+    		}
+    
+    		return $latte;
+    	}
+        
+NOTE: the same as previous
+deprecated\Templating\Template.php:177:9 (routine setLatte)
+Expression latte is expected to be of type String|Null, but it is of type Latte\Engine.
+    	public function setLatte(Latte\Engine $latte)
+    	{
+>>>>		$this->latte = $latte;
+    	}
+        
+NOTE: the same as previous
+deprecated\Templating\Template.php:219:10 (routine registerFilter)
+Expression latte is expected to be of type String|Null, but it is of type self|Nette\Templating\Template|Latte\Engine|Nette\DeprecatedException.
+    	/**
+    	 * Registers callback as template compile-time filter.
+    	 * @param  callable
+    	 * @return self
+    	 */
+    	public function registerFilter($callback)
+    	{
+    		if ($callback instanceof Latte\Engine) { // back compatibility
+>>>>			$this->latte = $callback;
+    		} elseif (is_array($callback) && $callback[0] instanceof Latte\Engine) {
+    			$this->latte = $callback[0];
+    		} elseif (strpos(Callback::toString($callback), 'Latte\Engine') !== FALSE) {
+    			$this->latte = TRUE;
+    		} elseif ($this->latte) {
+    			throw new Nette\DeprecatedException('Adding filters after Latte is not possible.');
+    		} else {
+    			$this->filters[] = Callback::check($callback);
+    		}
+    		return $this;
+    	}

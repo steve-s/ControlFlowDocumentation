@@ -36,6 +36,7 @@ The routine is expected to return type PhpArray|Null, the the expression false i
          * @param  string $className
 --
 CATEGORY: false positive
+CATEGORY: built-in doc error
 NOTE: support for overloads of library methods, ReflectionProperty::setValue has two versions, 
 one with 1 parameter and one with 2 parameters.
 \Util\GlobalState.php:351:16 (routine restoreStaticAttributes)
@@ -45,19 +46,19 @@ NOTE: class field mockObjectGenerator is documented to be of type array, but
 instance of PHPUnit_Framework_MockObject_Generator is assigned to it. It is not 
 used anywhere else, so the array doc should be changed to PHPUnit_Framework_MockObject_Generator
 --
-CATEGORY: style
 CATEGORY: false positive
+CATEGORY: unused arguments
 NOTE: may or may not be considered as false positive, the argument can be omitted, however, 
 is used to preserve the same function signature.
 \Util\Test.php:46:38 (routine trait_exists)
 --
 CATEGORY: false positive
-CATEGORY: inaccurate PHP manual
+CATEGORY: built-in doc error
 NOTE: ReflectionClass::newInstance expects variable number of arguments.
 \Util\Test.php:360:26 (routine getProvidedData)
 The routine newInstance is missing some of its mandatory parameters.
 
-==> TO BE CONTINUED
+==> TO BE CONTINUED in detailed table...
 
 --
 CATEGORY: documentation
@@ -72,7 +73,7 @@ NOTE: they are counting on default return value when the function does not retur
 The routine getCountOf is supposed to return a value of type 1000000000110000, but some of the possible execution paths do not return.
 --
 CATEGORY: false positive
-NOTE: to be fixed.
+CATEGORY: to be fixed
 \Framework\Constraint\Count.php:100:28 (routine getCountOf)
 Variable $other is used before it got assigned any value. This can generate a notice at runtime.
 --
@@ -82,12 +83,13 @@ NOTE: wrong documentation says it returns boolean, but it returns integer.
 The routine is expected to return type , the the expression $count is of type Integer.
 --
 CATEGORY: false positive
-NOTE: to be fixed.
+CATEGORY: to be fixed
 \Framework\Constraint\ExceptionMessage.php:69:15 (routine __construct)
 Expression expectedMessage is expected to be of type Integer, but it is of type String|Null.
 --
 CATEGORY: false positive
-CATEGORY: unused iface param
+CATEGORY: to be fixed
+NOTE: unused iface param
 \Framework\Constraint\IsAnything.php:76:37 (routine evaluate)
 Variable $description is not used.
          * @param  string                                       $description  Additional information about the test
@@ -103,6 +105,7 @@ NOTE: they count on default return value
 The routine matches is supposed to return a value of type 1000000000110000, but some of the possible execution paths do not return.
 --
 CATEGORY: false positive
+CATEGORY: built-in doc error
 NOTE: php manual does not support overloads of methods for now.
 \TextUI\Command.php:791:23 (routine handlePrinter)
 The routine newInstance is missing some of its mandatory parameters.
@@ -123,6 +126,7 @@ NOTE: $currentTest should be documented as PHPUnit_Framework_TestCase
 Expression self::$currentTest is expected to be of type Null|PHPUnit_Framework_TestCase, but it is of type PHPUnit_Framework_Test.
 --
 CATEGORY: false positive
+CATEGORY: to be fixed
 NOTE: might be fixed...
 \Util\TestDox\ResultPrinter.php:266:31 (routine startTest)
 Variable $test is used before it got assigned any value. This can generate a notice at runtime.

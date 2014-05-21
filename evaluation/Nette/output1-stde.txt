@@ -1,0 +1,11 @@
+Loaders\NetteLoader.php:92:TypeMismatch
+deprecated\Callback.php:123:ScalarWithArraySubscript
+deprecated\Callback.php:123:ScalarWithArraySubscript
+deprecated\Callback.php:124:FunctionParameterTypeMismatch
+deprecated\Callback.php:137:ScalarWithArraySubscript
+deprecated\Callback.php:152:ScalarWithArraySubscript
+deprecated\Callback.php:161:FunctionParameterTypeMismatch
+deprecated\Callback.php:163:ScalarWithArraySubscript
+deprecated\Templating\Template.php:189:FunctionParameterTypeMismatch
+deprecated\Templating\Template.php:177:TypeMismatch
+deprecated\Templating\Template.php:219:TypeMismatch
