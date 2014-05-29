@@ -1,0 +1,78 @@
+:387:61 (routine apply_filter)
+Variable $arguments is used before it got assigned any value. This can generate a notice at runtime.
+         *
+         *                              If FALSE is returned and you are sure that
+         *                              {@link http://php.net/manual/en/function.imagefilter.php imagefilter} exists and that
+         *                              the requested filter is valid, check the {@link error} property to see the error code.
+         */
+        function apply_filter($filter, $arg1 = '', $arg2 = '', $arg3 = '', $arg4 = '')
+        {
+    
+            // if "imagefilter" function exists and the requested filter exists
+            if (function_exists('imagefilter'))
+    
+                // if image resource was successfully created
+                if ($this->_create_from_source()) {
+    
+                    // prepare the target image
+                    $target_identifier = $this->_prepare_image($this->source_width, $this->source_height, -1);
+    
+                    // copy the original image
+                    imagecopyresampled(
+    
+                        $target_identifier,
+                        $this->source_identifier,
+                        0,
+                        0,
+                        0,
+                        0,
+                        $this->source_width,
+                        $this->source_height,
+                        $this->source_width,
+                        $this->source_height
+    
+                    );
+    
+                    // if multiple filters are to be applied at once
+                    if (is_array($filter)) {
+    
+                        // iterate through the filters
+                        foreach ($filter as $arguments)
+    
+                            // if filter exists
+                            if (defined('IMG_FILTER_' . strtoupper($arguments[0]))) {
+    
+                                // try to apply the filter...
+                                if (!@call_user_func_array('imagefilter', array_merge(array($target_identifier, constant('IMG_FILTER_' . strtoupper($arguments[0]))), array_slice($arguments, 1))))
+    
+                                    // ...and trigger an error if the filter could not be applied
+                                    trigger_error('Invalid arguments used for "' . strtoupper($arguments[0]) . '" filter', E_USER_WARNING);
+    
+                            // if filter doesn't exists, trigger an error
+                            } else trigger_error('Filter "' . strtoupper($arguments[0]) . '" is not available', E_USER_WARNING);
+    
+                    // if a single filter is to be applied and it is available
+                    } elseif (defined('IMG_FILTER_' . strtoupper($filter))) {
+    
+                        // get all the arguments passed to the method
+                        $arguments = func_get_args();
+    
+                        // try to apply the filter...
+                        if (!@call_user_func_array('imagefilter', array_merge(array($target_identifier, constant('IMG_FILTER_' . strtoupper($filter))), array_slice($arguments, 1))))
+    
+                            // ...and trigger an error if the filter could not be applied
+                            trigger_error('Invalid arguments used for "' . strtoupper($arguments[0]) . '" filter', E_USER_WARNING);
+    
+                    // if filter doesn't exists, trigger an error
+>>>>                } else trigger_error('Filter "' . strtoupper($arguments[0]) . '" is not available', E_USER_WARNING);
+    
+                    // write image
+                    return $this->_write_image($target_identifier);
+    
+                }
+    
+            // if script gets this far, return false
+            // note that we do not set the error level as it has been already set
+            // by the _create_from_source() method earlier, if the case
+            return false;
+    

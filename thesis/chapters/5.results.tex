@@ -1,23 +1,36 @@
 %pygmentize_options: -O startinline=True
 \chapter{Results}
 
+
+\section{Comparison to Phantm}
+
+\section{Evaluation on open source PHP code}
+
 The project has been evaluated on the following open source PHP frameworks and 
 websites.
 
-\begin{itemize}
-    \item PHPUnit: a port of JUnit unit testing framework for PHP. 
-    \item Zend Framework: popular general purpose PHP framework. 
+\begin{description}
+    \item[PHPUnit:] a port of JUnit unit testing framework for PHP; it is a mature 
+    and well established project that has been developed for more than 6 years 
+    by 156 contributors. Being a unit testing framework, PHPUnit itself has extensive 
+    unit test suite. For the experiment the master branch of the clone of the 
+    repository retrieved on 18.5.2014 has been used. 
+    
+    \item[Zend Framework:] popular general purpose PHP framework. Lorem ipsum...
         \note{over 3000 problems reported. Quite a big bite to chew with analysing and categorizing all of them.}
-    \item Nette: another popular PHP framework for building websites.
+        
+    \item[Nette:] another popular PHP framework for building websites.
         \note{Findings not so impressive: 1 (probably only) documentation error :(}
-    \item Piwik: open source version of Google Analytics. \note{few hundred problems found}
-    \item PrestaShop: open source e-commerce solution. \note{few hundred problems found}
-    \item Composer: popular dependency management system for PHP libraries. \note{few hundred problems found}
-    \item WordPress: on of the most popular content management systems.
-\end{itemize}
+        
+    \item[Piwik:] open source version of Google Analytics. \note{few hundred problems found, not categorized yet}
+    
+    \item[PrestaShop:] open source e-commerce solution. \note{few hundred problems found, not categorized yet}
+    
+    \item[Composer:] popular dependency management system for PHP libraries. \note{few hundred problems found, not categorized yet}
+\end{description}
 
 An evaluation always started with downloading a git repository with the 
-latest source code of given PHP project. Than the analysis was run and 
+latest source code of given PHP project. Then the analysis was run and 
 all the discovered problems were collected and categorized.
 Actual errors were rectified and recorded as commits in the 
 git repository. 
@@ -30,7 +43,7 @@ root of the cause was actually the only one line with the
 wrong type documentation. Such cases were counted as a 
 single problem.
 
-\section{Problems Taxonomy}
+\subsection{Problems Taxonomy}
 
 The problems were divided into few main categories 
 described below. Some of the problems recurring 
@@ -105,7 +118,11 @@ cause some actual positives to be missed.
         functions and classes that was used in the experiment.
 \end{itemize}
 
-\section{Summary}
+\subsection{Summary}
+
+The following table provides a summary of the problems found. 
+There is a table that lists concrete problems found PHPUnit 
+available in appendix.
 
 \newcommand{\subcat}[1]{\hspace{0.5cm}\small{\textit{#1}}} 
 \newcommand{\reldefret}{\subcat{default return value}}
@@ -133,45 +150,9 @@ cause some actual positives to be missed.
 
 
 
-\section{PhpUnit}
-PHPUnit is a mature and well established project that has been 
-developed for more than 6 years by 156 contributors. 
-Being a unit testing framework, PHPUnit itself has extensive 
-unit test suite. For the experiment the master branch of the clone of the 
-repository retrieved on 18.5.2014 was used.
+\subsection{Review of Some of the Problems Found}
 
-\subsection{Individual Errors.}
-
-\note{Q: move the table to an Appendix? Should I do such table for each project? -- 
-lots of data and work to be done. Maybe only for PHPUnit and for other projects only 
-discuss interesting errors and provide quantitative data in the summary table above.}
-
-\begin{center}
-    \begin{tabular}{| l | l | l | p{6cm} |}
-    \hline
-    File                             &   Line    &   Category       &   Note  \\ \hline
-    \path{Framework\TestCase.php}    &   1722    &   Style          &   Foreach used in form \code{foreach(\$array as \$key=>\$val)} although the \code{\$key} variable was not used anywhere. \\ \hline
-    \path{Framework\TestCase.php}    &   1726    &   Style          &   Discussion follows. \\ \hline    
-    \path{Framework\Assert.php}      &   1861    &   Actual Error   &   Discussion follows. \\ \hline
-    \path{Framework\Assert.php}      &   1960    &   Documentation  &   The routine code allows one of the arguments to be an \code{array} and works with it as such, but the documentation states that it can only be \code{boolean}. \\ \hline        
-    \path{Framework\Assert.php}      &   1896    &   Documentation  &   \code{assertSelectEquals} method restricts its parameter type to be \code{integer} and is invoked with \code{boolean}. 
-                                                                        However, the parameter value gets only forwarded to \code{convertSelectToTag}, which accepts any type (mixed). \\ \hline    
-    \path{Util\XML.php}              &   544     &   Documentation  &   \multirow{2}{6cm}{Missing \code{false} in return value documentation.} \\ \cline{1-3}    
-    \path{Util\Test.php}             &   294     &   Documentation  &   \\ \hline
-    \path{Util\GlobalState.php}      &   351     &   False Positive &   \multirow{2}{6cm}{Built-in documentation error.} \\ \cline{1-3}    
-    \path{Util\Test.php}             &   360     &   False Positive &   \\ \hline
-    \path{Framework\TestCase.php}    &   1941    &   Documentation  &   Field \code{mockObjectGenerator} is documented to have type \code{array}, 
-                                                                        but value of type \code{MockObject\_Generator} 
-                                                                        is assigned to it. The documentation should be updated. \\ \hline
-    \path{Util\GlobalState.php}      &   351     &   False Positive &   Built-in documentation error. \\ \hline
-    \path{Util\Test.php}             &   46      &   False Positive &   Function \code{trait\_exists} is conditionally declared if it does not exist.
-                                                                        It follows the same signature of actual built-in function \code{trait\_exists}, 
-                                                                        but it has empty body, therefore it does not use its arguments. \\ \hline
-    \end{tabular}
-\end{center}
-
-
-\subsection{Actual Error When Handling \code{DOMElements}}
+\subsubsection*{Actual Error When Handling \code{DOMElements}}
 
 The error is related to the following code (shortened).
 
@@ -215,12 +196,5 @@ Note that if method \code{removeCharacterDataNodes} removed
 all the child nodes that are not instances of \code{DOMElement}, 
 the code would be correct, but the error would still be reported, 
 therefore it would be false positive.
-
-
-\section{Zend Framework}
-
-\section{Nette}
-
-\section{WordPress}
 
 

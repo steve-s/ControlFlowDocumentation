@@ -16,18 +16,18 @@
     back end transforms the AST directly to Microsoft Intermediate Language (MSIL).
     
     In order to reduce the memory consumption and provide better 
-    modularity, Phalanger code went through small architecture 
+    modularity, Phalanger code went through minor architecture 
     refactoring before this project was started.     
     The classes representing the AST nodes originally contained 
     the code and data needed for emitting the corresponding 
     MSIL opcodes. This, however, represents 
     a coupling between the front-end and back-end and the 
-    front-end cannot be used just on its own. In the new 
+    front-end could not be used just on its own. In the new 
     version, the classes representing AST nodes are capable 
     of storing additional attributes in an extensible way 
     and the back-end have been rewritten to be an ordinary AST 
     visitor that uses the extensible AST nodes attributes.
-    Additional attributes provide a way to annotate AST nodes 
+    The attributes provide a way to annotate AST nodes 
     with any additional information, which in our case will be 
     the results of the analyses.    
     
@@ -35,12 +35,12 @@
     The PHP Tools for Visual Studio use Phalanger front-end in order to 
     parse PHP code into AST and then the AST is again traversed to provide 
     code completion and other features. All the AST nodes hold necessary 
-    pieces of information, e.g. the position in the source file or 
+    pieces of information, for example, the position in the source file or 
     documentation comments.
     
     The aim of this project is to provide the results of type analysis 
     and other analyses to the integrated development environment so 
-    that the possible errors and warnings can be visualised, e.g. underlined.
+    that the possible errors and warnings can be visualised.
     
     The longer term aim of this project, not in the scope of this thesis, 
     is to replace the existing algorithms for code completion, 
@@ -63,25 +63,25 @@
     \section{Overall Design}
     
     The project is divided into several modules.
-    \begin{itemize}
+    \begin{itemize*}
         \item Control Flow Graph,
         \item Intermediate Representation of PHP Code (Phil, RPhil),
         \item Generic Data Flow Analysis Framework, 
         \item Tables with Type and Other Information, 
         \item Concrete Analyses:
-        \begin{itemize}
+        \begin{itemize*}
             \item Dead Code Elimination, 
             \item Aliasing Analysis, 
             \item Constant Propagation,
             \item Type Analysis.
-        \end{itemize}
-    \end{itemize}
+        \end{itemize*}
+    \end{itemize*}
     
     The interactions between those modules on a conceptual level 
     when performing an analysis are depicted in diagram \ref{overalldiagram}. 
     Green elements represent extension points. Red arrows represent the 
     core flow of the algorithm.
-    
+
 \begin{figure}[h]  
   \centering
     \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio,viewport=0 55 532 590]{img/ControlFlowModules.pdf}  
@@ -90,7 +90,7 @@
 
     \subparagraph*{Intermediate Language.}
     One of the goals of the design was to stay as close as possible 
-    to the original AST representation, so that the results of the 
+    to the original AST representation, so that results of an 
     analysis can be easily propagated to an IDE and that the 
     Phalanger back-end does not have to be rewritten in order to 
     leverage the this project.
@@ -121,8 +121,8 @@
     of Type Tables discussed in one of the following paragraphs. 
     In order to resolve the symbols, the module building RPhil 
     can use names explicitly expressed in the code, for example, 
-    for direct local variable access \code{\$a}, or the results of 
-    an analysis, for instance, the results of type analysis to 
+    for direct local variable access \code{\$a}, or results of 
+    an analysis, for instance, results of the type analysis to 
     resolve method calls and fields references. 
     RPhil itself is typically consumed by the analyses, 
     so the accuracy of RPhil and subsequently of the 
@@ -134,7 +134,7 @@
     nodes called basic blocks. Each basic block contains 
     a list of Abstract Syntax Tree elements. This list is 
     then, usually on the fly, transformed to corresponding PHP 
-    Intermediate Language elements before its elements are given 
+    Intermediate Language elements before they are passed 
     to the flow function of a concrete Data Flow Analysis 
     implementation. 
     
@@ -204,33 +204,239 @@
     and provides a simple interface to perform a defined 
     analysis of a file or a given piece of code.
     
-    \section{The Intermediate Language}    
-        \note{The aim of the intermediate representation is... 
-        The three address code can be built by traversing the AST in 
-        the order of execution... Some AST elements represent more 
-        than one execution step...}
+    \section{The Intermediate Languages and Control Flow Graph}
+        The aim of the intermediate languages is to simplify the 
+        interface for concrete analyses implementations. 
+        However, at the same time, it was desirable to stay as 
+        close to the original AST elements as possible in order 
+        to easily propagate the results and to easily integrate 
+        Control Flow for Phalanger into the Phalanger project.         
+        Lastly the intermediate language should stay close enough 
+        to PHP code so that PHP specific patterns can be recognized.
         
-        \note{RPhil: the symbols are resolved using defined AST 
-        nodes annotations for constant values and type information...
-        \code{VarLikeConstructInfo} abstracts variables accesses...}
+        \subsection{Phil: PHP Intermediate Language}
+        
+        \subsubsection*{Motivation}
+        The main aim of Phil is to provide a framework for 
+        traversing the AST elements in the order of their 
+        execution in the smallest execution steps possible 
+        with respect to their possible effects to the environment. 
+        As opposed to implementing a full blown AST visitor 
+        for every analysis, Phil helps to avoid repetitive 
+        code that implements the AST structure traversal and 
+        breaking down some of the syntactic constructs 
+        like \code{\$i++}. As discussed later, a ``Phil element'' 
+        is often just a conceptual term, but in reality most 
+        of the Phil elements are represented directly by 
+        AST elements in order to save resources and stay 
+        close to the original AST.
+        
+        \subsubsection*{Implementation}
+        Phil is implemented mainly by two classes \code{PhilVisitor} 
+        and \code{Linearizer}, which is a class nested in \code{PhilVisitor}. 
+        The \code{PhilVisitor} class implements a variant of the visitor design pattern 
+        with virtual \code{Visit*} methods for all the Phil elements. 
+        The \code{Linearizer} is implementation of a visitor for the 
+        AST elements and it converts them to Phil elements.
+        
+        An important difference between original AST elements and 
+        Phil elements is that Phil does not have a hierarchical structure. 
+        Therefore an implementation of the \code{PhilVisitor} class does not 
+        need to perform recursive traversal for every visited element.
+        
+        Under closer look, most of the AST elements correspond 
+        to exactly one Phil element\footnote{or they are ignored, 
+        which is the case of most control flow changing statements 
+        and declaration statements}. 
+        Those AST elements are passed to \code{PhilVisitor} as they are. 
+        So in this case the \code{Linearizer}, as the name suggests, 
+        performs only the traversal and linerizes the AST structure 
+        for \code{PhilVisitor} so that it does not have to 
+        care about AST structure traversing.
+        
+        Elements that have to be unfolded into several operations, 
+        such as \code{IncDecEx} representing post or pre increment 
+        or decrement, have to be represented by more elements. 
+        One option would be to create a whole new alternative 
+        AST structure that would correspond the unfolded code. 
+        In our approach, we reuse the AST element to represent one 
+        of the unfolded operations and create new special Phil 
+        elements that wrap the original AST element and their 
+        only purpose is to indicate the stage of the compound 
+        operation. So for example, \code{IncDecEx} is broken down 
+        to 
+        \begin{itemize*}
+            \item \code{Expression} that represents the variable access and 
+                is recursively broken down to Phil elements, 
+            \item \code{IncDecEx} that represents the binary operation, 
+                so the \code{VisitBinaryEx} method is invoked for it on \code{PhilVisitor} as 
+                for any other binary operation.
+            \item \code{IncDecPhilAssignment} that represents the assignment, 
+                and the \code{VisitAssignment} method is invoked for it on \code{PhilVisitor} as 
+                for any other assignment.
+        \end{itemize*}
+        
+        Because we have an object instance to represent every Phil element, 
+        we do not have to visit them on the fly, they can also be saved into 
+        and array and visited by the \code{PhilVisitor} later. This enables 
+        us to perform the traversing only once, shall it be a performance issue 
+        in the future. It is also possible to crate accurate control flow 
+        graphs when it comes to try-catch blocks, because a single AST element, 
+        can cause exception in any stage of its evaluation, therefore it should 
+        be split into single execution steps and those put into separate 
+        basic blocks so that an edge from each of them to the 
+        catch block can be created. Note that the design is prepared 
+        for this case, but it is not implemented yet.
+        
+        \subsubsection*{Variables Accesses and Context Information}
+        The AST is broken down to small pieces visited by the \code{PhilVisitor}, 
+        which does not have to take care about their structure or order. However, 
+        sometimes a context information is required in order to handle 
+        some elements properly. This is the case of expressions that can be 
+        used as left hand side of an assignment or as a parameter passed 
+        by reference. In those cases the \code{Visit*} method of \code{PhilVisitor} 
+        takes another parameter of type \code{VarUseContext} that identifies the 
+        context in which the expression is accessed.
+        
+        To simplify the AST further, all the accesses to a memory location, be 
+        it local variable access, instance field access, or any other, are 
+        wrapped in an implementation of abstract class \code{VarLikeConstructInfo}. 
+        This class provides unified interface for typical operations performed 
+        on this kind of elements. Namely, for example, \code{GetMayReferenceVars}, 
+        which returns local variables that this access can point to (typically using 
+        the results of points-to analysis).
+        
+        \subsection{RPhil: Resolved PHP Intermediate Language}
+        
+        RPhil elements are the same as Phil elements, but with additional 
+        information retrieved from Type Tables where possible. 
+        \code{RPhilVisitor} implements a variant 
+        of the visitor pattern in the same way as \code{PhilVisitor}, but 
+        the virtual \code{Visit*} methods take additional parameters 
+        that provide this kind of information.
+        
+        A simple example is direct static field access, in which 
+        case the resolving is trivial, because the \code{RPhilVisitor} 
+        can get the class and field's name directly from the AST element. 
+        However, even a direct object's method access, is challenging, 
+        because we do not know the type of the expression that is 
+        being dereferenced using \code{->} operator.
+        
+        RPhil does not perform any analysis in order to resolve such 
+        cases, but by convention it looks for certain additional 
+        attributes attached to the AST elements in question. Those 
+        attributes are expected to be filled in by analyses. Concretely, 
+        every expression can be annotated with its type and value.
     
-    \section{Control Flow Graph}
-        \note{Description of the Control Flow graph construction}.
+        \subsection{Control Flow Graph}
+        
+        Control Flow Graphs are constructed by an implementation of the 
+        AST visitor. The class holds an instance of a basic block that 
+        is being currently constructed. Statements are sequentially visited, 
+        and those that do not change the flow of the control are just added 
+        to the current basic block. Statements that change the flow lead to 
+        a creation of new basic blocks that have incoming edges from the 
+        previous basic block.
+        
+        This structure works for well structured code, but PHP permits 
+        \code{goto} statements, especially forward ones are problematic, 
+        because at the moment the \code{goto} statement is being processed, 
+        the basic block for the target might not be constructed yet. 
+        For this purpose a table of \code{goto} statements and all the labels 
+        is created during the control flow graph construction and the 
+        \code{goto} statements are connected to their \code{labels} at the 
+        end once the whole routine body is processed.
+        
+        \subsubsection*{Exceptions}
+        When a try code block is processed, every statement is placed in 
+        its own basic block that is connected to the basic block of the 
+        consecutive statement and connected to all the possible catch code blocks.
+        
+        The possible catch blocks are chosen pessimistically, so 
+        a statement in try code block is connected to all the catch code blocks, 
+        even nested ones, up to a catch block that catches generic \code{Exception} 
+        or to the graph's \emph{exit} basic block.
+        
+        \subsubsection*{Edges}
+        Control Flow Graph edges can have an optional attribute which 
+        states the expression that has to hold if this edge is taken 
+        during the execution. For example, an edge to then branch of 
+        \code{if (\$x==3)} will have expression \code{\$x==3} and the 
+        analyses may work out from it that \code{\$x} is equal to 
+        \code{3} in the basic block corresponding to the then branch.
         
     \section{Data Flow Analysis}
-        \note{Architecture of the generic algorithm implementation 
-            using generics in C\# in a way that the graph the analysis 
-            can be performed upon an arbitrary graph (not only CFG), 
-            which can be useful if in the future some of the analyses 
-            will be performed, for example, on a definition-use graph.}
+        A data flow analysis (DFA) in general can be performed on any graph, 
+        the implementation of Control 
+        and so even in our case, we did not want it to be tied 
+        Flow Graph. For this purpose, our implementation of DFA is 
+        performed on interfaces that Control Flow Graph implements, 
+        but they can be implemented, for example, by definition-use 
+        graph\cite{aho1985compilers} and DFA can be run on this graph too.
+        The interfaces are depicted in figure \ref{graphifaces}.
         
-    \section{Tables}
-        \note{Intra-procedural dependencies handling \code{DependencyResolver}.}
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio]{img/graph-ifaces.png}  
+    \caption{Generic Graph Interfaces for DFA\label{graphifaces}}
+\end{figure}    
+
+        The generic data flow framework handles the order in which the 
+        graph nodes should be visited, compares the input and output 
+        data flows and decides when the analysis has reached a fix-point. 
+        However the concrete type of data flow, operations with data 
+        flow instances and the transfer function are left to be defined 
+        by a concrete analysis. In Control Flow for 
+        Phalanger, two types of analysis can implemented. The basic one 
+        processes only nodes; the ``branching'' one also processes edges, 
+        in which case it can take the branching expressions of Control 
+        Flow Graph into account, for example, but in general any information 
+        that the concrete implementation of \code{IEdge} can provide.
+        
+        The operations with data flow objects could be carried out by the 
+        objects themselves, but this would mean that already existing 
+        classes that happens to be suitable for being a data flow would 
+        have to be wrapped. And also one data flow representation, could 
+        not have different operations for different analyses. An example 
+        of this is \code{BitVector} class from .NET class library: it 
+        cannot implement any additional interface, and some analysis 
+        perform union of two vectors as the meet operation, while 
+        others perform intersection.
+        
+        Nonetheless, having the data flow objects implement the operations by 
+        themselves is more convenient and allows better encapsulation. 
+        Because Control Flow for Phalanger is meant as a framework for as 
+        well as software on its own, both scenarios are supported and 
+        some convenient generics based implementations of required 
+        interfaces are provided. The whole design is captured in 
+        diagram \ref{dataflowifaces}.
+        
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio]{img/dataflow-ifaces.png}  
+    \caption{Interfaces for concrete Data Flow Analyses\label{dataflowifaces}}
+\end{figure}
+
+        A simple example of concrete Data Flow Analysis is the built-in 
+        constant propagation analysis, which is discussed in one of the 
+        following sections.
+        
+    \section{Tables}        
+        \note{CodeTables versus TypeTables}
+        \note{CodeTables use RoutineContext annotation on AST elements}
+        \note{Intra-procedural dependencies 
+        handling \code{DependencyResolver} -- looks for routine context, 
+        if it is not found invokes analysis. Checks for loops.}
     
     \section{Analyses}
         \subsection{Dead Code Elimination}
+            \note{post order CFG traversal}
+        
         \subsection{Aliasing Analysis}        
+            \note{describe the simple rules. Justification: references are not used often.}
+        
         \subsection{Constant Propagation}
+            \note{Simple example of a DFA implementation}
 
     \section{Type Analysis}
         \note{

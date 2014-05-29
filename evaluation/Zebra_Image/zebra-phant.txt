@@ -1,0 +1,318 @@
+     - Files sucessfully imported:
+       * C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:19  Notice: Type mismatch: expected: String, found: True
+ini_set('gd.jpeg_ignore_warning', true);
+                                  ~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:339  Notice: Type mismatch: expected: Object[source_width => Int, ...], found: Object[source_width => Uninitialized, ...]
+                $target_identifier = $this->_prepare_image($this->source_width, $this->source_height, -1);
+                                                           ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:345  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                    $this->source_identifier,
+                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:350  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                    $this->source_width,
+                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:351  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                    $this->source_height,
+                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:352  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                    $this->source_width,
+                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:353  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                    $this->source_height
+                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:361  Notice: Unreachable code
+                    foreach ($filter as $arguments)
+                             ~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:462  Notice: Type mismatch: expected: String, found: Int(1) or Int(0)
+            $target_identifier = $this->_prepare_image($end_x - $start_x, $end_y - $start_y, -1);
+                                                                                             ~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:734  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                    $aspect_ratio = $this->source_width / $this->source_height;
+                                                          ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:746  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                    $aspect_ratio = $this->source_height / $this->source_width;
+                                                           ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:758  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                    $vertical_aspect_ratio = $height / $this->source_height;
+                                                       ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:759  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                    $horizontal_aspect_ratio = $width / $this->source_width;
+                                                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:762  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                    if (round($horizontal_aspect_ratio * $this->source_height < $height)) {
+                                                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:768  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                        $target_height = round($horizontal_aspect_ratio * $this->source_height);
+                                                                          ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:777  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                        $target_width = round($vertical_aspect_ratio * $this->source_width);
+                                                                       ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:785  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                    $vertical_aspect_ratio = $this->source_height / $height;
+                                             ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:786  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                    $horizontal_aspect_ratio = $this->source_width /  $width;
+                                               ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:798  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                    $target_width = round($this->source_width / $aspect_ratio);
+                                          ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:801  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                    $target_height = round($this->source_height / $aspect_ratio);
+                                           ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:807  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                    $target_width = $this->source_width;
+                                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:808  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                    $target_height = $this->source_height;
+                                     ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:833  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                    ($this->source_width > $width || $this->source_height > $height) :
+                     ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:835  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                    ($this->source_width > $target_width || $this->source_height > $target_height)
+                                                            ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:856  Notice: Type mismatch: expected: Int, found: Numeric
+                    $target_identifier = $this->_prepare_image($target_width, $target_height, $background_color);
+                                                               ~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:861  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                        $this->source_identifier,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:868  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                        $this->source_width,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:869  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                        $this->source_height
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:880  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:894  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:895  Notice: Type mismatch: expected: Int, found: Float
+                                floor(($target_width - $width) / 2),
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:897  Notice: Type mismatch: expected: Int, found: Numeric
+                                floor(($target_width - $width) / 2) + $width,
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:908  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:922  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:925  Notice: Type mismatch: expected: Int, found: Float
+                                floor(($target_height - $height) / 2),
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:927  Notice: Type mismatch: expected: Int, found: Numeric
+                                floor(($target_height - $height) / 2) + $height,
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:938  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:940  Notice: Type mismatch: expected: Int, found: Float
+                                floor(($target_width - $width) / 2),
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:941  Notice: Type mismatch: expected: Int, found: Float
+                                floor(($target_height - $height) / 2),
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:942  Notice: Type mismatch: expected: Int, found: Numeric
+                                floor(($target_width - $width) / 2) + $width,
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:943  Notice: Type mismatch: expected: Int, found: Numeric
+                                floor(($target_height - $height) / 2) + $height,
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:954  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:957  Notice: Type mismatch: expected: Int, found: Float
+                                floor(($target_height - $height) / 2),
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:959  Notice: Type mismatch: expected: Int, found: Numeric
+                                floor(($target_height - $height) / 2) + $height,
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:970  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:986  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:988  Notice: Type mismatch: expected: Int, found: Float
+                                floor(($target_width - $width) / 2),
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:990  Notice: Type mismatch: expected: Int, found: Numeric
+                                floor(($target_width - $width) / 2) + $width,
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1002  Error: Prototype error!
+                            return $this->crop(
+                                   ~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1022  Notice: Type mismatch: expected: Int, found: Numeric
+                        ($width > 0 && $height > 0 && $method != ZEBRA_IMAGE_NOT_BOXED ? $width : $target_width),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1023  Notice: Type mismatch: expected: Int, found: Numeric
+                        ($width > 0 && $height > 0 && $method != ZEBRA_IMAGE_NOT_BOXED ? $height : $target_height),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1030  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                        $this->source_identifier,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1037  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                        $this->source_width,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1038  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                        $this->source_height
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1050  Notice: Type mismatch: expected: Object[source_identifier => Any, ...], found: Object[source_identifier => Uninitialized, ...]
+            } else return $this->_write_image($this->source_identifier);
+                                              ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1111  Notice: Type mismatch: expected: Object[source_type => Any, ...], found: Object[source_type => Uninitialized, ...]
+            if ($this->source_type == IMAGETYPE_PNG && $background_color == -1) {
+                ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1115  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                if (!($target_identifier = imagerotate($this->source_identifier, $angle, -1))) {
+                                                       ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1118  Notice: Unreachable code
+                    $background_color = imagecolorallocate($this->source_identifier, 255, 255, 255);
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1126  Notice: Type mismatch: expected: Object[source_type => Any, ...], found: Object[source_type => Uninitialized, ...]
+            } elseif ($this->source_type == IMAGETYPE_GIF && $this->source_transparent_color_index >= 0) {
+                      ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1134  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                    $this->source_identifier,
+                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1142  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                $this->source_identifier = imagerotate($this->source_identifier, $angle, $background_color);
+                                                       ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1152  Notice: Type mismatch: expected: String, found: Int(1) or Int(0)
+                $target_identifier = $this->_prepare_image($width, $height, -1);
+                                                                            ~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1166  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                    $this->source_identifier,
+                    ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1174  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                $target_identifier = imagerotate($this->source_identifier, $angle, $background_color);
+                                                 ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1209  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+        } elseif (!is_file($this->source_path)) {
+                           ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1217  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+        } elseif (!is_readable($this->source_path)) {
+                               ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1225  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+        } elseif ($this->target_path == $this->source_path && !is_writable($this->source_path)) {
+                                                                           ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1234  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+        } elseif (!list($this->source_width, $this->source_height, $this->source_type) = @getimagesize($this->source_path)) {
+                                                                                                       ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1245  Notice: Type mismatch: expected: Object[target_path => String, ...], found: Object[target_path => String or null, ...]
+            $this->target_type = strtolower(substr($this->target_path, strrpos($this->target_path, '.') + 1));
+                                                                               ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1255  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+                    $identifier = imagecreatefromgif($this->source_path);
+                                                     ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1272  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+                    $identifier = imagecreatefromjpeg($this->source_path);
+                                                      ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1280  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+                    $identifier = imagecreatefrompng($this->source_path);
+                                                     ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1302  Notice: Type mismatch: expected: Object[source_path => String, ...], found: Object[source_path => String or null, ...]
+        if ($this->preserve_time) $this->source_image_time = filemtime($this->source_path);
+                                                                       ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1381  Notice: Type mismatch: expected: Object[source_width => Int, ...], found: Object[source_width => Uninitialized, ...]
+            $target_identifier = $this->_prepare_image($this->source_width, $this->source_height, -1);
+                                                       ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1391  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                        $this->source_identifier,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1394  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                        ($this->source_width - 1),
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1396  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                        $this->source_width,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1397  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                        $this->source_height,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1398  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                        -$this->source_width,
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1399  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                        $this->source_height
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1410  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                        $this->source_identifier,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1414  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                        ($this->source_height - 1),
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1415  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                        $this->source_width,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1416  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                        $this->source_height,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1417  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                        $this->source_width,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1418  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                        -$this->source_height
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1429  Notice: Type mismatch: expected: Object[source_identifier => Resource, ...], found: Object[source_identifier => Uninitialized, ...]
+                        $this->source_identifier,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1432  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                        ($this->source_width - 1),
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1433  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                        ($this->source_height - 1),
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1434  Notice: Type mismatch: expected: Object[source_width => Any, ...], found: Object[source_width => Uninitialized, ...]
+                        $this->source_width,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1435  Notice: Type mismatch: expected: Object[source_height => Any, ...], found: Object[source_height => Uninitialized, ...]
+                        $this->source_height,
+                        ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1436  Notice: Type mismatch: expected: Object[source_width => Numeric, ...], found: Object[source_width => Uninitialized, ...]
+                        -$this->source_width,
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1437  Notice: Type mismatch: expected: Object[source_height => Numeric, ...], found: Object[source_height => Uninitialized, ...]
+                        -$this->source_height
+                         ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1482  Notice: Type mismatch: expected: Object[target_type => Any, ...], found: Object[target_type => Uninitialized, ...]
+        if ($this->target_type == 'png' && $background_color == -1) {
+            ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1497  Notice: Type mismatch: expected: Object[target_type => Any, ...], found: Object[target_type => Uninitialized, ...]
+        } elseif ($this->target_type == 'gif' && $background_color == -1 && $this->source_transparent_color_index >= 0) {
+                  ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1502  Notice: Type mismatch: expected: Object[source_transparent_color => Array[...], ...], found: Object[source_transparent_color => Uninitialized, ...]
+                $this->source_transparent_color['red'],
+                ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1503  Notice: Type mismatch: expected: Object[source_transparent_color => Array[...], ...], found: Object[source_transparent_color => Uninitialized, ...]
+                $this->source_transparent_color['green'],
+                ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1504  Notice: Type mismatch: expected: Object[source_transparent_color => Array[...], ...], found: Object[source_transparent_color => Uninitialized, ...]
+                $this->source_transparent_color['blue']
+                ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1595  Notice: Type mismatch: expected: Object[target_type => Any, ...], found: Object[target_type => Uninitialized, ...]
+        switch ($this->target_type) {
+                ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1611  Notice: Type mismatch: expected: Object[target_path => String, ...], found: Object[target_path => String or null, ...]
+                } elseif (@!imagegif($identifier, $this->target_path)) {
+                                                  ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1635  Notice: Type mismatch: expected: Object[target_path => String, ...], found: Object[target_path => String or null, ...]
+                } elseif (@!imagejpeg($identifier, $this->target_path, $this->jpeg_quality)) {
+                                                   ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1661  Error: Prototype error!
+                } elseif (@!imagepng($identifier, $this->target_path, $this->png_compression)) {
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1661  Notice: Type mismatch: expected: Object[target_path => String, ...], found: Object[target_path => String or null, ...]
+                } elseif (@!imagepng($identifier, $this->target_path, $this->png_compression)) {
+                                                  ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1689  Notice: Type mismatch: expected: Object[target_path => String, ...], found: Object[target_path => String or null, ...]
+            chmod($this->target_path, intval($this->chmod_value, 8));
+                  ~~~~~
+C:\Users\Steve\Development\Devsense\Phalanger\Private\ControlFlow\Evaluation\CustomPhpSources\Zebra_Image.php:1698  Notice: Unreachable code
+            @touch($this->target_path, $this->source_image_time);
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+95 notices and 10 errors occured.

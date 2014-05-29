@@ -1,0 +1,40 @@
+total number of problems: 120 notices and 10 errors
+
+actual error: 1 (reported twice)
+false positive: 128
+    object shape: 82 (can be regarded as actual style error)
+    Any is not of type X: 13
+    type conversions: 2
+    built-in doc error: 2
+    prototype error: 9
+    rounding to integer: 2
+    not categorized: 17
+
+- all the reported "errors" are prototype errors (under "prototype error" 
+false positive sub-category) that are false positive probably due the fact 
+that Phantm does not distinguish mandatory and optional parameters 
+(in PHP any function can take any number of arguments, arguments explicitly 
+named in the signature are mandatory, but any number of optional arguments can be 
+accessed using intrinsic functions).
+
+- one actual error that was discovered by Control Flow too: 
+usage of uninitialized variable.
+
+- object shape: PHP allows to use undeclared object fields, they are 
+dynamically created when first used (usually assigned to). 
+Zebra_Image relies on this and dynamically creates some fields 
+in certain methods and then uses them in other methods, which 
+is reported by Phantm. Using fields without explicitly declaring 
+them can be seen as a style error, especially in case of Zebra_Image, 
+because the all the fields in question are in fact known beforehand 
+and therefore it is perfectly possible to explicitly declare them. 
+In other cases, however, this language feature enables useful patterns 
+mainly in combination with magic __set and __get methods, as 
+for example in model classes of Doctrine Object-Relational Mapper.
+
+- type conversions and rounding to integer: Phantm regards some implicit 
+type conversions as errors. Namely anything to string type conversion 
+that is typically used in PHP, and double to integer, which is more 
+debatable, but nonetheless often used deliberately instead of cast 
+or floor or ceiling functions.
+

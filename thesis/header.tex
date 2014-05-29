@@ -7,6 +7,8 @@
 \usepackage{rotating}
 \usepackage{multirow}
 \usepackage{proof}
+% compressed versions of listings, e.g. begin{itemize*} instead of \begin{itemize}
+\usepackage{mdwlist}
 
 \newcommand{\question}[1] {
     \begin{mdframed}
@@ -14,7 +16,7 @@
     \end{mdframed}
 }
 
-\newcommand{\note}[1]{\textcolor{gray}{\emph{#1}}}
+\renewcommand{\note}[1]{\textcolor{gray}{\emph{#1}}}
 
 \newcommand{\code}{\texttt}
 \newcommand{\filepath}{\path}
