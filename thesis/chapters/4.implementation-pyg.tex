@@ -167,7 +167,7 @@
     
     The results of an analysis can also be pushed into 
     the Code Tables. Code Tables gather relevant information 
-    about code elements like classes, functions, etc. 
+    about code elements like classes, functions, and so on. 
     It is mainly type related information, 
     for example, a return type of a function, 
     but also which parameters are passed by reference or 
@@ -182,14 +182,6 @@
     This is the case of library functions and classes, 
     but it also gives a possibility to merge the information 
     of two or more conditionally declared elements. 
-    
-    Although this kind of support for conditional declarations 
-    has not been implemented, the design is prepared for it, 
-    shall it be considered an important feature in the future. 
-    At the moment, if two or more declarations are found, 
-    the Type Tables behave as if they did not know the 
-    element at all, which preserves correctness for the 
-    price of loosing precision.
     
     \subparagraph*{Extensibility.}
     The whole project is designed as a class library and 
@@ -421,22 +413,194 @@
         constant propagation analysis, which is discussed in one of the 
         following sections.
         
-    \section{Tables}        
-        \note{CodeTables versus TypeTables}
-        \note{CodeTables use RoutineContext annotation on AST elements}
-        \note{Intra-procedural dependencies 
-        handling \code{DependencyResolver} -- looks for routine context, 
-        if it is not found invokes analysis. Checks for loops.}
+    \section{Tables}
+        Tables module responsibility is to maintain a database 
+        of symbols that can be referenced from the code. 
+        This module distinguishes between two kinds of symbols: 
+        symbols that can be found in the analysed code, and external 
+        symbols, which could be library functions, for example.
+        
+        \subsection{Type Tables}
+        
+        The most generic interface \code{ITypeTables} for querying 
+        the tables database merges the two kinds of symbols 
+        and provides mainly abstract type related information. 
+        The structure is shown in class diagram \ref{tablesifaces}.
+        
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio]{img/tables-ifaces.png}  
+    \caption{The Interface of Type Tables\label{tablesifaces}}
+\end{figure}
+
+        The tables need to know a context from which the 
+        query is made, because certain names can refer 
+        to different symbols in different namespaces 
+        for example. The \code{ContextManager} class maintains 
+        the current context and the consumers of the \code{ITypeTables} 
+        should invoke \code{EnterContext} and \code{LeaveContext} on its 
+        \code{ContextManager} to provide the correct context 
+        for their queries.
+
+        Global variables and fields provide two pieces type 
+        information: \code{ExpectedType} is checked when a 
+        value is assigned to that variable and the \code{Type} 
+        is used as the type of an expression that accesses 
+        the variable. Typically, the expected type is what 
+        the PHPDoc states and the ``type'' can be either what 
+        PHPDoc states or type inferred from all the assignments 
+        made to that variable.
+        
+        The fact that results of \code{ITypeTables} queries 
+        are only abstract type information not related to a 
+        concrete element in code, allows us to support built-in 
+        functions and classes and also to handle conditional 
+        declarations by merging the type information from 
+        all the occurrences found. However, this has not 
+        been implemented, but the design is prepared for it, 
+        shall it be considered an important feature in the future. 
+        At the moment, if two or more declarations are found, 
+        the Type Tables behave as if they did not know the 
+        element at all, which preserves correctness for the 
+        price of loosing precision.
+        
+        The basic implementation of \code{ITypeTables} is 
+        \code{Tables} class, which follows a variant of the 
+        composite design pattern. It gets a list of other 
+        \code{ITypeTables} implementations as its constructor 
+        parameter and queries those one by one until the 
+        symbol is found, or returns a value that indicates 
+        that the symbol was not found. The actual implementations 
+        of \code{ITypeTables} include Code Tables discussed 
+        later and can include user defined \code{ITypeTables} 
+        implementation that provides information about 
+        built-in functions and classes.
+    
+        \subsection{Code Tables}
+        Code Tables provide information related to concrete elements in 
+        the analysed code. So in this case not abstract type related 
+        information is provided, but a reference to the AST element 
+        with the declaration. Another difference to Type Tables is that 
+        Code Tables can return more results for one symbol name, 
+        which is because of conditional declarations. 
+        Other than that, the interface is similar to the one of 
+        Type Tables.
+        
+        \subsection{Dependency Resolver}
+        Dependency Resolver serves as an adapter of Code Tables interface 
+        to the Type Tables interface. However, in the case of routines, 
+        the routine's declaration AST element does not provide all the 
+        necessary type information straight away. Especially inferred 
+        return type, which is results of Type Analysis, will not be 
+        available if the analysis has not been performed yet.
+        
+        By convention, all the necessary information for analysing a 
+        routine and the results of the type analysis are stored in an 
+        instance of \code{RoutineContext} class in the additional attributes 
+        of the routine's declaration AST element. Since this AST element 
+        is returned by Code Tables, Dependency Resolver can check if 
+        the element has the annotation and if so return it as the result, 
+        and if not, it can start analysis of the routine. However, 
+        there can be cyclic references between routines, so Dependency 
+        Resolver also maintains a list of all the routines that are 
+        currently being analysed and if a routine is already in the list, 
+        default type information is returned as the query result instead 
+        of performing the analysis.
+        
+        \subsection{RoutineContext}
+        
+        \code{RoutineContext} class provides information about a routine 
+        needed for most of the analysis in order to analyse the routine. 
+        All the local variables, parameters and referenced global and 
+        static variables are numbered and accessed through their number 
+        instead of their name. The data \code{RoutineContext} provides are:
+        
+        \begin{itemize*}
+            \item Lists of
+                \begin{itemize*}
+                    \item all referenced types in the routine's body,
+                    \item all referenced variables (local, global, static).
+                \end{itemize*}
+            \item Results of the points-to analysis: lists of all variables that
+                \begin{itemize*}
+                    \item given variable can point to, 
+                    \item can be pointed to by another variable, 
+                    \item are captured by reference by some lambda function.
+                \end{itemize*}
+            \item Control Flow Graph.
+            \item Signature information -- implementation of \code{IRoutineTypesInfo} from Type Tables.
+            \item Results of Type Analysis:
+                \begin{itemize*}
+                    \item inferred return type.
+                \end{itemize*}
+        \end{itemize*}
+        
     
     \section{Analyses}
         \subsection{Dead Code Elimination}
-            \note{post order CFG traversal}
         
-        \subsection{Aliasing Analysis}        
-            \note{describe the simple rules. Justification: references are not used often.}
+        The Dead Code Elimination is based on the Reverse Post Order 
+        algorithm, which is supposed to order nodes in a way that 
+        is the most beneficial for Data Flow Analysis and has to be 
+        done anyway in order to perform Data Flow Analysis.
+        
+        Note that the Reverse Post Order algorithm as a part 
+        of the Data Flow Analysis module is implemented 
+        in a generic way for any \code{IGraph} implementations. 
+        
+        The algorithm performs a graph search from the \emph{Start} 
+        node and after it finishes, the unvisited nodes are 
+        at the end of the list with all the nodes. At this point, 
+        the list with all the nodes is traversed from the last 
+        element and the unvisited nodes are removed until a 
+        first visited node is reached.
+        
+        The Control Flow Graph is design allows to mark 
+        some edges as ``not executable'' if the branching 
+        condition is always false. Such edges will be ignored 
+        when the Dead Code Elimination is performed, however, 
+        the tagging of edges with false branching condition 
+        has not been implemented in the final version.        
         
         \subsection{Constant Propagation}
-            \note{Simple example of a DFA implementation}
+        Constant Propagation represents a simple example of non-branched 
+        implementation of a concrete Data Flow Analysis. 
+        
+        The lattice for the data flow values of single variable is 
+        depicted in figure \ref{constlattice}. The Data Flow type is class 
+        \code{ConstantPropagationDataFlow}, which wraps an array 
+        that contains the value of each variable. Note 
+        that the variables names are already converted to numbers by 
+        \code{RoutineContext} and those numbers serve as indexes into this array.
+        The value is an \code{object} instance, so it can be \code{null}, which 
+        is the least element of the lattice, or its value can be concrete 
+        singleton object instance that by convention represents 
+        \code{NotAConstant}, which is the greatest element of the lattice.
+        
+\begin{figure}[h]  
+  \centering
+    \includegraphics{img/ConstLattice.pdf}  
+    \caption{The Lattice for Constant Propagation\label{constlattice}}
+\end{figure}        
+        
+        The transfer function annotates every expression 
+        with its constant value if possible. An access to a 
+        variable is annotated with this variable's value 
+        from the data flow, some expressions can be symbolically 
+        executed using the annotations to get operands values, 
+        and constants are annotated with their value retrieved 
+        from Type Tables.
+        
+        The data flow is updated only for assignment statement, 
+        reference assignment statement and for function call, 
+        because some local variables can be passed by reference, 
+        which can change their value. The right hand side of 
+        the assignment is an expression, which should already by 
+        annotated with its value that is used for the data 
+        flow value.
+        
+
+        
 
     \section{Type Analysis}
         \note{
