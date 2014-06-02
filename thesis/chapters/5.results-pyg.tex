@@ -1,15 +1,102 @@
 %pygmentize_options: -O startinline=True
 \chapter{Results}
+We evaluated Control Flow for Phalanger on several open source PHP projects. 
+In order to have a comparison to another established tool of similar type, 
+we analysed one of the PHP projects with both Control Flow for Phalanger and 
+Phantm. The discussion of the differences in results is provided in the 
+following section. The rest of the PHP projects were analysed only with 
+Control Flow for Phalanger and the reported problems were manually inspected 
+and categorized.
 
 
 \section{Comparison to Phantm\label{phantmresults}}
 
+The project we chose for comparison evaluation is Zebra\_Image \cite{zebraimage}. 
+It is a PHP image manipulation library that consists of 1707 lines of code 
+in one file and one class. Zebra\_Image code contains some type documentation, 
+but incomplete and often written in a way that does not follow the standard 
+PHPDoc type description grammar.
+
+All the problems reported by either tool were briefly inspected and 
+categorized. The results are presented in the following table and 
+are very different for each tool, which can be due to the 
+different approaches to the analysis. The actual problems reported and 
+the possible reasons for the difference in results are discussed in 
+the following paragraphs.
+
+\begin{center}
+    \begin{tabular}{| p{6cm} | r | r |}
+    \hline
+    \textbf{Category}           &   \textbf{Phantm}      &   \textbf{Control Flow for Phalanger} \\ \hline
+    All Reported problems       &     130                &    1   \\ \hline
+    Uninitialized variable use  &       2                &    1   \\ \hline
+    Zebra\_Image dynamic fields  &       82               &    0     \\ \hline
+    Any is not of type X        &       13               &    0     \\ \hline    
+    Prototype errors            &       9                &    0     \\ \hline    
+    Conversion: double to integer&       2               &    0     \\ \hline    
+    Other type conversions      &       2               &    0     \\ \hline    
+    Not categorized             &       17               &    0     \\ \hline    
+    \end{tabular}
+\end{center}
+
+\subsubsection*{Reported Problems}
+
+The uninitialized variable error appears to be genuine problem that would 
+generate a notice at runtime. It was discovered by both tools. Because the 
+variable in question is accessed as an array using the \code{[]} operator, 
+Phantm reported it twice.
+
+All the prototype errors are false positives probably due to the fact 
+that Phantm does not distinguish mandatory and optional parameters. 
+In PHP, any routine can take any number of arguments. Arguments explicitly 
+named in the signature are mandatory, but any number of optional arguments can be 
+accessed using intrinsic functions. Therefore it is not necessarily a prototype 
+error if a routine is given more parameters than the number of 
+parameters explicitly named in its signature.
+
+PHP allows to use undeclared object fields, they are dynamically created when 
+first used, usually assigned to. Zebra\_Image relies on this and dynamically 
+creates some fields in certain methods and then uses them in 
+other methods, which is reported by Phantm. Using fields without 
+explicitly declaring them can be seen as a style error, especially in case 
+of Zebra\_Image, because all the fields in question are in fact known 
+beforehand and therefore it is perfectly possible to explicitly declare them. 
+In other cases, however, this language feature enables useful patterns 
+mainly in combination with magic \code{\_\_set} and \code{\_\_get} methods, as 
+for example in model classes of Doctrine Object-Relational Mapper \cite{doctrine}.
+
+Phantm regards some implicit type conversions as errors. Namely anything to 
+string type conversion, which is typically used in PHP, and double to 
+integer, which is more debatable, but nonetheless often used deliberately 
+instead of cast or floor or ceiling functions.
+
+\subsubsection*{Conclusion}
+
+Those results can indicate that, although at first sight the aims of the
+two tools are the same, under closer inspection, they differ. 
+Phantm attempts to perform very precise analysis. For example, 
+by modelling heap memory. Such precision is, in theory, more powerful 
+and can discover more actual problems; yet, it also yields
+many false positives. It would be possible to filter out the 
+``likely to be'' false positives, but that would filter out those 
+cases where due to the better precision, Phantm discovered 
+actual error.
+
+On the other hand, although being less precise, Control Flow for 
+Phalanger seems to have better ratio of false positives. 
+This could make it more suitable option for a day to day development, 
+which is what it was in fact focused on. 
+
+Due to this difference, the results for other PHP projects were 
+manually inspected only in the case of Control Flow for Phalanger 
+and in case of Phantm, only the total number of discovered problems 
+is provided for illustration.
 
 
 \section{Evaluation on open source PHP code}
 
-The project has been evaluated on the following open source PHP frameworks and 
-websites.
+For further evaluation, the following open source PHP frameworks and 
+websites were chosen:
 
 \begin{description}
     \item[PHPUnit:] a port of JUnit unit testing framework for PHP; it is a mature 

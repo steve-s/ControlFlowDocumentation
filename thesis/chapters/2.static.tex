@@ -488,19 +488,20 @@
         DFA analysis is that if we have a 
         bounded lattice $(S, \leq_{s})$ and a function 
         $f:S\rightarrow{S}$ that is monotonous, 
-        i.e. $\forall{a\in{S}}: a\leq_s{f(a)}$, then 
-        $\forall{x\in{S}}$ $\exists{k\in\mathbb{N}}$, such that 
+        i.e. $\forall{a,b\in{S}}: a\leq_s{b} \Rightarrow f(a)\leq_s{f(b)}$, 
+        then $\forall{x\in{S}}$ $\exists{k\in\mathbb{N}}$, such that 
         $f^k(x)=f^{(k+1)}(x)$. $f^k(x)$ is called a fixpoint.
         
-        Intuitively, $f$ has to have a fixpoint because 
-        for every argument $y$, it must either return 
-        $y$ itself, but then $y$ is a fixpoint, or it 
-        returns another element that is strictly 
-        greater than $y$, 
-        but this cannot go on forever, because eventually 
-        $f$ will be given $\top$ for which it does not have 
-        any other option but returning $\top$ and we 
-        have a fixpoint again.
+        \note{Informal intuitive proof}
+        %Intuitively, $f$ has to have a fixpoint because 
+        %for every argument $y$, it must either return 
+        %$y$ itself, but then $y$ is a fixpoint, or it 
+        %returns another element that is strictly 
+        %greater than $y$, 
+        %but this cannot go on forever, because eventually 
+        %$f$ will be given $\top$ for which it does not have 
+        %any other option but returning $\top$ and we 
+        %have a fixpoint again.
         
         
         \paragraph*{}
@@ -542,9 +543,9 @@
         
         \begin{itemize*}
             \item Modular approach that comes from assumption that 
-                reasonably written PHP code will be close to equivalent to 
-                a statically typed code: (Aggressive Type Inference, by John Aycock: Giving people 
-                a dynamically-typed language does not mean that they write dynamically-typed programs)
+                reasonably written PHP code will be close or equivalent to 
+                statically typed code: (Aggressive Type Inference, by John Aycock: giving people 
+                a dynamically-typed language does not mean that they write dynamically-typed programs.)
                 \begin{itemize*}
                     \item No heap abstraction: we use classes -- enough for our purposes, no constant propagation, no null propagation, ...
                     \item No context sensitivity: we analyse routines in modular way.
