@@ -603,3 +603,17 @@
         built up in the previous section. It will be more 
         abstract description, without technical details 
         about implementation.}
+        
+        \begin{itemize*}
+            \item Modular approach that comes from assumption that 
+                reasonably written PHP code will be close to equivalent to 
+                a statically typed code: (Aggressive Type Inference, by John Aycock: Giving people 
+                a dynamically-typed language does not mean that they write dynamically-typed programs)
+                \begin{itemize*}
+                    \item No heap abstraction: we use classes -- enough for our purposes, no constant propagation, no null propagation, ...
+                    \item No context sensitivity: we analyse routines in modular way.
+                    \item Simple points-to analysis and lambda capture by ref.
+                    \item Arrays: modelled as local variables.
+                \end{itemize*}
+        \end{itemize*}
+        

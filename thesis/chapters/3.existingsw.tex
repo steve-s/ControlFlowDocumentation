@@ -1,9 +1,85 @@
 \chapter{Existing Software}
-    The aim was not to explore all the static analyzers, we chose Phantm to have a comparison...
 
+    It is not in the scope of this thesis to provide a comprehensive 
+    overview of the work related to static analysis of PHP or type 
+    inference in dynamic languages in general. Furthermore, those 
+    topics are being actively researched, but Control Flow for 
+    Phalanger's focus is to adapt and apply some of the results 
+    of the research that are deemed to be useful for the 
+    purposes of type analysis of PHP.
 
-    \section{Phantm\cite{kneuss2010using}}
+    \section{Security Vulnerabilities in Web Applications}
     
-    \section{HipHop Type Inference for Hack}
+    Most of the existing work on static analysis of PHP is 
+    focused on discovery of security vulnerabilities in 
+    web applications that typically come from improperly 
+    handled user input, also called taint-style vulnerabilities. 
+    It is important for such analyses to be able to follow 
+    the flow of data from global variables like \code{\$\_POST} 
+    that contain user input, therefore more precise model of 
+    heap memory is required so that flow of data in between 
+    object instances can be analysed. Likewise, 
+    context sensitivity is important in this case.
     
-    \section{Weverca: Web Verification Tool\cite{hauzarhunting}}
+    An analysis for security vulnerabilities has also a different 
+    model of usage. Such analysis can be run not so frequently, 
+    for example, only before release or as a part of a continuous 
+    build process. Interactive on-the-fly analysis in an 
+    integrated development environment could also be a viable 
+    use case, but typically not a main goal. Moreover, such analysis 
+    is certainly not expected to be run every time the 
+    application is to be compiled or interpreted.
+    
+    Some of the available tools for detecting taint-style 
+    vulnerabilities in PHP are Pixy\cite{jovanovic2006pixy} and recently released 
+    Weverca: Web Verification Tool\cite{hauzarhunting}.    
+    
+    \subsection{Weverca: Web Verification Tool}
+    \note{Precise Memory Model with aliasing, CFG inlining, assume nodes, 
+        supported PHP versions}
+
+    \section{Type Inference}
+    
+    Type inference for dynamic languages is typically implemented 
+    for the purposes of compiler or interpreter. A notable implementation 
+    is type inference for PHP in Facebook's Hip Hop project \cite{zhao2012hiphop}, 
+    which is a compiler from PHP to C++ and a custom intermediate language 
+    that can be run in Hip Hop virtual machine. Hip Hop performs type 
+    analysis in order to find single type for a variable, but does not attempt 
+    to analyse the possible variable's types further as long as it 
+    does not have only one single type. 
+        
+    There are implementations of type inference for other dynamic languages. 
+    Ecstatic\cite{madsen2007ecstatic} is type inference for Ruby 
+    implemented using control flow insensitive cartesian product algorithm. 
+    Rubydust\cite{an2011dynamic} introduces a \emph{constraint based dynamic 
+    type inference} that infers static types based on dynamic program 
+    executions.
+
+    \subsection{Phantm}
+    
+    Phantm\cite{kneuss2010phantm} is a tool for detection of type related 
+    errors. From all the projects mentioned in this chapter, the aim of 
+    Phantm is closest to our project, which is why we also used Phantm 
+    for evaluation and compared its results with ours in 
+    section \ref{phantmresults} Comparison to Phantm.
+    
+    Phantm uses semi-dynamic and semi-static analysis approach. The web 
+    application in question is run up to a defined point, which is invocation 
+    of special Phantm's function that collects data about the state of the application, 
+    especially, values of global variables. This data is then used as an initial 
+    state for static analysis. The dynamic part of the analysis is called bootstrapping. 
+    This design illustrates that although type related errors can be searched for 
+    in generic frameworks, libraries or, for example, command line utilities 
+    written in PHP, Phantm's focus is on complete web applications.
+    
+    \note{precise memory model, routines inlining}
+    \note{NOTE: comparison on design level here. Discussion of what are the implications 
+    of the design with respect to the results and comparison to our results -- 
+    in section ``results''.}
+    
+    
+    
+    
+    
+    
