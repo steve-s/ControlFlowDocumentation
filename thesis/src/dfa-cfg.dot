@@ -1,0 +1,14 @@
+digraph flow {
+	 node[shape=box]
+	 graph[rankdir="TB"];
+	 edge[headport=n, tailport=s];
+	0 [label="$i = 3", xlabel="B_1"]
+	1 [label="foo($i)", xlabel="B_2"]
+	2 [label="$i = 3.14", xlabel="B_3"]
+	3 [label="EXIT"]
+	0 -> 1 []
+    1 -> 2 []
+    1 -> 3 []    
+    2 -> 1 []
+}
+

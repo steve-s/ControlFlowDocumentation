@@ -4,3 +4,21 @@ http://www.stanford.edu/class/cs295/
 
 Abstract interpretation and static analysis
 http://santos.cis.ksu.edu/schmidt/Escuela03/home.html
+
+
+
+Dream posudek:
+
+http://is.muni.cz/th/81313/fsps_m/?info=1
+
+Diplomant svojí prací prokázal, že o dané problematice má přehled. Velmi oceňuji originalitu 
+tématu, jelikož chybí odborná literatura. 
+ Jednotlivé části práce jsou logicky uspořádané a navazují na sebe. Diplomant splnil vytyčené 
+cíle, pouze hypotéza byla příliš obecná.
+Vlastní výzkum byl dosti rozsáhlý a rozhodně lze na něj navázat. Prezentace výsledků je také 
+na dobré úrovni, o čemž svědčí množství tabulek a grafů.
+V práci jsou pouze nedostatky formální, především při popisu schémat a grafů používáme 
+jednotné označení – obrázek, u příloh již nečíslujeme stránky. Gramatická stránka práce je na 
+dobré úrovni.
+Celkový přínos práce hodnotím velmi pozitivně, práce je přínosná nejen pro samotného 
+autora.

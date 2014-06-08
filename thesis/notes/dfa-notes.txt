@@ -1,0 +1,46 @@
+
+
+- product lattice
+
+- the results of data-flow analyses: for each instruction in the program, they specify some 
+property that must hold every time that instruction is executed. The analyses 
+differ in the properties they compute.
+
+- execution of a program can be viewed as a series 
+of transformations of the program state
+
+- execution of a program can be viewed as a series 
+of transformations of the program state
+
+program point before and program point after -- for each instruction
+lemma: within a basic block, after = before of the next instruction
+lemma: edge from B1->B2, after of last(B1) may equal to before first(B2)
+
+execution path: sequence of program points p1, p2, ... 
+(pi and p(i+1) are either neighbours in basic block, or along an edge)
+
+data-flow value for program point: an abstraction of the set of all possible program 
+states that can be observed for that point.
+The set of possible data-flow values is the domain for this application.
+The choice of abstraction depends on the goal of the analysis.
+
+data-flow values before and after a statement are determined (constrained) 
+by the semantics of the statement --> transfer function
+
+Basic Block transfer function --> composition of transfer functions
+
+OUT[B] = transfer function (IN[B])  (transf. constraint)
+IN[B] = union OUT[P] where P predecessor of B  (CFG constraint)
+
+--> does not have a unique solution, we want the most precise 
+solution that satisfies both CFG and transfer constraints.
+
+COMPLEXITY: the algorithm is guaranteed to converge after a number 
+of rounds no greater than the product of the height of the framework 
+and the number of nodes of the flow graph.
+
+IDEAL - ideal solution (the best, we assume only "possible" -- they can be 
+actually executed -- paths ENTRY -> ... -> B)
+MFP - maximum fixed point (the 'best' approx., we assume whole paths from the CFG structure 
+and apply meet operator to their results)
+MOP - meet over all paths (iterative algorithm MOP is approx of MFP which is approx of IDEAL)

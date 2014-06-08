@@ -324,15 +324,108 @@
         an under-approximation and it is up to the designer and user of the analysis 
         which one is acceptable for his or her\footnote{``His'' or ``he'' 
         should be read as ``his or her'' or ``he or she'' through the rest of the text.} 
-        purposes.                
+        purposes.
+
+        Data Flow Analysis (DFA)\cite{aho1985compilers}, \cite{nielson1999principles} has 
+        become a de-facto standard type of analysis for most of the optimizing compilers and 
+        other more complex static analyses are either directly based on DFA or on 
+        the ideas behind DFA. DFA is also used in Control Flow for Phalanger. 
+        In the rest of this section, we provide brief description of 
+        firstly DFA in general and then how we have leveraged DFA for 
+        the purposes of PHP code analysis.
         
-        \subsection{Terminology}
-        %More detailed description of what static analysis is 
-        %(as opposed to for example explicit model checking, 
-        %verification, etc.). Terminology: context sensitive, 
-        %path sensitive, symbolic execution, abstract interpretation, etc.                    
+        %---------------------------------------------------------------------------------------
+        \subsection{Program State}
+        Execution of a program can be seen as a series of transformations of 
+        the program state. Each individual program instruction, when executed, 
+        can change the program state and produces its \emph{output state}.         
+        How exactly is defined by the instruction's semantics and it typically 
+        depends on the \emph{input state}, which is a program state produced 
+        by the previously executed instruction. 
         
-        Static analyses are usually described in the form of inference rules. 
+        The goal of a static analysis is to devise some useful piece of information 
+        about how instruction $i$ can change the program state, so that it can 
+        be used for program optimization or to reveal potentially problematic 
+        instructions. For example, if assignment $a=4/b$ always assigns 
+        constant value $1$ to $a$, because $b$ happens to be equal to $4$ 
+        in any possible program state preceding $a=4/b$, we can change 
+        $a=4/b$ to $a=1$, which has the same affect to the program state. 
+        If we instead found out that $b$ is always equal to $0$, we would 
+        know that this instruction will cause an exception.
+        
+        The result we expect from a static analysis is, for each instruction 
+        in the program, provide some useful property of program state transformation 
+        that always holds every time the instruction is executed. 
+        The analyses differ in the properties they compute. 
+        We will call such computed property a \emph{data-flow}.
+        
+        
+        %---------------------------------------------------------------------------------------
+        \subsection{Control Flow Graph.} 
+        DFA is typically performed on a control flow graph, 
+        although there exist approaches to DFA 
+        without explicit control flow graph 
+        construction \cite{mohnen2002graph}.
+        
+        Control flow graph nodes, also called basic blocks, 
+        are program statements that are always executed sequentially. 
+        Directed edges represent the control flow between basic blocks, 
+        for example, jumps in the control flow due to conditionals, 
+        \code{goto} statements or any other statements that can change 
+        the flow of the program.        
+        Control flow graphs usually contain two special nodes: 
+        entry node and exit node. The entry node does not have any 
+        incoming edges and all the paths lead to the exit node.        
+        An example of a control flow graph is given in figure \ref{cfg}.
+        
+\begin{table}[h]
+  \begin{tabular}{ l | m{6cm} }
+  \centering
+    \includegraphics[scale=0.7]{img/cfg.png}
+  &
+ 
+\begin{minipage}{6cm}
+%pygmentize_begin php
+%   echo 'entry';
+%   if ($x == 3)
+%       $y = 4;
+%   else
+%       return 5;
+%        
+%   while ($y < 7) {
+%       echo $y;
+%       $y++;
+%   }
+%
+%   return 3;
+%pygmentize_end
+\end{minipage}
+
+  \\
+  \end{tabular}
+  \caption{Control flow graph\label{cfg}}  
+\end{table}        
+        
+        %---------------------------------------------------------------------------------------
+        \subsection{Transfer functions}
+        
+        We say that the input state of a statement is associated with 
+        the \emph{program point before} the statement and the output state 
+        is associated with the \emph{program point after} the statement. 
+        Our aim is to calculate \emph{data-flow} value for both 
+        program points for each statement, denoted $IN(s)$ and $OUT(s)$ for 
+        a statement $s$.
+        
+        \subsubsection*{Single Statement}
+        
+        We can express the \emph{data-flow} for \emph{program point after} 
+        a statement as a function of the \emph{data-flow} of 
+        \emph{program point before} the statement, also called \emph{transfer function}. 
+        Formally if $f_t$ is a \emph{transfer function}, then $f_t(IN(s))=OUT(s)$.
+        Each type of statement will have a different \emph{transfer function} 
+        that will reflect the semantics of the statement. 
+        
+        \emph{Transfer functions} are often described in the form of inference rules. 
         An example of an inference rule can be 
         ``if the types of expressions $e_1$ and $e_2$ are integers, then the type of 
         expression $e_1+e_2$ is integer''. Those rules can be more formally 
@@ -344,30 +437,212 @@
         the conclusion. The exact notation is not important, we will be using it 
         intuitively to illustrate the ideas that we describe.
         
-        \paragraph{Flow Sensitivity.}
-        The example inference rule is not valid, if we admit that evaluation of 
-        expression $e_1$ can influence the type of expression $e_2$ or vice versa. 
-        In such case, the ordering of the expressions is important, but not captured 
-        in the inference rule. Therefore this rule is \emph{flow insensitive}. If we make 
-        the hypotheses more complex using additional constraints to capture the ordering 
-        and dependency of the expressions, it will be \emph{flow sensitive}.
+        \subsubsection*{Statements Interaction}
         
-        \paragraph{Path Sensitivity.}        
-        If we admit conditional control flow statements, like if-then-else, 
-        we can have more possible paths through the program. In our example, 
-        let us say that there is an if statement before the expression $e_1$
-        and the expression $e_1$ can evaluate to different 
-        type if the then branch of the if-then-else statement is taken than 
-        if the else branch is taken. If the inference rules do not model this, 
-        like our example rule, we say that the inference system is 
-        \emph{path insensitive}, otherwise we say 
-        that it is \emph{path sensitive}.
+        The \emph{data-flow} for \emph{program point before} a statement 
+        depends on the \emph{data-flow} of \emph{program point after} the 
+        last executed statement. Let us consider a basic block $B$ with 
+        statements $s_0, s_1, ..., s_n$.
         
-        \note{TODO: I should do some more reading about path sensitivity, 
-        is this a correct description? Add an example of how such inference rule 
-        would look like?}
+        In the case of any $s_i \neq s_0$, that is any statement but 
+        the first one, there is only one statement whose execution 
+        can precede the execution of $s_i$ and that is the previous statement 
+        in the sequence: $s_{i-1}$. So we have $IN(s_i) = OUT(s_{i-1})$ 
+        for $i\in{[1..n]}$. 
         
-        \paragraph{Abstraction.}
+        In fact, thanks to this property, we can define \emph{transfer function} 
+        $f_B$ of a basic block as composition of transfer functions of 
+        its statements. Formally: 
+        
+        \[ f_B = f_{s_n} \circ f_{s_{(n-1)}} \circ ... f_{s_0} \]
+        
+        where $f_{s_i}$ is the transfer function for statement $s_i$.            
+        Furthermore, we denote \emph{data-flow values} of basic block as 
+        $IN(B)=IN(s_1)$ and $OUT(B)=OUT(s_n)$. From the definitions we can 
+        observe simple identities: 
+        
+        \[ f_B(IN(s_1))=f_B(IN(B))=OUT(B)=OUT(s_n) \]
+        
+        The first statement $s_1$ of the basic block has to be 
+        handled differently. Its execution can be preceded by 
+        execution of the last statement of any of 
+        the basic blocks $B_1, B_2, ..., B_m$ that precede basic block 
+        $B$ in the control flow graph. One of the possibilities to deal with 
+        this, is to combine \emph{data-flows} $OUT(B_1), ..., OUT(B_m)$ into 
+        single \emph{data-flow} that approximates all of them. 
+        Nonetheless, the way the \emph{data-flows} are combined depends 
+        on the concrete \emph{data-flow} type and thus 
+        should be defined by the analysis. We denote the function to 
+        combine \emph{data-flows} as $\mathit{MEET}$. 
+        
+        \subsubsection*{Equations for Data-Flow}
+        
+        If we put everything together, we get a set of equations:
+        \begin{align*}
+            OUT(B_i) &= f_{B_i}(IN(B_i)) \\
+            IN(B_i) &= \mathit{MEET}(OUT(P_0), ..., OUT(P_m)) \\ 
+        \end{align*}
+        where $P_i$ is predecessor of $B_i$ in the control flow graph. 
+        The analysis must also define value of $IN(START)$, that is 
+        \emph{input state} for the initial node, which does not have 
+        any predecessors.
+        
+        \subsubsection*{Example}
+        We will illustrate the system of \emph{data-flow} equations on a 
+        simple example. The subject of our analysis will be the 
+        type of the variable \code{\$i} in the code sample in figure \ref{dfacfg}.
+        
+        \emph{Data-flow} will be a set of possible types of variable $i$ and 
+        initial \emph{data-flow} of the start node will be an empty set.
+
+\begin{table}[h]
+  \begin{tabular}{ l | m{6cm} }
+  \centering
+    \includegraphics[scale=0.7]{img/dfa-cfg.png}
+  &
+ 
+\begin{minipage}{6cm}
+%pygmentize_begin php
+%   $i = 3;
+%   while (foo($i)) {
+%       $i = 3.14;
+%   }
+%   // exit
+%pygmentize_end
+\end{minipage}
+
+  \\
+  \end{tabular}
+  \caption{Code for Data-Flow Example\label{dfacfg}}  
+\end{table}
+
+        \emph{Transfer functions}: we will assume that function call does 
+        not change state, therefore the transfer function of 
+        function call is identity -- $OUT(s)=IN(s)$. Assignment of 
+        a constant \code{c} of type \code{T} to \code{\$i} changes 
+        type of \code{\$i} to \code{T}.
+        
+        \emph{MEET} operation will be union of the sets of 
+        possible types of \code{\$i}.
+        
+        The set of equations is in this case
+        
+        \begin{align*}
+            OUT(B_1) &= f_{B_1}(IN(B_1))=f_B(\emptyset) \,\,\,\,\,\text{(initial node)} \\
+            OUT(B_2) &= f_{B_2}(\mathit{MEET}(OUT(B_1), OUT(B_3))) \\
+            OUT(B_3) &= f_{B_3}(OUT(B_2))     
+        \end{align*}
+        
+        Knowing that $f_{B_1}$ and $f_{B_3}$ are constant functions, because 
+        the assignment changes type of \code{\$i} to \code{T} without taking 
+        the \emph{input data-flow} into account, and $f_{B_2}$ is identity 
+        function, we can simplify the equations to
+
+        \begin{align*}
+            OUT(B_1) &= \left\{ \mathit{Integer} \right\} \\
+            OUT(B_2) &= f_{B_2}(\mathit{MEET}(OUT(B_1), OUT(B_3))) \\
+            OUT(B_3) &= \left\{ \mathit{Double} \right\} \\
+            \\
+            OUT(B_1) &= \left\{ \mathit{Integer} \right\} \\
+            OUT(B_2) &= f_{B_2}( \left\{ \mathit{Integer} \right\} \cup \left\{ \mathit{Double} \right\} ) = 
+                \left\{ \mathit{Integer}, \mathit{Double} \right\} \\
+            OUT(B_3) &= \left\{ \mathit{Double} \right\}
+        \end{align*}
+        
+        With this result we can, for example, check that function \code{foo} 
+        is invoked with correct argument type, because from $IN(B_2)$ we 
+        know that \code{\$i} at the moment of invocation of \code{foo} 
+        can be either of type \code{Integer} or \code{Double}.
+                
+        \subsection{Finding Solution for the Data-flow Equations}
+        
+        \subsubsection*{Lattices.}
+        The algorithm for finding a solution to a set of data-flow 
+        equations is based on algebraic structures called lattices. 
+        A lattice is a partially ordered set in which every 
+        two elements have a least upper bound, called supremum, 
+        and a greatest lower bound, called infimum.
+        
+        \emph{Bounded lattice} is a lattice that has 
+        a greatest element and a least element, 
+        usually denoted as $\top$ and $\bot$. 
+        A bounded lattice is depicted in figure \ref{lattice}.       
+        
+\begin{figure}[h]  
+  \centering
+    \includegraphics{img/lattice.pdf}
+  \caption{Bounded lattice with 5 elements.\label{lattice}}    
+\end{figure}
+
+        There are several properties of lattices important for DFA.
+        
+        If we have a finite bounded lattice $(S, \leq_{s})$ and a function 
+        $f:S\rightarrow{S}$ that is monotonous, in order words, 
+        $\forall{a,b\in{S}}: a\leq_s{b} \Rightarrow f(a)\leq_s{f(b)}$, 
+        then $\forall{x\in{S}}$ $\exists{k\in\mathbb{N}}$, such that 
+        $f^k(x)=f^{(k+1)}(x)$. $f^k(x)$ is called a fixpoint.
+        
+        Intuitively, $f$ has to have a fixpoint because 
+        for every argument $y$, it must either return 
+        $y$ itself, but then $y$ is a fixpoint, or it 
+        returns another element that is strictly 
+        greater than $y$, but this cannot go on forever, because eventually 
+        $f$ will be given $\top$ for which it does not have 
+        any other option but returning $\top$ and we 
+        have a fixpoint again.
+        
+        From this property further follows that if we use finite 
+        lattice's elements as a domain for transfer functions, 
+        and the transfer functions are monotonous, then the set of 
+        data-flow equations has a solution, which is a safe 
+        approximation of the, in a sense, best solution to the 
+        data flow problem. Details can be found in \cite{kildall1973unified}.
+        
+        Product lattice obtained from two or more lattices 
+        is also a lattice, which can simplify the design of 
+        data flow analyses.        
+
+        \subsubsection*{The Iterative Algorithm}
+        
+        The algorithm to find the solution to the data-flow equations 
+        initially sets $OUT(B_i)$ for every basic block to the initial 
+        \emph{data-flow}, which should be the lowest element of the lattice. 
+        Then it iteratively takes a basic block $B_j$ such that 
+        its input \emph{data-flow} $IN(B_j)$ has changed or is not 
+        initialized yet and computes $OUT(B_j)$, which might change 
+        the input \emph{data-flow} of the ancestors of $B_j$. 
+        The process is repeated until a the system stabilizes. 
+        
+        The algorithm can take basic blocks in any order, however, 
+        the reverse post order provides the best time complexity 
+        \cite{aho1985compilers}.
+        
+        \subsubsection*{Bit Vectors as Data-flow Representation}
+
+        The performance of the algorithm also depends on the implementation 
+        of \emph{data-flow}, the $\textit{MEET}$ operations and the transfer 
+        functions. 
+        
+        \emph{Data-flow} often represents a subset of a set of possible values 
+        and the $\textit{MEET}$ operation is either union or intersection.
+        For example, subset of all possible types of a variable. 
+        Furthermore, we want to calculate the information for all 
+        variables not only for one. If we know the number of variables $n$ and 
+        types $m$ in advance, we can represent the \emph{data-flow} as 
+        a bit-vector where groups of $m$ bits represent a data of 
+        single variable and within those bits, value of bit with 
+        index $i$ indicates whether the type with index $i$ is in the set. 
+        Union or intersection can be implemented using fast bitwise operations.
+
+
+        % -----------------------------------------------------------------------
+        \subsection{Abstraction}
+        \note{data-flow value for program point: an abstraction of the set of all possible program 
+            states that can be observed for that point. Motivation for abstraction.}
+            
+        \note{TODO: convert the inference rules to rules with program state 
+        and statement on the right side of the line.}
+        
         Another example of problem that can be partly solved with static analysis 
         is the sign of integral variables. We can have inference rules of the 
         following form.
@@ -413,101 +688,12 @@
         $$
         \infer{\vdash v_1+v_2 : \top}
         {\vdash v_1 : \ominus & \vdash v_2 : \top}
-        $$               
-    
-        \subsection{Data Flow Analysis}
-        Data Flow Analysis (DFA) is a static analysis framework 
-        for compiler optimizations and verification that 
-        scales to large code bases 
-        \cite{nielson1999principles}, \cite{aho1985compilers}.
-        
-        \paragraph{Control Flow Graph.} 
-        DFA is typically performed on a control flow graph, 
-        although there are exist approaches to DFA 
-        without explicit control flow graph 
-        construction \cite{mohnen2002graph}.
-        
-        Control flow graph nodes, also called basic blocks, 
-        are program statements that are always sequentially executed. 
-        Directed edges represent the control flow between basic blocks, 
-        for example, jumps in the control flow due to conditionals, 
-        \code{goto} statements or any other statements that can change 
-        the flow of the program.        
-        Control flow graphs usually contain two special nodes: 
-        entry node and exit node. The entry node does not have any 
-        incoming edges and all the paths lead to the exit node.        
-        An example of a control flow graph is given in figure \ref{cfg}.
-        
-\begin{table}[h]
-  \begin{tabular}{ l | m{6cm} }
-  \centering
-    \includegraphics[scale=0.7]{img/cfg.png}
-  &
- 
-\begin{minipage}{6cm}
-%pygmentize_begin php
-%   echo 'entry';
-%   if ($x == 3)
-%       $y = 4;
-%   else
-%       return 5;
-%        
-%   while ($y < 7) {
-%       echo $y;
-%       $y++;
-%   }
-%
-%   return 3;
-%pygmentize_end
-\end{minipage}
+        $$
 
-  \\
-  \end{tabular}
-  \caption{Control flow graph\label{cfg}}  
-\end{table}          
-        
-        \paragraph*{Lattices.}
-        The reasoning behind correctness and termination of DFA 
-        is based on an algebraic structures called lattices. 
-        A lattice is a partially ordered set in which every 
-        two elements have a least upper bound, called supremum, 
-        and a greatest lower bound, called infimum.
-        
-        \emph{Bounded lattice} is a lattice that has 
-        a greatest element and a least element, 
-        usually denoted as $\top$ and $\bot$. 
-        A bounded lattice is depicted in figure \ref{lattice}.       
-        
-\begin{figure}[h]  
-  \centering
-    \includegraphics{img/lattice.pdf}
-  \caption{Bounded lattice with 5 elements.\label{lattice}}    
-\end{figure}
+        \note{Mention beta and gamma functions formalism for abstractions}
+           
 
-        What is important about lattices for 
-        DFA analysis is that if we have a 
-        bounded lattice $(S, \leq_{s})$ and a function 
-        $f:S\rightarrow{S}$ that is monotonous, 
-        i.e. $\forall{a,b\in{S}}: a\leq_s{b} \Rightarrow f(a)\leq_s{f(b)}$, 
-        then $\forall{x\in{S}}$ $\exists{k\in\mathbb{N}}$, such that 
-        $f^k(x)=f^{(k+1)}(x)$. $f^k(x)$ is called a fixpoint.
-        
-        \note{Informal intuitive proof}
-        %Intuitively, $f$ has to have a fixpoint because 
-        %for every argument $y$, it must either return 
-        %$y$ itself, but then $y$ is a fixpoint, or it 
-        %returns another element that is strictly 
-        %greater than $y$, 
-        %but this cannot go on forever, because eventually 
-        %$f$ will be given $\top$ for which it does not have 
-        %any other option but returning $\top$ and we 
-        %have a fixpoint again.
-        
-        
-        \paragraph*{}
-        \note{The following few paragraphs will finish the description 
-        of Data Flow Analysis.}
-
+        % ----------------------------------------------------------------------
         \subsection{Intraprocedural Analysis}
         So far we have been discussing an analysis of a 
         single function or method\footnote{We will use term 
@@ -527,6 +713,8 @@
         yielding another gain in precision when 
         analysing the function that realises the call.
         
+        \paragraph{TODO: Region Based Analysis.}
+        
         \paragraph*{}
         \note{The following few paragraphs will discuss 
         feasibility of Context Sensitive Intraprocedural Analysis, 
@@ -535,6 +723,7 @@
         make Context Sensitive Intraprocedural Analysis 
         more scalable.}
     
+    % ----------------------------------------------------------------------------
     \section{Control Flow for Phalanger Approach}
         \note{Description of the analysis used in our case using the terminology 
         built up in the previous section. It will be more 
