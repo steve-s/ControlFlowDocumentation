@@ -8,7 +8,8 @@
     it should also provide public interface useful for the 
     Phalanger PHP Visual Studio tools.
     
-    \paragraph{Abstract Syntax Tree.} Phalanger front-end parses PHP code 
+    \subsubsection*{Abstract Syntax Tree}     
+    Phalanger front-end parses PHP code 
     into an Abstract Syntax Tree (AST) \cite{aho1985compilers} structure. 
     This structure is then traversed by the back-end using the 
     visitor design pattern \cite{gamma1994design}. Phalanger does not 
@@ -31,7 +32,7 @@
     with any additional information, which in our case will be 
     the results of the analyses.    
     
-    \paragraph{Integrated Development Environment Integration.}
+    \subsubsection*{Integrated Development Environment Integration}
     The PHP Tools for Visual Studio use Phalanger front-end in order to 
     parse PHP code into AST and then the AST is again traversed to provide 
     code completion and other features. All the AST nodes hold necessary 
@@ -88,7 +89,7 @@
     \caption{Control Flow for Phalanger Design Overview\label{overalldiagram}}
 \end{figure}    
 
-    \subparagraph*{Intermediate Language.}
+    \subsubsection*{Intermediate Language}
     One of the goals of the design was to stay as close as possible 
     to the original AST representation, so that results of an 
     analysis can be easily propagated to an IDE and that the 
@@ -129,7 +130,7 @@
     analyses results can be improved by iterative execution 
     of the analyses.
     
-    \subparagraph*{Analyses.}
+    \subsubsection*{Analyses}
     The Data Flow Analysis is performed on Control Flow Graph 
     nodes called basic blocks. Each basic block contains 
     a list of Abstract Syntax Tree elements. This list is 
@@ -159,7 +160,7 @@
     to add custom analyses that are performed on the raw 
     Control Flow Graph.
     
-    \subparagraph*{Analyses Results.}
+    \subsubsection*{Analyses Results}
     The results of an analysis can be annotations added 
     to the AST node objects, or annotations of basic blocks, 
     which support extensible attributes in the same way as 
@@ -173,7 +174,7 @@
     but also which parameters are passed by reference or 
     whether the function returns a reference.
     
-    \subparagraph*{Type Tables.} This module provides 
+    \subsubsection*{Type Tables} This module provides 
     almost the same information about routines, types, 
     global variables and constants as Code Tables. 
     However, in this case the information 
@@ -183,7 +184,7 @@
     but it also gives a possibility to merge the information 
     of two or more conditionally declared elements. 
     
-    \subparagraph*{Extensibility.}
+    \subsubsection*{Extensibility}
     The whole project is designed as a class library and 
     framework with many extension points. Some of the 
     functionality can be used independently. For example, 
