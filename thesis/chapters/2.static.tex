@@ -427,11 +427,12 @@
         
         \emph{Transfer functions} are often described in the form of inference rules. 
         An example of an inference rule can be 
-        ``if the types of expressions $e_1$ and $e_2$ are integers, then the type of 
-        expression $e_1+e_2$ is integer''. Those rules can be more formally 
-        described with the following notation        
+        ``if the type of variable \code{b} is \code{Integer} in state $S_1$, 
+        then after executing statement \code{a=b}, we get a new state $S_2$ that 
+        is the same as $S_2$ except variable \code{a} is of type \code{Integer} in $S_2$''. 
+        Those rules can be more formally described with the following notation        
         $$
-        \infer{\vdash e_1+e_2 : Integer}{\vdash e_1 : Integer & \vdash e_2 : Integer}
+        \infer{[a=b, S_1] \rightarrow S_2, S_2 \vdash a : Integer}{S_1 \vdash b : Integer}
         $$        
         where above the horizontal line we have hypothesis and below is 
         the conclusion. The exact notation is not important, we will be using it 
@@ -600,7 +601,11 @@
         
         Product lattice obtained from two or more lattices 
         is also a lattice, which can simplify the design of 
-        data flow analyses.        
+        data flow analyses.
+
+        Power set $\mathcal{P}(S)$, the set of all subsets of $S$, 
+        is also a lattice, the lattice order relation 
+        being subset relation $\subseteq$.
 
         \subsubsection*{The Iterative Algorithm}
         
@@ -637,26 +642,27 @@
 
         % -----------------------------------------------------------------------
         \subsection{Abstraction}
-        \note{data-flow value for program point: an abstraction of the set of all possible program 
-            states that can be observed for that point. Motivation for abstraction.}
-            
-        \note{TODO: convert the inference rules to rules with program state 
-        and statement on the right side of the line.}
         
-        Another example of problem that can be partly solved with static analysis 
-        is the sign of integral variables. We can have inference rules of the 
-        following form.
+        The \emph{data-flow} value for program point is typically an abstraction 
+        of some property of the set of all possible program states that can be 
+        observed during real execution for that program point. 
+        
+        Abstracting the desired property is often important in order to make 
+        the analysis practical or even feasible. Let us consider an analysis 
+        that should determine a sign of integral variables at each program point.
+        We can have inference rules of the following form.
+        
         $$
-        \infer{\vdash v_1+v_2 : -7 (sign: \ominus)}
-        {\vdash v_1 : -10 (sign: \ominus) & \vdash v_2 : 3 (sign: \oplus)}
+        \infer{[v_3=v_1+v_2, S_1] \rightarrow S_2, S_2 \vdash v_3 : -7 (sign: \ominus)}
+        {S_1 \vdash v_1 : -10 (sign: \ominus) & S_1 \vdash v_2 : 3 (sign: \oplus)}
         $$
-        However, the implementation would not be very efficient and we sometimes 
-        do not have the full information about variables values, but in some cases 
+        
+        However, the implementation would not be very efficient and also the full 
+        information about variables values is not always available, but in some cases 
         we can deduce another less precise, but still useful piece of information 
-        by other means. For example, variable of 
-        type \code{unsigned integer} will always be positive, we can count on that 
-        even if we do not know the actual value. What we 
-        can do is to abstract the possible integral values with set 
+        by other means. For example, variable of type \code{unsigned integer} will 
+        always be positive, we can count on that even if we do not know the actual value. 
+        What we can do is to abstract the possible integral values with set 
         $\{0, \ominus, \oplus\}$ with the following meanings         
         \begin{itemize}
             \item $\ominus$ represents all negative integers,
@@ -664,64 +670,154 @@
             \item $0$ represents zero,
         \end{itemize}                
         and rewrite the inference rules as follows:
+        
         $$
-        \infer{\vdash v_1+v_2 : \ominus}
-        {\vdash v_1 : \ominus & \vdash v_2 : \ominus}
+        \infer{[v_3=v_1+v_2, S_1] \rightarrow S_2, S_2 \vdash v_3 : \ominus}
+        {S_1 \vdash v_1 : \ominus & S_1 \vdash v_2 : \ominus}
         $$
+        
         Nonetheless, there is another problem. What to do when we have $\ominus$ 
         and $\oplus$ in the hypothesis.
+        
         $$
-        \infer{\vdash v_1+v_2 : ?}
-        {\vdash v_1 : \ominus & \vdash v_2 : \oplus}
+        \infer{[v_3=v_1+v_2, S_1] \rightarrow S_2, S_2 \vdash v_3 : ?}
+        {S_1 \vdash v_1 : \ominus & S_1 \vdash v_2 : \oplus}
         $$
+        
         The solution is to extend the domain so that it is closed under all operations. 
         We add another element to our set:
         \begin{itemize}
             \item $\top$ represents an unknown value (either positive, negative, or zero).
         \end{itemize}
         Then the rule will be:
+        
         $$
-        \infer{\vdash v_1+v_2 : \top}
-        {\vdash v_1 : \ominus & \vdash v_2 : \oplus}
-        $$
+        \infer{[v_3=v_1+v_2, S_1] \rightarrow S_2, S_2 \vdash v_3 : \top}
+        {S_1 \vdash v_1 : \ominus & S_1 \vdash v_2 : \oplus}
+        $$        
+        
         And for example another rule dealing with $\top$ in hypothesis:
         $$
-        \infer{\vdash v_1+v_2 : \top}
-        {\vdash v_1 : \ominus & \vdash v_2 : \top}
+        \infer{[v_3=v_1+v_2, S_1] \rightarrow S_2, S_2 \vdash v_3 : \top}
+        {S_1 \vdash v_1 : \ominus & S_1 \vdash v_2 : \top}
         $$
+        
+        It is no surprise that we used symbol $\top$, which is also used to denote the 
+        greatest element in a lattice. By adding $\bot$, the least element, and inference 
+        rules for it, we can get a lattice depicted in \ref{lattice} and use 
+        this abstraction as \emph{data-flow} value.
+        
+        \subsubsection*{Formalization}
 
-        \note{Mention beta and gamma functions formalism for abstractions}
-           
+        There is a theoretical framework for designing sound and correct 
+        abstractions. In a nutshell, an abstraction following this framework 
+        has to include: 
+        
+        \begin{itemize*}
+            \item concrete domain $C$, which has to be a lattice ,
+            \item abstract domain $A$, which has to be a finite lattice,
+            \item concretization function $\gamma{}:A\mapsto{}C$,
+            \item abstraction function $\alpha{}:C\mapsto{}A$,
+        \end{itemize*}
+        
+        In our case the concrete domain could be the power set of all 
+        possible integral values, which is a lattice, and the abstract 
+        domain with elements $\{0, \ominus, \oplus\, \top, \bot\}$ was 
+        described above. The $\gamma$ and $\alpha$ functions map values 
+        from one domain to another. When we map elements of concrete domain 
+        to the abstract domain, we loose precision due to abstraction. 
+        Let us provide few examples, instead of a formal definition 
+        of $\gamma$ and $\alpha$.
+        
+        \begin{align*}
+            \begin{split}
+                \gamma{}(\oplus) &= \left\{1, 2, 3, ...\right\} \\
+                \gamma{}(\top) &= \top = \left\{..., -2, 1, 0, 1, 2, ...\right\} \\
+            \end{split}
+            \begin{split}
+                \alpha{}(\left\{3, 4, 5\right\}) &= \oplus \\ 
+                \alpha{}(\left\{3, -4\right\}) &= \top \\
+            \end{split}
+        \end{align*}
+        
+        The framework for abstract interpretation further defines 
+        necessary conditions for the $\gamma$ and $\alpha$ functions 
+        and conditions for the \emph{transfer functions} with respect 
+        to $\gamma$ and $\alpha$ mapping. Details and other 
+        static analysis methods based on abstract interpretation 
+        framework can be found in \cite{cousot1977abstract}, 
+        \cite{Cousot2000abstract}.
 
         % ----------------------------------------------------------------------
         \subsection{Intraprocedural Analysis}
-        So far we have been discussing an analysis of a 
-        single function or method\footnote{We will use term 
+        
+        So far we have been discussing an analysis of a single function 
+        or a method \footnote{We will use term 
         routine to designate a global function, static or instance method}. 
         However, if we want to analyse whole program or 
         a library, the interaction between the routines 
-        can be taken into account to make it more precise.
+        must be taken into account.
         
-        \paragraph{Context Sensitive Intraprocedural Analysis.}
-        The most precise solution would be to take into account 
-        the calling context when analysing a function. 
-        In different contexts, the function can be, 
-        for example, given different parameters values 
-        which may then influence the result of the analysis. 
-        More precise result for a specific call site context 
-        can be propagated to that call site, 
-        yielding another gain in precision when 
-        analysing the function that realises the call.
+        Straight forward approach is to regard other routines as 
+        black boxes and assume the worst with respect to how a 
+        routine call can change the program state. Nonetheless, 
+        in practical programming language with references, or pointers,  
+        pass-by-reference arguments, lambda functions with 
+        capture by reference, and other caveats, an innocent 
+        routine call can theoretically do almost anything to 
+        the program state even from the local point of view 
+        of the function we are analysing.
+                
+        \subsubsection*{Context Sensitive Intraprocedural Analysis}
         
-        \paragraph{TODO: Region Based Analysis.}
+        The most precise solution is to analyse a function, 
+        say \code{foo}, for each possible calling context. 
+        In other words, re-analyse \code{foo}'s body every 
+        time we encounter its invocation when analysing another 
+        function, and use the program state before 
+        the invocation of \code{foo} as an initial state 
+        for the re-analysis of \code{foo}.
         
-        \paragraph*{}
-        \note{The following few paragraphs will discuss 
-        feasibility of Context Sensitive Intraprocedural Analysis, 
-        because call sites are not always known, 
-        practical consequences and usual approaches to 
-        make Context Sensitive Intraprocedural Analysis 
-        more scalable.}
+        Caching of the results of analysis based on 
+        the calling context, so that we do not re-analyse it 
+        if the context is the same as some context previously 
+        encountered, is possible. However, in the most generic 
+        form, it is difficult to asses the equality of 
+        program states, because the context consists not only 
+        of arguments passed to the function, but also the 
+        global state including the heap.
+        
+        Another problem, which makes fully context sensitive 
+        approach impractical or even impossible, is polymorphism 
+        or dynamic invocation of routines in general, be it 
+        lambda functions, virtual methods, reflection, 
+        or any other means. It is not known statically what 
+        function will be invoked and thus what function to analyse. 
+        The call site can be determined by the analysis itself, 
+        but in general it cannot be guaranteed.
+        
+        \subsubsection*{Heap Abstractions}
+        
+        The researchers have proposed several approaches to representation 
+        of heap data in an abstract way in order to minimize memory 
+        requirements and provide fast algorithms to check two heap abstractions 
+        for equality or isomorphism. A sound and useful definition of heaps 
+        isomorphism is also a problematic task by itself. The paper 
+        \cite{kanvar2014heap} provides a survey on the heap 
+        abstraction models.
+        
+        \subsubsection*{Region Based Analysis}
+        
+        Another approach is to analyse a routine once in a 
+        generic context setting and create a \emph{transfer function} 
+        that summarizes the effects of the routine call to the 
+        program state \cite{aho1985compilers}. However, in practical setting, 
+        we need to decide how to derive the \emph{transfer function} and how to 
+        represent it. A constant \emph{transfer function} that always 
+        returns the $\top$, in other words, the worst assumption about 
+        the program state, is always safe \emph{transfer function} 
+        for any routine call, but we have not gained anything over 
+        the naive solution from the beginning of this section.
     
     % ----------------------------------------------------------------------------
     \section{Control Flow for Phalanger Approach}
@@ -731,6 +827,9 @@
         about implementation.}
         
         \begin{itemize*}
+            \item Precise analysis only for local variables $\rightarrow$ compiler optimizations,
+            \item Arrays unsupported,
+            \item objects fields, global variables, static fields $\rightarrow$ no way to analyse precisely anyway,
             \item Modular approach that comes from assumption that 
                 reasonably written PHP code will be close or equivalent to 
                 statically typed code: (Aggressive Type Inference, by John Aycock: giving people 
