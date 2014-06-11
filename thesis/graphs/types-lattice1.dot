@@ -1,0 +1,20 @@
+            digraph flow {
+                node[shape=box]
+                graph[rankdir="BT",splines=line];
+                edge[headport=s, tailport=n];
+
+                uninit [label="Uninitialized"];
+                intnull [label="{int, null}"];
+                intfalse [label="{int, false}"];
+                falsenull [label="{false, null}"];
+                intfalsenull [label="{int, false, null}"];
+                any [label="Any"];
+
+                uninit -> false -> intfalse -> intfalsenull -> any;
+                uninit -> int -> intnull -> intfalsenull;
+                uninit -> null -> intnull;
+                false -> falsenull -> intfalsenull;
+                null -> falsenull;
+                int -> intfalse;                
+            }
+        

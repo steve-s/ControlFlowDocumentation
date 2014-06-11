@@ -3,7 +3,7 @@
 \chapter{Analysing PHP Code}
 
     The PHP programming language first appeared in 1995\cite{phphist}. Over the years 
-    the language has evolved and so have the ways how programmers use it. 
+    the language has evolved and so have the ways programmers use it. 
     This project focuses on PHP version 5.5\footnote{From this point, 
     if the PHP version is not stated explicitly, it is implicitly 5.5.} 
     and the aim for the analysis 
@@ -14,12 +14,25 @@
     PHP libraries and frameworks that by themselves do not contain 
     any PHP files that produce HTML or any other output for the user.
     
-    \section{PHP semantics}
-    This section describes some important parts of the semantics of 
-    the PHP programming language, especially those that represent a 
-    challenge for static analysis.
+    The following section PHP Semantics describes some important parts 
+    of the semantics of the PHP programming language, especially those 
+    that represent a challenge for static analysis.
+
+    Section Static Code Analysis gives a brief overview of existing 
+    static analysis methods, especially Data Flow Analysis 
+    (DFA)\cite{aho1985compilers}\cite{nielson1999principles}, 
+    which has become a de-facto standard type of analysis for most of 
+    the optimizing compilers and other more complex static analysis methods 
+    are either directly based on DFA or on the ideas behind DFA. 
+    This section includes references to relevant literature and 
+    is not meant as a comprehensive description, but should provide a 
+    context for the following section Control Flow for Phalanger Approach, 
+    where we discuss how we used the existing techniques for the purposes 
+    of our PHP code analysis.
     
-    \subparagraph*{}    
+    \section{PHP Semantics}
+
+    \subsection{Dynamic Typing}
     In PHP, local or global variables, object fields and function or 
     method parameters are dynamically typed, which means that they 
     can hold values of completely different types at different 
@@ -130,7 +143,7 @@
     the value of \code{\$a} is used (e.g. in an expression), 
     the value of \code{\$b} is used instead.
     
-    The variable where the reference is pointing to is determined 
+    The variable the reference is pointing to is determined 
     in a transitive fashion, which means that if we assign 
     by reference another reference, the new reference will 
     point to where the other reference was pointing to, 
@@ -171,7 +184,7 @@
     \subsection{Interesting Control Flow Structures}
     The \code{break} and \code{continue} statements with 
     optional numeric argument are supported in PHP in a 
-    similar way as in other standard imperative programming 
+    similar way as in other imperative programming 
     languages. There are, however, important differences 
     to be noted.
     
@@ -190,7 +203,7 @@
     is perhaps not so intuitive: within a \code{switch} 
     it works the same way as \code{break}.
     
-    \subparagraph*{Switch Statement Semantics.} 
+    \subsubsection*{Switch Statement Semantics} 
     The basic semantics of the \code{switch} statement in PHP is 
     again very similar to that of other standard imperative 
     programming languages. The \code{switch} statement in PHP 
@@ -199,14 +212,14 @@
     the values of \code{case} labels can also be arbitrary 
     expressions and because we are in a context of dynamic 
     programming language, they can again evaluate to a value 
-    of any type.
+    of any type at runtime.
     
-    At runtime, the switch expression is evaluated only once 
+    The switch expression is evaluated only once 
     at the beginning, and if it has an undefined value (undefined variable, 
     void function call), then the control flow goes directly 
     to the default item, without evaluating the expressions 
     in the case items. If the value is defined, then it is 
-    one by one compared to the values that the 
+    one-by-one compared to the values that the 
     \code{case} labels evaluate to. If a \code{case} label evaluates 
     to \code{boolean} value, then it is used to decide whether to 
     jump to that \code{case} item or continue with evaluating 
@@ -220,7 +233,7 @@
     have side effects due to usage of assignments as expressions 
     or calls of functions with side effects. 
     
-    PHP also allows to place the \code{default} label anywhere in between 
+    PHP also permits placing the \code{default} label anywhere in between 
     the other \code{case} labels. This can be used for fall-back 
     to or from a \code{case} item as in the following code sample 
     that is abbreviated version of actual code taken from the 
@@ -274,11 +287,11 @@
     WordPress still relies on this pattern in parts of its code base.
     
     Although the mentioned pattern could be deemed as 
-    reasonable and useful. This feature allows 
-    to write very problematic code as in the following example 
-    that may or may not crash on fatal errors ``Cannot 
-    redeclare foo()'' or ``Call to undefined function foo()'' 
-    depending upon the user input.
+    reasonable and useful. This feature permits very problematic 
+    code as in the following example that may or may not 
+    crash on fatal errors ``Cannot redeclare foo()'' or 
+    ``Call to undefined function foo()'' depending upon 
+    the user input.
     
 %pygmentize_begin php
 %while ($_POST['a'] != 3) {
@@ -297,10 +310,10 @@
     
                 
     \subsection{Auto-loading}
-    Historically, in PHP in order to reference any symbol 
+    Historically, in PHP, in order to reference any symbol 
     from a different file, one had to import that 
     file explicitly. Newer versions of PHP support  
-    customized auto-loading. A used defined routine 
+    customized auto-loading. A user defined routine 
     can be invoked by the runtime every time an 
     undefined class is referenced. 
     The auto-loading routine is then responsible for 
@@ -369,20 +382,12 @@
         Static analysis can be used to get possible types of an expression in 
         a dynamically typed language, to find out expressions that have constant 
         value through constant propagation and many other problems. 
-        Static analyses usually do not give accurate solution, but 
-        its approximation, which can be an over-approximation or 
-        an under-approximation and it is up to the designer and user of the analysis 
-        which one is acceptable for his or her\footnote{``His'' or ``he'' 
+        Static analyses usually do not give accurate solution, it is an approximation, 
+        which can be an over-approximation or an under-approximation and it is up 
+        to the designer and user of the analysis which one is acceptable for 
+        his or her\footnote{``His'' or ``he'' 
         should be read as ``his or her'' or ``he or she'' through the rest of the text.} 
         purposes.
-
-        Data Flow Analysis (DFA)\cite{aho1985compilers}, \cite{nielson1999principles} has 
-        become a de-facto standard type of analysis for most of the optimizing compilers and 
-        other more complex static analyses are either directly based on DFA or on 
-        the ideas behind DFA. DFA is also used in Control Flow for Phalanger. 
-        In the rest of this section, we provide brief description of 
-        firstly DFA in general and then how we have leveraged DFA for 
-        the purposes of PHP code analysis.
         
         %---------------------------------------------------------------------------------------
         \subsection{Program State}
@@ -489,6 +494,20 @@
         Each type of statement will have a different \emph{transfer function} 
         that will reflect the semantics of the statement. 
         
+        Example: our analysis tracks type of local variables, so the \emph{data-flow} 
+        is a map from variable names to their type. In such setting, a \emph{transfer function} 
+        for assignment statement \code{\$a=\$b}, will take the input \emph{data-flow} 
+        $flow_{in}$ and will return $flow_{out}$, such that $flow_{out}(x)=flow_{in}(x)$ for 
+        every variable name $x$, except for $flow_{out}(\$a)=flow_{in}(\$b)$. In other words, 
+        the type of all the variables stays the same, except for \code{\$a} whose type 
+        changes to whatever is the type of \code{\$b} is. 
+        
+        In practice, there is only one \emph{transfer function} for all the assignment 
+        statements that is parametrized by the left-hand side and right-hand side of 
+        the assignment. And in general, each statement in the programming language has 
+        usually its ``meta'' \emph{transfer function} that is parametrized not only 
+        by the input \emph{data-flow}, but by the statement structure.
+        
         \emph{Transfer functions} are often described in the form of inference rules. 
         An example of an inference rule can be 
         ``if the type of variable \code{b} is \code{Integer} in state $S_1$, 
@@ -502,7 +521,7 @@
         the conclusion. The exact notation is not important, we will be using it 
         intuitively to illustrate the ideas that we describe.
         
-        \subsubsection*{Statements Interaction}
+        \subsubsection*{Statement Interaction}
         
         The \emph{data-flow} for \emph{program point before} a statement 
         depends on the \emph{data-flow} of \emph{program point after} the 
@@ -542,15 +561,15 @@
         
         \subsubsection*{Equations for Data-Flow}
         
-        If we put everything together, we get a set of equations:
+        When we put everything together, we get a set of equations:
         \begin{align*}
             OUT(B_i) &= f_{B_i}(IN(B_i)) \\
             IN(B_i) &= \mathit{MEET}(OUT(P_0), ..., OUT(P_m)) \\ 
         \end{align*}
-        where $P_i$ is predecessor of $B_i$ in the control flow graph. 
-        The analysis must also define value of $IN(START)$, that is 
-        \emph{input state} for the initial node, which does not have 
-        any predecessors.
+        where $P_0, ..., P_m$ are predecessors of $B_i$ in the 
+        control flow graph. The analysis must also define value 
+        of $IN(START)$, that is \emph{input state} for the 
+        initial node, which does not have any predecessors.
         
         \subsubsection*{Example}
         We will illustrate the system of \emph{data-flow} equations on a 
@@ -588,7 +607,7 @@
   \caption{Code for Data-Flow Example\label{dfacfg}}  
 \end{table}
 
-        \emph{Transfer functions}: we will assume that function call does 
+        \emph{Transfer functions}: we will assume that a function call does 
         not change state, therefore the transfer function of 
         function call is identity -- $OUT(s)=IN(s)$. Assignment of 
         a constant \code{c} of type \code{T} to \code{\$i} changes 
@@ -633,7 +652,9 @@
         equations is based on algebraic structures called lattices. 
         A lattice is a partially ordered set in which every 
         two elements have a least upper bound, called supremum, 
-        and a greatest lower bound, called infimum.
+        and a greatest lower bound, called infimum. If $a$ and 
+        $b$ are elements of a lattice, we denote their least upper 
+        bound as $a\wedge{}b$.
         
         \emph{Bounded lattice} is a lattice that has 
         a greatest element and a least element, 
@@ -663,7 +684,7 @@
         any other option but returning $\top$ and we 
         have a fixpoint again.
         
-        From this property further follows that if we use finite 
+        From this property further follows that if we use a finite 
         lattice's elements as a domain for transfer functions, 
         and the transfer functions are monotonous, then the set of 
         data-flow equations has a solution, which is a safe 
@@ -690,7 +711,7 @@
         The process is repeated until a the system stabilizes. 
         
         The algorithm can take basic blocks in any order, however, 
-        the reverse post order provides the best time complexity 
+        the \emph{reverse post order} provides the best time complexity 
         \cite{aho1985compilers}.
         
         \subsubsection*{Bit Vectors as Data-flow Representation}
@@ -701,7 +722,7 @@
         
         \emph{Data-flow} often represents a subset of a set of possible values 
         and the $\textit{MEET}$ operation is either union or intersection.
-        For example, subset of all possible types of a variable. 
+        For example, a subset of all possible types of a variable. 
         Furthermore, we want to calculate the information for all 
         variables not only for one. If we know the number of variables $n$ and 
         types $m$ in advance, we can represent the \emph{data-flow} as 
@@ -720,7 +741,7 @@
         
         Abstracting the desired property is often important in order to make 
         the analysis practical or even feasible. Let us consider an analysis 
-        that should determine a sign of integral variables at each program point.
+        that should determine the sign of integral variables at each program point.
         We can have inference rules of the following form.
         
         $$
@@ -825,11 +846,11 @@
         So far we have been discussing an analysis of a single function 
         or a method \footnote{We will use term 
         routine to designate a global function, static or instance method}. 
-        However, if we want to analyse whole program or 
+        However, if we want to analyse a whole program or 
         a library, the interaction between the routines 
         must be taken into account.
         
-        Straight forward approach is to regard other routines as 
+        A straight forward approach is to regard other routines as 
         black boxes and assume the worst with respect to how a 
         routine call can change the program state. Nonetheless, 
         in practical programming language with references, or pointers,  
@@ -853,7 +874,7 @@
         the calling context, so that we do not re-analyse it 
         if the context is the same as some context previously 
         encountered, is possible. However, in the most generic 
-        form, it is difficult to asses the equality of 
+        form, it is impossible to asses the equality of 
         program states, because the context consists not only 
         of arguments passed to the function, but also the 
         global state including the heap.
@@ -869,12 +890,24 @@
         
         \subsubsection*{Heap Abstractions}
         
-        The researchers have proposed several approaches to representation 
-        of heap data in an abstract way in order to minimize memory 
-        requirements and provide fast algorithms to check two heap abstractions 
-        for equality or isomorphism. A sound and useful definition of heaps 
-        isomorphism is also a problematic task by itself. The paper 
-        \cite{kanvar2014heap} provides a survey on the heap 
+        When a routine takes a pointer or reference to some object 
+        on the heap as an argument, it can traverse to other 
+        objects on the heap and change their state. Let alone low-level 
+        languages that allow direct manipulation with the memory and 
+        can therefore change anything in the heap. 
+        
+        The heap can be important part of the program state for 
+        some kinds of analyses. If we want to take the heap state 
+        into the consideration during the analysis, we need an 
+        abstraction for the heap to make the approach feasible 
+        in practice.
+        
+        Researchers have proposed several approaches to representation 
+        of heap data in an abstract way to minimize memory requirements 
+        and provide fast algorithms to check two heap abstractions 
+        for equality or isomorphism. A sound and useful definition 
+        of heaps isomorphism is also a problematic task by itself. 
+        The paper \cite{kanvar2014heap} provides a survey on the heap 
         abstraction models.
         
         \subsubsection*{Region Based Analysis}
@@ -889,13 +922,222 @@
         the program state, is always safe \emph{transfer function} 
         for any routine call, but we have not gained anything over 
         the naive solution from the beginning of this section.
+        
+        In the case of Control Flow for Phalanger, we used 
+        a variant of a region based analysis. Details are 
+        discussed in the following \wsection{}.
     
     % ----------------------------------------------------------------------------
     \section{Control Flow for Phalanger Approach}
-        \note{Description of the analysis used in our case using the terminology 
-        built up in the previous section. It will be more 
-        abstract description, without technical details 
-        about implementation.}
+        
+        \subsection{Overview}
+        
+        The analysis for the type inference in Control Flow for 
+        Phalanger is based on the generic Data-flow framework. 
+        The questions that have to be answered, in order to 
+        implement such analysis, include:
+        
+        \begin{itemize*}
+            \item how the results of the analysis will be represented,
+            \item what the \emph{data-flow} values will be, 
+            \item what data structures will be used to represent them efficiently, 
+            \item how to deal with routines calls and their effects to the program state.
+        \end{itemize*}
+        
+        The approach taken in Control Flow for Phalanger is based on an 
+        observation that even when developers are given a dynamically typed 
+        programming language, it does not mean that they will write 
+        dynamically typed programs. Empirical evidence for this 
+        observation was presented in \cite{walker1996type}. 
+        
+        We are therefore assuming that large part of the analysed 
+        code corresponds to a statically typed code one-to-one, 
+        it only does not include the type information. However, 
+        we do not want to ignore the dynamic typing completely.
+
+        Another decision we made, is that only local variables 
+        will be a viable target for compiler optimizations use 
+        case, since the compiler optimizations have to be safe with 
+        respect to all the possible and obscure corner cases, 
+        and global variables and heap memory are difficult to 
+        analyse precisely. On the other hand, with bug-hunting and 
+        integrated development environment supporting style 
+        analyses, we can afford more courageous assumptions.
+        
+        
+        \subsection{Data-flow Values}
+        
+        The \emph{data-flow} should capture the type information 
+        for variables within the routine. We do want to support 
+        dynamic typing, therefore for every variable, we have 
+        a subset of all its possible types, not only a single type.        
+        So the \emph{data-flow} value is a map from variable names to 
+        subsets of types. 
+        
+        For an efficient representation of the \emph{data-flow}, 
+        the routine's body is scanned for all local variables names 
+        referenced types prior to the analysis. After the scan, the 
+        number of variables and types is a known constant and the 
+        \emph{data-flow}, being an array of subsets of a set 
+        of all the types, can be represented as a bit-vector. 
+        The $\operatorname{MEET}$ operation is a union, because if 
+        a variable can have type \code{T} from one branch and 
+        type \code{K} from another, at the join point we can only 
+        assume that it has either type \code{T} or \code{K}.
+        
+        However, with a real world class based object oriented 
+        programming language, the situation is not as simple. 
+        We have to deal with subtyping, and we also want to 
+        support type information from documentation comments, 
+        which nonetheless should be distinguished from the 
+        type information inferred from the actual code.
+        
+        The basic \emph{data-flow} values for a single variable 
+        and set of types $\left\{int, false, null\right\}$ are depicted 
+        in the figure \ref{typeslattice1}. Aside the whole set of 
+        all types references within the routine's body, we have 
+        another artificial value called \emph{Any}, which simply 
+        designates any possible type, not restricted to the set 
+        of known types. In the following paragraphs, we discuss 
+        how we added support for classes and documentation 
+        comments to this schema. We focus on \emph{data-flow} 
+        lattice for a single variable; the lattice for all variables 
+        will simply be a product lattice.
+        
+        \begin{figure}[h]  
+          \centering        
+          \includegraphics[scale=0.6]{graphs/types-lattice1.png}
+          \caption{Basic lattice with types.\label{typeslattice1}}    
+        \end{figure}
+        
+        \subsubsection*{Booleans}        
+        In the case of booleans, we distinguish 
+        \code{true} and \code{false}, because it is a well 
+        known pattern in PHP for routines to use \code{false} 
+        return value as an indication of failure. 
+        Routines then can have, for example, have type 
+        \code{false|object} meaning that this routine returns either 
+        object or value \code{false}, never value \code{true}.
+        
+        \subsubsection*{Null}        
+        Another thing to note is that we treat \code{null} as 
+        a special type. This again comes from PHPDoc documentation 
+        comments, where one can, for instance, state 
+        \code{integer|null} as return type of a routine, 
+        in which case representing the routines return type 
+        as just \code{integer} would not precise. Moreover, 
+        having \code{null} can be used to distinguish between 
+        non-nullable and nullable reference types. 
+        Control Flow for Phalanger by default assumes that all 
+        the reference types can be \code{null}, but it can 
+        be configured to assume the opposite, in which case it can, 
+        for example, report type error if a routine expects 
+        instance of some \code{object} as an argument, 
+        but is given \code{null}.
+        
+        \subsubsection*{Type Hints}        
+        We refer to the type information gathered from documentation 
+        comments as type hints. For example, routines can have 
+        documentation comments that state expected types of the 
+        parameters. However, it is perfectly legal to invoke the 
+        routine with actual parameters of different types, so we 
+        cannot rely on the documentation completely, but we want 
+        to utilize it.
+        
+        For this purpose, we distinguish between type information 
+        that was inferred from the code and should always be 
+        valid and type information that was extracted from the 
+        documentation comments or possibly other unreliable 
+        sources, for instance, return type of a non-final method, 
+        which cannot be accurately determined because of 
+        polymorphism.
+        
+        The distinction is realized as a single bit flag 
+        we call ``type hint''. It is a single flag for the 
+        whole set of possible types, so we cannot have a 
+        set of two possible types where one is ``type hint'' 
+        and the other is not. 
+        
+        We can think of all the sets with ``type hint'' flag 
+        as a parallel lattice to the lattice of sets without 
+        ``type hint'' flag. Let us say that $hint(x)$ denotes 
+        an element from the parallel lattice corresponding to 
+        element $x$ in the original one. If we are comparing 
+        two elements $a$ and $b'$, where $b'=hint(b)$ is from the 
+        ``type hint'' lattice, we say that their upper bound or 
+        supremum is equal to $hint(a\wedge{}b)$, formally 
+        $a\wedge{}b'=hint(a\wedge{}b)$. A lattice that is formed 
+        from putting together the original types lattice and the 
+        ``type hint'' lattice for types $\left\{int, string\right\}$ 
+        is depicted in figure \ref{hintslattice}.
+        
+        \begin{figure}[h]  
+          \centering        
+          \includegraphics[scale=0.6]{graphs/hints-lattice.png}
+          \caption{Types lattice with ``type hint'' flag.\label{hintslattice}}    
+        \end{figure}
+        
+        
+        \subsubsection*{Classes}
+        
+        We refer to built-in types as basic types, those are 
+        \begin{itemize*}
+            \item int
+            \item double
+            \item string
+            \item resource
+            \item false and true (instead of boolean)
+            \item null
+            \item array
+            \item callable -- a reference to a lambda function.
+        \end{itemize*}
+        
+        If we say that variable \code{\$a} is of type \code{T}, 
+        where \code{T} is a non-final class, even in statically 
+        typed language, this could mean that \code{\$a} can 
+        be in fact instance of many different classes, 
+        namely \code{T} and all its subclasses.
+        
+        Because we are in a dynamic environment, we cannot, 
+        in general, know all subclasses of \code{T} in advance. 
+        Nonetheless, it can be useful to distinguish between 
+        ``\code{\$a} is of type \code{T} only'' and 
+        ``\code{\$a} is of type \code{T} or any of its subtypes''.
+        
+        To make this distinction, we add another flag ``subclasses'', 
+        which works similarly to ``any type'' flag: it holds or does 
+        not hold for the whole set of class types. Also the upper bound 
+        of two elements, where one of the has the flag ``subclasses'', 
+        will has the ``subclasses'' flag.
+        
+        Moreover, we add one artificial value, which is \code{object}, 
+        and it denotes arbitrary class instance, but it is not the 
+        same as \emph{Any}, because it excludes the other primitive 
+        types. A lattice for just class types $\left\{T,K\right\}$ 
+        is in figure \ref{objectslattice}.
+        
+        \begin{figure}[h]  
+          \centering        
+          \includegraphics[scale=0.5]{graphs/objects.png}
+          \caption{Types lattice with classes.\label{objectslattice}}    
+        \end{figure}        
+        
+        The upper bound of any set of class types and a set of 
+        basic types is a union of those. However, the upper 
+        bound of a set with some class types in it and a set with 
+        \code{object} in it is a union of the basic types and 
+        \code{object}, so the class types are ``overridden'' by 
+        the \code{object}. This is illustrated in figure \ref{objectsandbasics}.
+        
+        \begin{figure}[h]  
+          \centering        
+          \includegraphics[scale=0.5]{graphs/objects-prim.png}
+          \caption{Types lattice: class and a basic type.\label{objectsandbasics}}    
+        \end{figure}
+        
+        This lattice with class types can be amended with the ``type hint'' 
+        flag the same way we did before we introduced classes.
+
         
         \begin{itemize*}
             \item Precise analysis only for local variables $\rightarrow$ compiler optimizations,

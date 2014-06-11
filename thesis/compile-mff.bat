@@ -7,8 +7,8 @@ IncludePygmentize.exe 4.implementation.tex > 4.implementation-pyg.tex
 IncludePygmentize.exe 5.results.tex > 5.results-pyg.tex
 cd ..
 
-pdflatex mff-thesis.tex
+pdflatex --shell-escape mff-thesis.tex
 bibtex mff-thesis.aux
-pdflatex mff-thesis.tex
-pdflatex mff-thesis.tex
+pdflatex --shell-escape mff-thesis.tex
+pdflatex --shell-escape mff-thesis.tex
 ./clean.bat

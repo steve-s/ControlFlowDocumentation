@@ -1,4 +1,4 @@
-\chapter{Existing Software}
+\chapter{Related Work}
 
     It is not in the scope of this thesis to provide a comprehensive 
     overview of the work related to static analysis of PHP or type 
@@ -41,13 +41,14 @@
     \section{Type Inference}
     
     Type inference for dynamic languages is typically implemented 
-    for the purposes of compiler or interpreter. A notable implementation 
+    for the purposes of compilation or interpretation. A notable implementation 
     is type inference for PHP in Facebook's Hip Hop project \cite{zhao2012hiphop}, 
     which is a compiler from PHP to C++ and a custom intermediate language 
-    that can be run in Hip Hop virtual machine. Hip Hop performs type 
-    analysis in order to find single type for a variable, but does not attempt 
-    to analyse the possible variable's types further as long as it 
-    does not have only one single type. 
+    that can be run in the Hip Hop virtual machine. Hip Hop performs type 
+    analysis in order to find a single type for a variable, so it can treat 
+    it as statically typed variable during compilation. However, if a single 
+    type for a variable cannot be determined, Hip Hop does not analyse 
+    the type information any further and fall backs to the dynamic typing.    
         
     There are implementations of type inference for other dynamic languages. 
     Ecstatic\cite{madsen2007ecstatic} is type inference for Ruby 

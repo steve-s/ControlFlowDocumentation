@@ -1,0 +1,20 @@
+digraph flow {
+    node[shape=box]
+    graph[rankdir="BT"];
+    edge[headport=s, tailport=n];
+    
+	uninit [label="Uninitialized"]
+    intstring [label="{int, string}"]    
+    hintint [label="hint: {int}"]
+    hintstring [label="hint: {string}"]
+    hintintstring [label="hint: {int, string}"]
+	any [label="Any"]    
+
+    uninit -> int -> intstring;
+    uninit -> string -> intstring;
+    
+    int -> hintint -> hintintstring;
+    string -> hintstring -> hintintstring;
+    intstring -> hintintstring -> any;
+}
+
