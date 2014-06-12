@@ -604,13 +604,86 @@
         
 
     \section{Type Analysis}
-        \note{
-        \begin{itemize}
-            \item Type Information representation
-            \item Data Flow representation
-            \item AST annotations
-        \end{itemize}}
+        
+        The theoretical side of workings of the type analysis was 
+        discussed in \wsection{} Control Flow for Phalanger Approach. 
+        Here we focus on practical side of the implementation: the 
+        \emph{data-flow} representation and how we realized the 
+        annotation of expressions with type information.
+        
+        \subsection{Type Information Representation}
+        
+        In this paragraph we discuss representation of 
+        type information for a single variable or a single expression. 
+        The representation is based on the type information 
+        lattice described earlier. It is a set of possible 
+        basic types, class types and \code{object}. It can 
+        have flags ``subclasses'' and ``type hint''. 
+        There are few things to note:
+        \begin{itemize*}
+            \item \code{object} represents any object type, 
+            \item \emph{Any} is a special \emph{data-flow} value that 
+                represents any possible type, 
+            \item empty set $\emptyset$  is a special \emph{data-flow} value that 
+                represents uninitialized type.
+        \end{itemize*}
+        
+        The aim is to represent the type information efficiently, 
+        because we want to annotate every expression with type 
+        information and because we want a memory efficient 
+        representation of the \emph{data-flow}, which is an 
+        array of type information for all variables.
+        
+        The type information is always tied to a concrete routine: 
+        it is either annotation of one of the expressions in 
+        the routine's body, or type of one of the local variables. 
+        For every routine we create a special ``context'' object 
+        with a list of all referenced types $\mathbb{T}$. This way 
+        every type has a unique index. Let us denote the index 
+        of type $K$ as $\mathit{index}(\mathbb{T}, K)$ the 
+        type under index $i$ as $\mathit{type}(\mathbb{T}, i)$.
+        Furthermore, we made an assumption that a single routine 
+        is unlikely to reference more than $64$ distinct types. 
+        From this follows that we can represent a subset of 
+        $\mathbb{T}$ as a 64 bit integer, where bit with index 
+        $i$ indicates whether the type $\mathit{type}(\mathbb{T}, i)$ 
+        is present in the set or not. With this representation, 
+        we can implement very efficient set operations with 
+        bitwise operators.
+        
+        However, this representation does not reflect the 
+        lattice we described earlier. We shuffle 
+        the type indexes to the left and reserve first few 
+        indexes from right for special bit flags:
+        
+        \begin{itemize*}
+            \item\textbf{any flag} if present, other bits should be ignored and the whole 
+                type information value is deemed as the lattice element \emph{Any}.            
+            \item\textbf{object flag} if present any class types should be ignored.
+            \item\textbf{type hint flag}
+            \item\textbf{subclasses flag}
+        \end{itemize*}
+        
+        From the properties of bitwise or, it follows that 
+        a bitwise or (union) of two type information instances 
+        represented with this schema, will give us their 
+        lowest upper bound. Let us, for example, consider 
+        a union of two type information instances where one 
+        has \textbf{any flag} set. The union will have 
+        also \textbf{any flag} set, which in the lattice 
+        corresponds to $\emph{Any}\wedge{}x=\emph{Any}$ 
+        for every $x$. The same behaviour works with 
+        respect to the other special flags.
+        
+        Last thing we need to deal with is when a routine references 
+        more types than the number we can represent. In such case, 
+        any type whose index would be greater than $63$, is treated as 
+        if its index was exactly $63$. This means that types with 
+        index greater or equal to $63$ will share one bit and 
+        therefore we loose precision, because we cannot distinguish those 
+        types from each other. However, it is a safe approximation and 
+        a price we pay for the memory efficiency.
 
-    \section{The Analyser pipeline and AnalysisDriver}
-        \note{Description of the high level public interface 
-        and the phases of the full analysis process.}
+    %\section{The Analyser pipeline and AnalysisDriver}
+    %    \note{Description of the high level public interface 
+    %    and the phases of the full analysis process.}

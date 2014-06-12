@@ -1,0 +1,16 @@
+digraph flow {
+    node[shape=box]
+    graph[rankdir="BT"];
+    edge[headport=s, tailport=n];
+    
+	top [label="(foo()+$a)/$b"];
+    plus [label="foo()+$a"];
+    foo [label="foo()"]
+    a [label="$a"];
+    b [label="$b"];
+    
+    a -> plus -> top;
+    foo -> plus;
+    b -> top;
+}
+

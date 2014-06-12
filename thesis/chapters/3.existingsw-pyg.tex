@@ -1,12 +1,14 @@
 \chapter{Related Work}
 
-    It is not in the scope of this thesis to provide a comprehensive 
-    overview of the work related to static analysis of PHP or type 
-    inference in dynamic languages in general. Furthermore, those 
-    topics are being actively researched, but Control Flow for 
-    Phalanger's focus is to adapt and apply some of the results 
-    of the research that are deemed to be useful for the 
-    purposes of type analysis of PHP.
+    Static analysis is a topic that is being actively researched. 
+    A brief overview of the static analysis methods was presented 
+    in the previous \wchapter{}. Control Flow for Phalanger's aim is 
+    to adapt and apply some of the results of the research deemed 
+    to be useful for the purposes of type analysis of PHP. 
+    In related work, we focus on tools that also use static 
+    analysis to analyse PHP code for different purposes. 
+    We also shortly mention interesting tools for other 
+    dynamic languages.
 
     \section{Security Vulnerabilities in Web Applications}
     
@@ -18,25 +20,39 @@
     the flow of data from global variables like \code{\$\_POST} 
     that contain user input, therefore more precise model of 
     heap memory is required so that flow of data in between 
-    object instances can be analysed. Likewise, 
-    context sensitivity is important in this case.
+    object instances and routine calls can be analysed. 
     
     An analysis for security vulnerabilities has also a different 
     model of usage. Such analysis can be run not so frequently, 
     for example, only before release or as a part of a continuous 
     build process. Interactive on-the-fly analysis in an 
     integrated development environment could also be a viable 
-    use case, but typically not a main goal. Moreover, such analysis 
-    is certainly not expected to be run every time the 
+    use case, but typically not the main goal. Moreover, 
+    such analysis is not likely to be run every time the 
     application is to be compiled or interpreted.
     
     Some of the available tools for detecting taint-style 
-    vulnerabilities in PHP are Pixy\cite{jovanovic2006pixy} and recently released 
-    Weverca: Web Verification Tool\cite{hauzarhunting}.    
+    vulnerabilities in PHP are Pixy\cite{jovanovic2006pixy} 
+    and recently released Weverca: Web Verification Tool\cite{hauzarhunting}.    
     
     \subsection{Weverca: Web Verification Tool}
-    \note{Precise Memory Model with aliasing, CFG inlining, assume nodes, 
-        supported PHP versions}
+    
+    Weverca is also based on the Phalanger parser, but it uses an older 
+    version, therefore it does not support some of the newer language 
+    constructs.
+    
+    Opposed to our modular approach, Weverca uses heap abstractions, 
+    which in correspondence with the different goals of both projects 
+    where Weverca focuses on tracking data that originated from user 
+    input down to their usage.
+    
+    In order to make the interprocedural analysis context sensitive, 
+    Weverca uses routines inlining: the whole routines body is 
+    copied at the place of its invocation and formal parameters 
+    are substituted for the actual parameters of the routine 
+    invocation.
+    
+    % TODO: what do they do if this cannot be done?
 
     \section{Type Inference}
     
@@ -74,14 +90,8 @@
     in generic frameworks, libraries or, for example, command line utilities 
     written in PHP, Phantm's focus is on complete web applications.
     
-    \note{Precise memory model, Routines inlining, ...}
-    
-    \note{NOTE: comparison on design level here. Discussion of what are the implications 
-    of the design with respect to the results and comparison to our results -- 
-    in section ``results''.}
-    
-    \note{QUESTION: is it enough if there will be approx. 1 page about Weverca, 
-    and approx. 1 page about Phantm?}
+    %\note{Precise memory model, Routines inlining, ...}
+
     
     
     

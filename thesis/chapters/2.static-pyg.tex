@@ -930,20 +930,7 @@
     % ----------------------------------------------------------------------------
     \section{Control Flow for Phalanger Approach}
         
-        \subsection{Overview}
-        
-        The analysis for the type inference in Control Flow for 
-        Phalanger is based on the generic Data-flow framework. 
-        The questions that have to be answered, in order to 
-        implement such analysis, include:
-        
-        \begin{itemize*}
-            \item how the results of the analysis will be represented,
-            \item what the \emph{data-flow} values will be, 
-            \item what data structures will be used to represent them efficiently, 
-            \item how to deal with routines calls and their effects to the program state.
-        \end{itemize*}
-        
+        \subsection{Assumptions}        
         The approach taken in Control Flow for Phalanger is based on an 
         observation that even when developers are given a dynamically typed 
         programming language, it does not mean that they will write 
@@ -964,14 +951,97 @@
         integrated development environment supporting style 
         analyses, we can afford more courageous assumptions.
         
+        In this \wsection{} we focus on the type analysis, because 
+        it is by far the most complex kind of analysis implemented. 
+        Other analyses, like constant propagation, follow the same 
+        concepts and, furthermore, they rely on the results of the 
+        type analysis and points-to analysis, which is 
+        also discussed in this \wsection{}.
         
-        \subsection{Data-flow Values}
+        \subsection{Analysis Results}
+        
+        The outcomes of the analysis of a single routine are:
+        
+        \begin{description*}
+            \item[Variables table: type information for local variables] -- 
+            for every local variable, a set of its possible types at any 
+            point during the execution of the routine. Note that it summarizes 
+            all types that variable can have at different program points. 
+            Knowing that a variable has only one possible type can be useful 
+            for compiler.
+            
+            \item[Type information for expressions] -- every expression in the 
+            routine's body will be annotated with the type or set of types 
+            the expression can evaluate to.
+            
+            \item[Warnings] -- some expressions expect only operands of 
+            certain type; if the analysis encounters such expression 
+            and from the analysis it follows that the operand is not of the 
+            expected type, the piece of code in question is reported as a warning.
+            The same holds for the type expectations of routine's arguments, 
+            object fields and others.
+            
+        \end{description*}
+        
+        Another outcome of analysis across all routines will be \emph{globals table} 
+        with type information for global symbols that is global variables, 
+        instance and static fields and routines.
+        
+        \subsection{Local Analysis: Overview}
+        
+        We can think about expressions in terms of 
+        evaluation trees, like in figure \ref{evaltree}. 
+        Since expressions should be annotated with their 
+        type information, the analysis can use a bottom 
+        up approach and annotate the leaves of the 
+        evaluation tree first and then recursively from 
+        the type information of operands infer type 
+        information for compound expressions.
+        
+        \begin{figure}[h]  
+          \centering        
+          \includegraphics[scale=0.5]{graphs/evaltree.png}
+          \caption{Evaluation tree of an expression \code{(foo()+\$a)/\$b}.\label{evaltree}}    
+        \end{figure}        
+        
+        Statements or expressions that can change the program state, 
+        like assignment statement, will have their operands 
+        annotated with the type information and thus have all 
+        the necessary information to reflect the change of 
+        the program state accordingly. For instance, 
+        the type of the right hand side expression of an assignment 
+        statement will determine the type for the variable 
+        on the left hand side.
+        
+        Some type information can be inferred from the code without 
+        any knowledge about variables' types. For example, the result 
+        of string concatenation is always a \code{string}, no matter 
+        what the types of the arguments are. However, simple local 
+        variable use is an expression and we need to know the possible 
+        types of the variable to annotate this expression 
+        with its type. For this, we need to perform a DFA that will 
+        give us the type information for each variable at each program 
+        point. Note that the \emph{data-flow} values are used only 
+        temporarily to annotate the expressions and build the variables 
+        table, but we do not create actual \emph{data-flow} instance 
+        for every program point.
+        
+        The questions that have to be answered, in order to 
+        implement the DFA, include:
+        
+        \begin{itemize*}
+            \item what the \emph{data-flow} values will be, 
+            \item what data structures will be used to represent them efficiently, 
+            \item how to deal with routines calls and their effects to the program state.
+        \end{itemize*}
+        
+        \subsection{Local Analysis: Data-flow Values}
         
         The \emph{data-flow} should capture the type information 
         for variables within the routine. We do want to support 
         dynamic typing, therefore for every variable, we have 
         a subset of all its possible types, not only a single type.        
-        So the \emph{data-flow} value is a map from variable names to 
+        The \emph{data-flow} value is a map from variable names to 
         subsets of types. 
         
         For an efficient representation of the \emph{data-flow}, 
@@ -1025,7 +1095,7 @@
         comments, where one can, for instance, state 
         \code{integer|null} as return type of a routine, 
         in which case representing the routines return type 
-        as just \code{integer} would not precise. Moreover, 
+        as just \code{integer} would not be precise. Moreover, 
         having \code{null} can be used to distinguish between 
         non-nullable and nullable reference types. 
         Control Flow for Phalanger by default assumes that all 
@@ -1081,6 +1151,7 @@
         \subsubsection*{Classes}
         
         We refer to built-in types as basic types, those are 
+        \begin{multicols}{2}
         \begin{itemize*}
             \item int
             \item double
@@ -1089,8 +1160,9 @@
             \item false and true (instead of boolean)
             \item null
             \item array
-            \item callable -- a reference to a lambda function.
+            \item callable -- for example: lambda
         \end{itemize*}
+        \end{multicols}
         
         If we say that variable \code{\$a} is of type \code{T}, 
         where \code{T} is a non-final class, even in statically 
@@ -1137,21 +1209,179 @@
         
         This lattice with class types can be amended with the ``type hint'' 
         flag the same way we did before we introduced classes.
-
         
-        \begin{itemize*}
-            \item Precise analysis only for local variables $\rightarrow$ compiler optimizations,
-            \item Arrays unsupported,
-            \item objects fields, global variables, static fields $\rightarrow$ no way to analyse precisely anyway,
-            \item Modular approach that comes from assumption that 
-                reasonably written PHP code will be close or equivalent to 
-                statically typed code: (Aggressive Type Inference, by John Aycock: giving people 
-                a dynamically-typed language does not mean that they write dynamically-typed programs.)
-                \begin{itemize*}
-                    \item No heap abstraction: we use classes -- enough for our purposes, no constant propagation, no null propagation, ...
-                    \item No context sensitivity: we analyse routines in modular way.
-                    \item Simple points-to analysis and lambda capture by ref.
-                    \item Arrays: modelled as local variables.
-                \end{itemize*}
-        \end{itemize*}
+        \subsection{Intraprocedural Analysis}
+        
+        The approach we described so far considers only local variables, 
+        but we want to analyse object and class fields' types, and global 
+        variables. We also have to take into account possible changes to 
+        local variables made from other routines through references.
+        
+        The assumption here is that the results of analysis for fields 
+        and global variables do not have to be precise and that although 
+        PHP is a dynamic language that permits dynamic fields and dynamic 
+        methods, mostly the developers do not abuse those features and 
+        we can assume that instances of the same class have the same 
+        fields of the same type and the same methods across the whole 
+        program. Furthermore, routines return type and expected 
+        arguments types will mostly be constant and independent 
+        from the program state or each other.
+        
+        \subsubsection*{Routines Return Values}
+        When the analysis encounters a routine invocation, it needs 
+        to know the routine's return type and possible other pieces 
+        of information we discuss later.
+        
+        If the source code of the routine in question is available, 
+        in other words, it is part of the analysed source, we 
+        recursively trigger its analysis in order to infer its 
+        return type. When the analysis finished, we save the 
+        results to the \emph{globas table} so that we do not 
+        need to analyse the routine next time and resume the 
+        analysis of the original routine.
+        
+        This approach, however, does not work for recursive 
+        and mutually recursive routines. The solution we use 
+        is that if a cycle in routines invocations is detected, 
+        we do not analyse the last routine in the cycle, but 
+        instead we assume the worst about its return type -- 
+        we assume it can return any type.
+        
+        
+        \subsubsection*{Heap}        
+        Let us first provide an example, where heap abstraction and 
+        context sensitive intraprocedural analysis would be useful:
+        
+%pygmentize_begin php
+% function foo() {
+%   $a = new X();
+%   boo($a);
+%   return $a->bar;
+% }
+%
+% function boo(X $a) {
+%   $a->bar = 3;
+% }
+%pygmentize_end
+\begin{Verbatim}[commandchars=\\\{\}]
+ \PY{k}{function} \PY{n+nf}{foo}\PY{p}{()} \PY{p}{\PYZob{}}
+   \PY{n+nv}{\PYZdl{}a} \PY{o}{=} \PY{k}{new} \PY{n+nx}{X}\PY{p}{();}
+   \PY{n+nx}{boo}\PY{p}{(}\PY{n+nv}{\PYZdl{}a}\PY{p}{);}
+   \PY{k}{return} \PY{n+nv}{\PYZdl{}a}\PY{o}{\PYZhy{}\PYZgt{}}\PY{n+na}{bar}\PY{p}{;}
+ \PY{p}{\PYZcb{}}
+
+ \PY{k}{function} \PY{n+nf}{boo}\PY{p}{(}\PY{n+nx}{X} \PY{n+nv}{\PYZdl{}a}\PY{p}{)} \PY{p}{\PYZob{}}
+   \PY{n+nv}{\PYZdl{}a}\PY{o}{\PYZhy{}\PYZgt{}}\PY{n+na}{bar} \PY{o}{=} \PY{l+m+mi}{3}\PY{p}{;}
+ \PY{p}{\PYZcb{}}
+\end{Verbatim}
+        
+        Here the function \code{boo} changes type of the nested field 
+        \code{bar}. If we do not reflect this in the program 
+        state after the invocation of \code{boo(\$a)} in 
+        function \code{foo}, we cannot determine the type of 
+        the return expression \code{\$a->bar}.
+        
+        However, we decided to approach this problem differently. 
+        We do not analyse individual object instances, 
+        instead we summarize the type information inferred 
+        for individual instances of the same class and provide 
+        those results within the \emph{globals table}.
+        
+        Illustrated on the same example, when analysing function 
+        \code{foo}, the analysis would encounter the invocation 
+        of \code{boo}. Since \code{boo} has not been analysed yet, 
+        this triggers analysis of \code{boo}. While analysing 
+        \code{boo} the \emph{globals table} learns that 
+        field \code{bar} can be of type \code{integer}. When analysis 
+        of \code{boo} finishes and analysis of \code{foo} resumes, 
+        on the line with \code{return \$a->bar} we know from the 
+        \emph{data-flow} that \code{\$a} is of type \code{X} and 
+        from the \emph{globals table} we get that field \code{bar} 
+        of class \code{X} can be of type \code{integer}.
+        
+        With this approach we do not have to model heap, 
+        which can be more effective, but on the other hand, 
+        there are cases different to this example, where our 
+        approach fails and heap model, could give us 
+        better results. For instance, if function \code{boo} 
+        did not provide type information for its parameter 
+        in its signature, because we analyse each routine 
+        in a generic context.
+                
+        Moreover, we ignore the effects of indirect assignments 
+        and references to the \emph{globals table}, which means 
+        that the \emph{globals table} is not safe approximation. 
+        However, as we stated at the beginning of this \wsection{}, 
+        the analysis of instance fields is meant for bug hunting 
+        purposes and we can afford some imprecision. In addition, 
+        the type information inferred by means of \emph{globals table} 
+        is marked with the ``type hint'' flag.
+        
+        The global variables and static class field are analysed 
+        in the way as instance fields.
+        
+        \subsubsection*{Type Documentation}
+        There are two different cases where we need to consider type 
+        information for fields or global variables: when a field or global 
+        variable is read, and when a field or global variable is assigned to.
+        
+        Field and global variables can have PHPDoc type documentation.
+        In the case of assignment, we want to check that the value assigned 
+        to the variable has a type compatible with the documentation, 
+        otherwise it is possibly a bug or documentation error.
+        
+        When it comes to type annotation of an expression that uses 
+        a global variable or a field, if the type documentation is available, 
+        we use it over the information from \emph{globals table}, 
+        but still mark the type information with ``type hint'' flag.
+        
+        \subsubsection*{References Analysis}
+        References in PHP are used, but occasionally, therefore we do 
+        not want to ignore them, but we do not require a 
+        precise results when references are used in 
+        the analysed routine.
+        
+        Another piece of information the analysis needs to know 
+        about a routine that is being invoked from within the 
+        analysed routine is which arguments are passed by reference 
+        to it, so that their value can be changed inside the 
+        invoked function. This is fortunately a part of the 
+        routine's signature, and can be easily determined. 
+        We simply throw away any assumptions we had about the type 
+        of a variable which is being passed by reference to 
+        another routine.
+        
+        The situation is more complicated with references within a 
+        single routine. When a statement or expression can change 
+        the type of a variable, it can change type of any variable 
+        that this variable points to, if it is a reference.
+        
+        We use a simple approach: prior to the analysis, the routine 
+        body is scanned for any assignments by reference (\code{\$a=\&\$b}) 
+        and two sets are created: variables that can be a reference and 
+        variables that can be pointed to by a reference. This is very 
+        conservative approximation, but we expect sparse usage of 
+        references.
+        
+        When the analysis finds out that a type of a variable can 
+        be changed to \code{T}, it checks if the variable can be 
+        a reference and if so the type of all the variables that 
+        can be pointed to is updated. Those variables can be only 
+        pointed to, but do not have to be pointed to, so we take 
+        their current type information and merge with type \code{T}.
+        
+        Moreover, any routine's invocation can change any local 
+        variable from the can be pointed to set, because the 
+        reference can ``leak'' on the heap for example, for where 
+        the other routine can read it. That is why, after any routine 
+        invocation, we throw away any assumptions about variables in 
+        the can be pointed to set.
+        
+        The same holds for local variables that are captured by 
+        reference by some lambda function. The lambda function can 
+        again ``leak'' on the heap, from where the other routine 
+        can invoke it.
+        
+        %TODO: \subsubsection*{Arrays}
+        
         

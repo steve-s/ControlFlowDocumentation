@@ -103,18 +103,22 @@ websites were chosen:
     unit test suite. For the experiment the master branch of the clone of the 
     repository retrieved on 18.5.2014 has been used. 
     
+    \item[Nette:] popular general purpose PHP framework with long development 
+    history and contributions from 137 developers. Nette has unit test suite 
+    with good code coverage and the source code is very well documented including 
+    the type documentation comments.
+\end{description}
+
+    \begin{comment}
     \item[Zend Framework:] popular general purpose PHP framework. Lorem ipsum...
-        \note{over 3000 problems reported. Quite a big bite to chew with analysing and categorizing all of them.}
-        
-    \item[Nette:] another popular PHP framework for building websites.
-        \note{Findings not so impressive: 1 (probably only) documentation error :(}
+        \note{over 3000 problems reported. Quite a big bite to chew with analysing and categorizing all of them.}        
         
     \item[Piwik:] open source version of Google Analytics. \note{few hundred problems found, not categorized yet}
     
     \item[PrestaShop:] open source e-commerce solution. \note{few hundred problems found, not categorized yet}
     
     \item[Composer:] popular dependency management system for PHP libraries. \note{few hundred problems found, not categorized yet}
-\end{description}
+    \end{comment}
 
 An evaluation always started with downloading a git repository with the 
 latest source code of given PHP project. Then the analysis was run and 
@@ -217,18 +221,18 @@ available in appendix.
 \begin{center}
     \begin{tabular}{| p{5cm} | r | r | r | r | r |}
     \hline
-    \sumh{Category}         &   \sumh{PHPUnit}      &   \sumh{Zend}       &   \sumh{Nette}    &   \sumh{WP}    &   \sumh{total}   \\ \hline
-    Style                   &   6                   &       NA                      &   NA              &   NA                  &   6       \\ \hline
-    \reldefret              &   2                   &       NA                      &   NA              &   NA                  &   2       \\ \hline        
-    Documentation           &   10                  &       NA                      &   NA              &   NA                  &   10      \\ \hline    
-    \subcat{missing false}  &   3                   &       NA                      &   NA              &   NA                  &   3       \\ \hline
-    Actual Error            &   1                   &       NA                      &   NA              &   NA                  &   1      \\ \hline    
-    False positive          &   8                   &       NA                      &   NA              &   NA                  &   8      \\ \hline    
-   \subcat{unused arguments}&   1                   &       NA                      &   NA              &   NA                  &   1      \\ \hline        
-    \subcat{amendable}      &   4                   &       NA                      &   NA              &   NA                  &   4      \\ \hline            
- \subcat{built-in doc error}&   3                   &       NA                      &   NA              &   NA                  &   3      \\ \hline
+    \sumh{Category}         &   \sumh{PHPUnit}      &   \sumh{Nette}    &   \sumh{total}   \\ \hline
+    Style                   &   6                   &   0              &   6       \\ \hline
+    \reldefret              &   2                   &   0              &   2       \\ \hline        
+    Documentation           &   10                  &   1              &   11      \\ \hline    
+    \subcat{missing false}  &   3                   &   0              &   3       \\ \hline
+    Actual Error            &   1                   &   0              &   1      \\ \hline    
+    False positive          &   8                   &   0              &   8      \\ \hline    
+   \subcat{unused arguments}&   1                   &   0              &   1      \\ \hline        
+    \subcat{amendable}      &   4                   &   0              &   4      \\ \hline            
+ \subcat{built-in doc error}&   3                   &   0              &   3      \\ \hline
     \textbf{Total} 
-    (excl. false positives) &17                   &       NA                      &   NA              &   NA                  &   17      \\ \hline                
+    (excl. false positives) &17                   &   1              &   17      \\ \hline
     \end{tabular}
 \end{center}
 
