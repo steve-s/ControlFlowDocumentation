@@ -521,6 +521,8 @@
         the conclusion. The exact notation is not important, we will be using it 
         intuitively to illustrate the ideas that we describe.
         
+        %[a=b,s1] => s2,a:Integer || b:integer \in S2
+        
         \subsubsection*{Statement Interaction}
         
         The \emph{data-flow} for \emph{program point before} a statement 
@@ -978,8 +980,8 @@
             certain type; if the analysis encounters such expression 
             and from the analysis it follows that the operand is not of the 
             expected type, the piece of code in question is reported as a warning.
-            The same holds for the type expectations of routine's arguments, 
-            object fields and others.
+            The same holds for the type expectations extracted from 
+            documentation comments for fields, routines and others.
             
         \end{description*}
         
@@ -1010,7 +1012,7 @@
         the necessary information to reflect the change of 
         the program state accordingly. For instance, 
         the type of the right hand side expression of an assignment 
-        statement will determine the type for the variable 
+        statement will determine the new type for the variable 
         on the left hand side.
         
         Some type information can be inferred from the code without 
@@ -1302,7 +1304,8 @@
         With this approach we do not have to model heap, 
         which can be more effective, but on the other hand, 
         there are cases different to this example, where our 
-        approach fails and heap model, could give us 
+        approach fails to devise any useful information 
+        and heap model, could give us 
         better results. For instance, if function \code{boo} 
         did not provide type information for its parameter 
         in its signature, because we analyse each routine 
@@ -1365,17 +1368,18 @@
         
         When the analysis finds out that a type of a variable can 
         be changed to \code{T}, it checks if the variable can be 
-        a reference and if so the type of all the variables that 
-        can be pointed to is updated. Those variables can be only 
-        pointed to, but do not have to be pointed to, so we take 
-        their current type information and merge with type \code{T}.
+        a reference and if so the types of all the variables that 
+        can be pointed to by any reference are updated. Those variables 
+        \textbf{may} only be pointed to, but do not \textbf{have to} 
+        be pointed to, so we take their current type information 
+        and merge with type \code{T}, creating over approximation.
         
         Moreover, any routine's invocation can change any local 
-        variable from the can be pointed to set, because the 
-        reference can ``leak'' on the heap for example, for where 
-        the other routine can read it. That is why, after any routine 
-        invocation, we throw away any assumptions about variables in 
-        the can be pointed to set.
+        variable from the can be pointed to set, because 
+        references can ``leak'' on the heap, for where 
+        the other routine can read them. That is why, after any routine 
+        invocation, we throw away any assumptions about variables 
+        in the can be pointed to set.
         
         The same holds for local variables that are captured by 
         reference by some lambda function. The lambda function can 
