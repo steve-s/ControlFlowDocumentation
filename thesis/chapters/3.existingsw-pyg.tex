@@ -1,14 +1,10 @@
 \chapter{Related Work}
 
-    Static analysis is a topic that is being actively researched. 
     A brief overview of the static analysis methods was presented 
-    in the previous \wchapter{}. Control Flow for Phalanger's aim is 
-    to adapt and apply some of the results of the research deemed 
-    to be useful for the purposes of type analysis of PHP. 
-    In related work, we focus on tools that also use static 
-    analysis to analyse PHP code for different purposes. 
-    We also shortly mention interesting tools for other 
-    dynamic languages.
+    in the previous \wchapter{}. In this \wchapter{}, we focus on 
+    tools that also use static analysis to analyse PHP code for 
+    different purposes. We also shortly mention interesting tools 
+    for other dynamic languages.
 
     \section{Security Vulnerabilities in Web Applications}
     
@@ -23,7 +19,7 @@
     object instances and routine calls can be analysed. 
     
     An analysis for security vulnerabilities has also a different 
-    model of usage. Such analysis can be run not so frequently, 
+    model of usage. Such analysis can be run less frequently, 
     for example, only before release or as a part of a continuous 
     build process. Interactive on-the-fly analysis in an 
     integrated development environment could also be a viable 
@@ -33,26 +29,86 @@
     
     Some of the available tools for detecting taint-style 
     vulnerabilities in PHP are Pixy\cite{jovanovic2006pixy} 
-    and recently released Weverca: Web Verification Tool\cite{hauzarhunting}.    
+    and recently released Weverca: Web Verification Tool\cite{hauzarhunting}.
     
     \subsection{Weverca: Web Verification Tool}
     
-    Weverca is also based on the Phalanger parser, but it uses an older 
-    version, therefore it does not support some of the newer language 
-    constructs.
+    Weverca is an implementation of static analysis framework also 
+    based on the Phalanger parser. As opposed to Control Flow for 
+    Phalanger, the main goal of Weverca is to provide security 
+    vulnerabilities analysis, although it is capable of supporting 
+    other kinds of static analyses.
     
-    Opposed to our modular approach, Weverca uses heap abstractions, 
-    which in correspondence with the different goals of both projects 
-    where Weverca focuses on tracking data that originated from user 
-    input down to their usage.
+    \subsubsection*{Memory Abstraction}
+    Weverca represents the program state at each program point by 
+    an abstraction of the complete memory state including local 
+    variables, global variables and static fields. Compared 
+    to our approach, we represent the program state by the state 
+    of local variables only and global variables and fields not 
+    analysed precisely in context sensitive way, but summarized 
+    in one global database shared among all analysed functions.
     
-    In order to make the interprocedural analysis context sensitive, 
-    Weverca uses routines inlining: the whole routines body is 
-    copied at the place of its invocation and formal parameters 
-    are substituted for the actual parameters of the routine 
-    invocation.
+    The approach of Weverca enables better precision and 
+    their default implementations of the memory model do 
+    provide such precision. On the contrary, our approach 
+    permits more effective representation of the program 
+    points state. Needless to say, both tools provide means 
+    to be extended with an implementation of the other 
+    approach.
+        
+    Moreover, the memory abstraction used in Weverca includes 
+    defined symbols, such as routines, classes and others. 
+    PHP permits to define symbols dynamically and in certain circumstances 
+    symbol cannot be used before it is defined\footnote{A symbol 
+    cannot be used before the file with its declaration is imported, 
+    but symbols from the same file can be used before they are declared.}. 
+    Therefore Weverca is capable of discovering use before 
+    declaration kind of errors for global symbols. In Control 
+    Flow for Phalanger, we decided to not support this, 
+    because most of the modern object oriented PHP projects 
+    use \emph{autoloading} and with 
+    autoloading it is impossible in general to analyse which 
+    files are being imported at which program points. 
+    Autoloading rules are often simple and follow 
+    similar patterns and so a viable possibility for a static 
+    analyser would be to let the user choose from predefined 
+    set of autoloading rules that the analyser understands. 
+    However, neither of the tools implement this feature yet.
     
-    % TODO: what do they do if this cannot be done?
+    \subsubsection*{Intraprocedural Analysis}
+    
+    In order to make the interprocedural analysis context 
+    sensitive, Weverca inlines the control flow graph of 
+    invoked routine in the control flow graph of the 
+    analysed routine. Note that there can be more than 
+    one routine that can be invoked due to polymorphism 
+    or dynamic nature of PHP. In such case Weverca 
+    inlines all of them adding a non-deterministic choice 
+    between them, in other words, edges from the routine call 
+    program point to the first program point of all the 
+    possible routines.
+    
+    As discussed in the previous \wchapter{}, Control Flow for 
+    Phalanger uses modular approach, which may scale better, 
+    but lacks the precision of Weverca.
+    
+    \subsubsection*{Type Information}
+    
+    \note{Support for type hints. Enough for whole subsubsection?}
+    
+    \subsubsection*{Design and Implementation}
+    
+    From the point of view of implementation, Weverca uses 
+    Phalanger as a parser, but the design does not evince 
+    any intention of tighter integration with Phalanger. 
+    The version of Phalanger used is slightly outdated, 
+    and thereof support for newer PHP language constructs 
+    is probably missing.
+    
+    \note{PHPDoc support.}
+    
+    \note{Intermediate Representation}
+    
 
     \section{Type Inference}
     
@@ -90,11 +146,18 @@
     in generic frameworks, libraries or, for example, command line utilities 
     written in PHP, Phantm's focus is on complete web applications.
     
-    %\note{Precise memory model, Routines inlining, ...}
-
-    
-    
-    
-    
-    
-    
+    \note{
+    \begin{itemize*}
+        \item similar type abstraction (null, false, true, int values are repr. explicitly for const. prop.)
+        \item heap abstraction, but assumption about routines only changing a 
+        local region in heap and returning fresh instances.
+        \item array support: merging, termination -- limited nesting.
+        \item ignores completely:
+            \begin{itemize*}
+                \item references
+                \item indirect accessed (variables, fields)
+                \item assignment in conditional exprs.
+                \item eval, autoload
+            \end{itemize*}
+    \end{itemize*}    
+    }

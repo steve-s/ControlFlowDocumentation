@@ -1,0 +1,7 @@
+
+
+Phantm:
+
+We assume that each function and method affect distinct parts of the heap. 
+We ignore side effects on objects passed to functions, and assume that 
+functions returning objects always return a fresh instance.
