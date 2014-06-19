@@ -9,36 +9,73 @@
     three real world PHP project. Although, the tool 
     does not use heap abstraction and 
     does not perform context sensitive analysis, it was 
-    still capable to discovered several real 
+    still capable of discovering several real 
     issues with a good ratio of false positives. 
     
     This result may indicate that, were some imprecision 
     in the analysis results can be tolerated, the 
     modular approach we used can give results comparable 
-    to those of tools that use more complex methods.
+    to those of tools that use more complex methods, with 
+    possibly better scalability.
 
     \section{Future Work}
     
+        \subsubsection*{Phalanger Integration}
         The Control Flow for Phalanger has not yet been fully 
         integrated into the Phalanger project. This includes 
         integration with the compiler in order to enable 
         code optimizations and evaluation of the possible 
         performance gain when running PHP websites like WordPress.
-    
-        The analysis itself can be improved on several fronts.
         
+        \subsubsection*{Arrays Support}
         Array support has not been implemented yet. Variables 
         that can be of type array are analysed properly, but 
-        the structure of the array is not analysed, therefore 
+        the structure of the array is not analysed. Therefore 
         any time an element of an array is accessed, we do not 
         have any type information for it and have to assume 
-        the worst, that is it can be any type.
+        the worst -- it can be any type.
         
-        Type information is represented using a 64 bit value, 
-        however, we can go even further and represent the type 
+        Arrays in PHP are often used as ad-hoc structural 
+        types like records in Pascal or structs in C. 
+        In such case, the array is typically subscribed to 
+        only by a set of known string constants, 
+        which represents a good opportunity for 
+        static analysis.
+        
+        One of the possible concepts for local arrays 
+        analysis we would like to investigate further 
+        is based on the fact that arrays in PHP have 
+        copy semantics as opposed to most of the other 
+        programming languages. We can model each constant 
+        index of an array as a separate local variable. 
+        For example, for code \code{\$a['x']=3} we create 
+        two local variables: \code{\$a} and \code{\$a@x} 
+        and the type of \code{\$a} would be an array and 
+        the type of \code{\$a@x} would be an integer. 
+        Such representation would still permit us to use 
+        bit-vectors as the \emph{data-flow} representation.
+        
+        \subsubsection*{Performance Evaluation and Tuning}
+        Some of the design decisions in Control Flow for 
+        Phalanger were made for performance reasons. The 
+        design is done an a way that permits further 
+        performance targeted improvements, but first 
+        an evaluation of the current performance is 
+        required.
+        
+        One of the possible enhancements is more efficient 
+        type information representation. Type information 
+        is represented using a 64 bit value, however, 
+        we can go even further and represent the type 
         information with 8 bit number, which will be an index 
         into a table with all the possible type information 
         instances for one routine. This would give us 255 
         possible combinations of types, which we assume is 
-        enough for most of the routines.
+        enough for most of the routines. Since every expression 
+        node in AST is annotated with type information and 
+        \emph{data-flow} values are arrays of 
+        type information, we expect memory consumption 
+        and possibly performance improvement.
+        
+        %\subsubsection*{Context-sensitive Analysis}
         

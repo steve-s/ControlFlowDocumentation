@@ -515,13 +515,16 @@
         is the same as $S_2$ except variable \code{a} is of type \code{Integer} in $S_2$''. 
         Those rules can be more formally described with the following notation        
         $$
-        \infer{[a=b, S_1] \rightarrow S_2, S_2 \vdash a : Integer}{S_1 \vdash b : Integer}
+        \infer{a:Integer\in{}S_2}{b:Integer \in S_1, [a=b, S_1] \rightarrow S_2}
         $$        
         where above the horizontal line we have hypothesis and below is 
-        the conclusion. The exact notation is not important, we will be using it 
-        intuitively to illustrate the ideas that we describe.
-        
-        %[a=b,s1] => s2,a:Integer || b:integer \in S2
+        the conclusion. In hypothesis we have that in state $S_1$ it 
+        holds that $a$ is an integer and a statement $a=b$ transforms 
+        the state $S_1$ to $S_2$. The conclusion says that in state 
+        $S_2$ $b$ is an integer. We should also say that other 
+        facts in $S_2$ stay the same as in $S_1$, in other words they 
+        are not changed by the transformation, but for the sake 
+        of brevity, we will always assume that implicitly.
         
         \subsubsection*{Statement Interaction}
         

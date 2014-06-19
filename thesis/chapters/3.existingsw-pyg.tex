@@ -48,6 +48,10 @@
     analysed precisely in context sensitive way, but summarized 
     in one global database shared among all analysed functions.
     
+    Weverca also represents each memory location by not only 
+    its type information, but if it has constant value, 
+    with its value.
+    
     The approach of Weverca enables better precision and 
     their default implementations of the memory model do 
     provide such precision. On the contrary, our approach 
@@ -75,6 +79,11 @@
     set of autoloading rules that the analyser understands. 
     However, neither of the tools implement this feature yet.
     
+    Weverca has context sensitive intraprocedural references 
+    analysis, which is compared to our approach more powerful. 
+    We assume infrequent usage of references, and simpler 
+    approach can provide better scalability.
+    
     \subsubsection*{Intraprocedural Analysis}
     
     In order to make the interprocedural analysis context 
@@ -94,7 +103,11 @@
     
     \subsubsection*{Type Information}
     
-    \note{Support for type hints. Enough for whole subsubsection?}
+    Weverca does not take into account type information from 
+    PHPDoc documentation comments. For this reason, it also 
+    does make sense have a distinction between ``type hints'' 
+    and properly inferred types like Control Flow for 
+    Phalanger does.
     
     \subsubsection*{Design and Implementation}
     
@@ -102,12 +115,12 @@
     Phalanger as a parser, but the design does not evince 
     any intention of tighter integration with Phalanger. 
     The version of Phalanger used is slightly outdated, 
-    and thereof support for newer PHP language constructs 
-    is probably missing.
+    and thereof support for some of the newer PHP language 
+    constructs is missing.
     
-    \note{PHPDoc support.}
-    
-    \note{Intermediate Representation}
+    As opposed to Control Flow for Phalanger, Weverca explicitly 
+    constructs its intermediate PHP code representation 
+    and stores it in memory.
     
 
     \section{Type Inference}
@@ -146,18 +159,48 @@
     in generic frameworks, libraries or, for example, command line utilities 
     written in PHP, Phantm's focus is on complete web applications.
     
-    \note{
+    \subsubsection*{Memory Abstraction}
+    Phantm keeps track of the shape of individual object instances on the heap. 
+    By shape in this case, we mean list of fields and their type information. 
+    Phantm therefore does not summarize the type information for fields based 
+    on classes as Control Flow for Phalanger does, but each class instance 
+    can have different set of fields with different type information.
+    
+    However, the authors of Phantm assume that each individual routine 
+    manipulates a distinct section of the heap memory and returns a 
+    fresh instance, if it returns an object instance. In other words, 
+    a routine's analysis result does not depend on the state of heap at 
+    the program point before it was called and, from the point of view 
+    of the call site, does not effect the heap state. This assumption 
+    means that it is not necessary to take the heap memory state into 
+    account for context sensitive analysis.
+    
+    \subsubsection*{Type Information}
+    
+    In contrast to Weverca, Phantm takes into account type 
+    information from PHPDoc comments. However, the available 
+    documentation of Phantm does not mention that Phantm would 
+    distinguish between type information inferred from 
+    PHPDoc, in our case ``type hint'' flag.
+    
+    Phantm also models \code{boolean} type as two types 
+    \code{true} and \code{false} capturing the value as well 
+    as the type.
+    
+    \subsubsection*{Design Assumptions}
+    The authors of Phantm made a design decision to ignore 
+    several problematic features of PHP. They justify the 
+    decision by sparse usage of those in practice. 
+    Namely the following PHP features are ignored:
     \begin{itemize*}
-        \item similar type abstraction (null, false, true, int values are repr. explicitly for const. prop.)
-        \item heap abstraction, but assumption about routines only changing a 
-        local region in heap and returning fresh instances.
-        \item array support: merging, termination -- limited nesting.
-        \item ignores completely:
-            \begin{itemize*}
-                \item references
-                \item indirect accessed (variables, fields)
-                \item assignment in conditional exprs.
-                \item eval, autoload
-            \end{itemize*}
-    \end{itemize*}    
-    }
+        \item References within routines and arguments passed by reference.
+        \item Indirect accesses to local variables and fields, for example, \code{\$\$a=3}.
+        \item Assignments in conditional expressions, in other words, expressions 
+            whose value determines the control flow, like the conditional expression 
+            of \code{if-then-else}.
+        \item Special function \code{eval} and similar functions and autoloading.
+    \end{itemize*}
+        
+    Likewise, we also assume sparse usage of such features, 
+    but do not ignore them completely.
+    
