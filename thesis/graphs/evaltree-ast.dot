@@ -1,0 +1,16 @@
+digraph flow {
+    node[shape=box]
+    graph[rankdir="BT"];
+    edge[headport=s, tailport=n];
+    
+	top [label="BinaryEx (Operation: Division)"];
+    plus [label="BinaryEx (Operation: Plus)"];
+    foo [label="FunctionCall (Name: foo)"]
+    a [label="DirectVarUse (Name: $a)"];
+    b [label="DirectVarUse (Name: $b)"];
+    
+    a -> plus -> top;
+    foo -> plus;
+    b -> top;
+}
+

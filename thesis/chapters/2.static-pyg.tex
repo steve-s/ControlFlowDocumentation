@@ -14,19 +14,14 @@
     PHP libraries and frameworks that by themselves do not contain 
     any PHP files that produce HTML or any other output for the user.
     
-    The following section PHP Semantics describes some important parts 
+    The following \wsection{} PHP Semantics describes some important parts 
     of the semantics of the PHP programming language, especially those 
     that represent a challenge for static analysis.
 
-    Section Static Code Analysis gives a brief overview of existing 
-    static analysis methods, especially Data Flow Analysis 
-    (DFA)\cite{aho1985compilers}\cite{nielson1999principles}, 
-    which has become a de-facto standard type of analysis for most of 
-    the optimizing compilers and other more complex static analysis methods 
-    are either directly based on DFA or on the ideas behind DFA. 
-    This section includes references to relevant literature and 
-    is not meant as a comprehensive description, but should provide a 
-    context for the following section Control Flow for Phalanger Approach, 
+    \wSection{} Static Code Analysis gives a brief overview of existing 
+    static analysis methods with references to relevant literature. 
+    It is  not meant as a comprehensive description, but should provide a 
+    context for the following \wsection{} Control Flow for Phalanger Approach, 
     where we discuss how we used the existing techniques for the purposes 
     of our PHP code analysis.
     
@@ -384,10 +379,20 @@
         value through constant propagation and many other problems. 
         Static analyses usually do not give accurate solution, it is an approximation, 
         which can be an over-approximation or an under-approximation and it is up 
-        to the designer and user of the analysis which one is acceptable for 
-        his or her\footnote{``His'' or ``he'' 
-        should be read as ``his or her'' or ``he or she'' through the rest of the text.} 
-        purposes.
+        to the designer and user of the analysis which one is acceptable or safe for 
+        his or her purposes.
+        
+        In the rest of this \wsection{}, we provide a brief overview of 
+        static analysis methods, especially 
+        Data Flow Analysis (DFA)\cite{aho1985compilers}\cite{nielson1999principles},
+        which has become a de-facto standard type of analysis for most of 
+        the optimizing compilers and other more complex static analysis methods 
+        are either directly based on DFA or on the ideas behind DFA.
+        This should provide a context for the following \wsection{} 
+        Control Flow for Phalanger Approach, where we discuss how we 
+        applied and adapted DFA and other techniques described 
+        in this \wsection{} in order to analyse PHP code in 
+        Control Flow for Phalanger.
         
         %---------------------------------------------------------------------------------------
         \subsection{Program State}
@@ -513,15 +518,15 @@
         ``if the type of variable \code{b} is \code{Integer} in state $S_1$, 
         then after executing statement \code{a=b}, we get a new state $S_2$ that 
         is the same as $S_2$ except variable \code{a} is of type \code{Integer} in $S_2$''. 
-        Those rules can be more formally described with the following notation        
+        Those rules can be also described with the following notation        
         $$
-        \infer{a:Integer\in{}S_2}{b:Integer \in S_1, [a=b, S_1] \rightarrow S_2}
+        \infer{[a=b, S_1] \rightarrow S_2, S_2 \vdash a : Integer}{S_1 \vdash b : Integer}
         $$        
         where above the horizontal line we have hypothesis and below is 
-        the conclusion. In hypothesis we have that in state $S_1$ it 
-        holds that $a$ is an integer and a statement $a=b$ transforms 
-        the state $S_1$ to $S_2$. The conclusion says that in state 
-        $S_2$ $b$ is an integer. We should also say that other 
+        the conclusion. In hypothesis we have that in state $S_1$ $a$ 
+        is an integer. The conclusion says that given that statement 
+        $a=b$ transforms the state $S_1$ to $S_2$, then 
+        in state $S_2$ $b$ is an integer. We should also say that other 
         facts in $S_2$ stay the same as in $S_1$, in other words they 
         are not changed by the transformation, but for the sake 
         of brevity, we will always assume that implicitly.
@@ -747,7 +752,10 @@
         Abstracting the desired property is often important in order to make 
         the analysis practical or even feasible. Let us consider an analysis 
         that should determine the sign of integral variables at each program point.
-        We can have inference rules of the following form.
+        We can have inference rules of the following form: given that in state 
+        $S_1$ $v_1$ equals to $-10$ and $v_2$ equals to $3$, and statement 
+        $v_3=v_1+v_2$ transforms state $S_1$ to $S_2$, then in state $S_2$ 
+        $v_3$ is equal to $-7$.
         
         $$
         \infer{[v_3=v_1+v_2, S_1] \rightarrow S_2, S_2 \vdash v_3 : -7 (sign: \ominus)}
@@ -934,8 +942,9 @@
     
     % ----------------------------------------------------------------------------
     \section{Control Flow for Phalanger Approach}
+    \label{phalapproach}
         
-        \subsection{Assumptions}        
+        \subsection{Introduction}
         The approach taken in Control Flow for Phalanger is based on an 
         observation that even when developers are given a dynamically typed 
         programming language, it does not mean that they will write 
@@ -962,6 +971,19 @@
         concepts and, furthermore, they rely on the results of the 
         type analysis and points-to analysis, which is 
         also discussed in this \wsection{}.
+        
+        The design of type analysis consists of three parts: 
+        \begin{itemize*}
+            \item Determine what the actual results of the analysis will be.
+            \item Design of the local analysis, which is based on 
+                the DFA approach and so we need to design lattice 
+                of \emph{data-flow} values and transfer functions.
+            \item Design of the interprocedural analysis, which 
+                adapts the region based method, therefore we 
+                need to decide how to devise and represent 
+                a transfer function that summarizes effects of                 
+                a whole routine body.
+        \end{itemize*}
         
         \subsection{Analysis Results}
         
@@ -1031,13 +1053,20 @@
         table, but we do not create actual \emph{data-flow} instance 
         for every program point.
         
-        The questions that have to be answered, in order to 
+        The transfer functions use the bottom-up evaluation approach 
+        and reflect the semantics of the PHP language. For the sake of 
+        brevity, we do not provide their formal description\footnote{
+        The transfer functions encoded in C\# can be found in the 
+        source codes of the project}.
+        
+        The remaining questions that have to be answered, in order to 
         implement the DFA, include:
         
         \begin{itemize*}
             \item what the \emph{data-flow} values will be, 
             \item what data structures will be used to represent them efficiently, 
-            \item how to deal with routines calls and their effects to the program state.
+            \item how to deal with routines calls and their 
+                effects to the program state -- intraprocedural analysis.
         \end{itemize*}
         
         \subsection{Local Analysis: Data-flow Values}
@@ -1308,8 +1337,8 @@
         which can be more effective, but on the other hand, 
         there are cases different to this example, where our 
         approach fails to devise any useful information 
-        and heap model, could give us 
-        better results. For instance, if function \code{boo} 
+        and heap model could give us better results. 
+        For instance, if function \code{boo} 
         did not provide type information for its parameter 
         in its signature, because we analyse each routine 
         in a generic context.
@@ -1324,7 +1353,7 @@
         is marked with the ``type hint'' flag.
         
         The global variables and static class field are analysed 
-        in the way as instance fields.
+        in the same way as instance fields.
         
         \subsubsection*{Type Documentation}
         There are two different cases where we need to consider type 
@@ -1389,6 +1418,29 @@
         again ``leak'' on the heap, from where the other routine 
         can invoke it.
         
-        %TODO: \subsubsection*{Arrays}
+        \subsection{Summary}
+        In this \wsection{} we provided an overview of the design 
+        of the type analysis used in Control Flow for Phalanger. 
         
+        The type analysis is based on Data-flow analysis framework 
+        with the lattice of \emph{data-flow} values being a power set 
+        of possible types with additional flags to distinguish 
+        between some special cases, especially to distinguish 
+        between type information (indirectly) inferred from 
+        documentation comments and type information inferred 
+        from actual code.
+        
+        The interaction between routines is dealt with using 
+        a modular approach where for each routine we derive 
+        its return type and other required information 
+        in a generic setting, not in a context of its 
+        concrete invocation from within other routines. 
+        We do not analyse individual object instances 
+        and therefore we do not need to take the heap 
+        state into consideration.
+        
+        In the \wchapter{} Design and Implementation, 
+        we discuss the design and implementation of 
+        Control Flow for Phalanger, an implementation of 
+        the analysis designed in this section.
         

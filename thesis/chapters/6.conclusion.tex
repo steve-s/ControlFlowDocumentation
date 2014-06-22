@@ -1,22 +1,51 @@
 \chapter{Conclusion}
 
-    In this thesis we presented a project with code name 
+    In this \wthesis{} we presented a project with code name 
     Control Flow for Phalanger, which can analyse PHP 
     source code in order to discover type related errors 
-    and mismatches with type documentation.
+    and mismatches with type documentation. Control Flow 
+    for Phalanger also provides a framework for 
+    implementation of any other kind of analysis.
+    
+    The type analysis in Control Flow for Phalanger 
+    is based on Data-flow analysis. The \emph{data-flow} 
+    values design used in Control Flow for Phalanger 
+    permits an effective representation with bit-vectors.
+    In order to deal with the effects of routines 
+    interaction, we used a modular approach, where 
+    we analyse each routine only once in a generic 
+    context setting to devise its return type and its 
+    effects to the global state. This approach 
+    can provide better scalability over 
+    context sensitive analysis with memory 
+    abstraction used by some of the other tools 
+    for analysis of PHP code.
+    
+    The results of the type analysis can be used 
+    by other tools, for example, a compiler or 
+    integrated development environment plug-in. 
+    The inferred type information, provided as 
+    a result of the type analysis, provides a 
+    distinction between type information derived 
+    (indirectly) from documentation comments and 
+    from actual code, thus it supports both 
+    use cases: the compiler can use the safe 
+    type information derived only from code, 
+    but IDE plug-in can take advantage of the 
+    PHPDoc documentation comments.
     
     The Control Flow for Phalanger was evaluated on 
-    three real world PHP project. Although, the tool 
-    does not use heap abstraction and 
-    does not perform context sensitive analysis, it was 
-    still capable of discovering several real 
-    issues with a good ratio of false positives. 
+    three real world PHP projects. Although, the tool 
+    does not perform context sensitive analysis and 
+    does not use memory abstraction, it was still 
+    capable of discovering several real issues with 
+    a good ratio of false positives.
     
     This result may indicate that, were some imprecision 
     in the analysis results can be tolerated, the 
     modular approach we used can give results comparable 
-    to those of tools that use more complex methods, with 
-    possibly better scalability.
+    to those of tools that use more complex methods, 
+    but with better scalability.
 
     \section{Future Work}
     

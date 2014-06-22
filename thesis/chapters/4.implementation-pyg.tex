@@ -1,65 +1,104 @@
 \chapter{Design and Implementation}
 
-    \section{Implementation Specific Constraints}
+    \section{Introduction}
     
-    One of the requirements was that the project should be implemented 
-    in the context of the Phalanger project. It should be ready 
-    to be plugged in between the Phalanger's front-end and back-end and 
-    it should also provide public interface useful for the 
-    Phalanger PHP Visual Studio tools.
+    In this chapter we provide an overview of the design and 
+    implementation of the type analysis described in 
+    section \nameref{phalapproach}. Aside the type analysis 
+    itself, the aim of Control Flow for Phalanger is to provide 
+    a generic framework for implementation of any kind 
+    of analysis, especially \emph{data-flow} based analyses.
+    
+    Control Flow for Phalanger includes implementation of 
+    aforementioned type analysis, constant propagation analysis 
+    and dead code detection. The results of those analyses 
+    are made available to other user defined analyses 
+    through a public interface, so that user defined analyses 
+    can benefit from, for example, a resolved method call 
+    that depends on the type of the variable the method 
+    is called upon. Moreover, the analyses included in 
+    Control Flow for Phalanger can report errors and warnings 
+    discovered during analysing the code like, for instance, 
+    dead code or type mismatches with documentation.
+    
+    Control Flow for Phalanger can also be used as a 
+    library by other tools. For example, integrated 
+    development environment plug-in can visualize the 
+    issues reported by the default analyses, or compiler 
+    can use the public interface for accessing the 
+    analyses results to emit more efficient code.
+    
+    In the next section we discuss the implementation 
+    constraints that come from the requirement to use 
+    Phalanger front-end and to integrate Control Flow 
+    for Phalanger with the whole Phalanger project -- 
+    it should be designed so that it can be plugged 
+    in between the Phalanger's front-end and back-end 
+    and it should also provide public interface useful 
+    for the Phalanger PHP Visual Studio tools.
+    
+    The following section provides an overview of the 
+    architecture of Control Flow for Phalanger in 
+    terms of high level modules and their interaction. 
+    Finally, the last section of this chapter describes 
+    some of the interesting bits of the implementation.
+    
+    \section{Implementation Constraints}
     
     \subsubsection*{Abstract Syntax Tree}     
-    Phalanger front-end parses PHP code 
-    into an Abstract Syntax Tree (AST) \cite{aho1985compilers} structure. 
-    This structure is then traversed by the back-end using the 
-    visitor design pattern \cite{gamma1994design}. Phalanger does not 
-    use any other intermediate representation than AST and the 
-    back end transforms the AST directly to Microsoft Intermediate Language (MSIL).
+    Phalanger front-end parses PHP code into an Abstract 
+    Syntax Tree (AST) \cite{aho1985compilers} structure. 
+    An example of such AST structure is depicted in 
+    figure \ref{estexample}. This structure is then traversed 
+    by the Phalanger back-end, which emits the 
+    corresponding Microsoft Intermediate Language 
+    (MSIL) instructions. Phalanger does not use any other 
+    intermediate representation than AST and so the back end 
+    transforms AST directly to MSIL.
     
-    In order to reduce the memory consumption and provide better 
-    modularity, Phalanger code went through minor architecture 
-    refactoring before this project was started.     
-    The classes representing the AST nodes originally contained 
-    the code and data needed for emitting the corresponding 
-    MSIL opcodes. This, however, represents 
-    a coupling between the front-end and back-end and the 
-    front-end could not be used just on its own. In the new 
-    version, the classes representing AST nodes are capable 
-    of storing additional attributes in an extensible way 
-    and the back-end have been rewritten to be an ordinary AST 
-    visitor that uses the extensible AST nodes attributes.
-    The attributes provide a way to annotate AST nodes 
-    with any additional information, which in our case will be 
-    the results of the analyses.    
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[scale=0.5]{graphs/evaltree-ast.png}  
+    \caption{Abstract Syntax Tree of code \code{(foo()+\$a)/\$b}.\label{estexample}}
+\end{figure}      
+    
+    The classes that represent the AST nodes support extensible 
+    attributes, through which one can attach any additional 
+    information to the nodes, or ``annotate'' the nodes. 
+    This mechanism is used by Phalanger back-end and 
+    Control Flow for Phalanger also uses the extensible 
+    attributes to provide the results 
+    of its analyses as discussed in the following section.
     
     \subsubsection*{Integrated Development Environment Integration}
-    The PHP Tools for Visual Studio use Phalanger front-end in order to 
-    parse PHP code into AST and then the AST is again traversed to provide 
-    code completion and other features. All the AST nodes hold necessary 
-    pieces of information, for example, the position in the source file or 
-    documentation comments.
+    The PHP Tools for Visual Studio use Phalanger 
+    front-end in order to parse PHP code into AST 
+    and then the AST is again traversed to provide 
+    code completion and other features. The AST nodes 
+    hold necessary pieces of information, for example, 
+    the position in the source file or documentation comments.
+    Control Flow for Phalanger can seamlessly integrate 
+    into this schema, because it provides its results 
+    as annotations of the original AST nodes.
     
-    The aim of this project is to provide the results of type analysis 
-    and other analyses to the integrated development environment so 
-    that the possible errors and warnings can be visualised.
-    
-    The longer term aim of this project, not in the scope of this thesis, 
-    is to replace the existing algorithms for code completion, 
-    ``jump to definition'' and ``find usages'' features. Because 
+    The longer term aim of this project, not in the scope 
+    of this \wthesis{}, is to replace the existing 
+    algorithms for code completion, ``jump to definition'' 
+    and ``find usages'' features. Because 
     with a dynamic language like PHP, it is not trivial to 
     find all the usages of, for example, a class or determine 
-    a definition of, for instance, a field accessed on some local variable. 
-    In order to provide more precise results, 
-    type analysis is needed.
+    a definition of, for instance, a field accessed 
+    on some local variable. In order to provide more 
+    precise results, type analysis is needed.
     
     One of the challenging parts of integrated development 
-    environment integration is also dealing with incomplete code 
-    that is being typed in by the user. Therefore one of the requirements 
-    was also that the analysis should be capable of 
-    performing an ad-hoc re-analysis of once analysed 
-    code with a new statement added. This ad-hoc re-analysis 
-    should be, if possible, more effective that doing the 
-    whole analysis again.
+    environments support is also dealing with incomplete code 
+    that is being typed in by the user. Therefore one of 
+    the requirements was also that the analysis should 
+    be capable of performing an ad-hoc re-analysis of 
+    once analysed code with a new statement added. 
+    This ad-hoc re-analysis should be, if possible, 
+    more effective that doing the whole analysis again.
     
     \section{Overall Design}
     
@@ -85,7 +124,8 @@
 
 \begin{figure}[h]  
   \centering
-    \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio,viewport=0 55 532 590]{img/ControlFlowModules.pdf}  
+    %\includegraphics*[width=\textwidth,height=\textheight,keepaspectratio,viewport=0 55 532 590]{img/ControlFlowModules.pdf}  
+    \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio,viewport=0 15 565 590]{img/ControlFlowModules.pdf}  
     \caption{Control Flow for Phalanger Design Overview\label{overalldiagram}}
 \end{figure}    
 
