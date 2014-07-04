@@ -330,7 +330,7 @@
         Static analyses usually do not give accurate solution, it is an approximation, 
         which can be an over-approximation or an under-approximation and it is up 
         to the designer and user of the analysis which one is acceptable or safe for 
-        his or her purposes.
+        their purposes.
         
         In the rest of this \wsection{}, we provide a brief overview of 
         static analysis methods, especially 
@@ -440,7 +440,7 @@
         for assignment statement \code{\$a=\$b}, will take the input \emph{data-flow} 
         $flow_{in}$ and will return $flow_{out}$, such that $flow_{out}(x)=flow_{in}(x)$ for 
         every variable name $x$, except for $flow_{out}(\$a)=flow_{in}(\$b)$. In other words, 
-        the type of all the variables stays the same, except for \code{\$a} whose type 
+        the type of all the variables stays the same, except for \code{\$a}, whose type 
         changes to whatever is the type of \code{\$b} is. 
         
         In practice, there is only one \emph{transfer function} for all the assignment 
@@ -472,7 +472,11 @@
         The \emph{data-flow} for \emph{program point before} a statement 
         depends on the \emph{data-flow} of \emph{program point after} the 
         last executed statement. Let us consider a basic block $B$ with 
-        statements $s_0, s_1, ..., s_n$.
+        statements $s_0, s_1, ..., s_n$, that is a sequence of 
+        instructions that are always sequentially executed. A basic 
+        block is part of a control flow graph and its incoming 
+        edges lead from all the basic blocks whose execution can 
+        precede this basic block.
         
         In the case of any $s_i \neq s_0$, that is any statement but 
         the first one, there is only one statement whose execution 
@@ -586,7 +590,7 @@
                 
         \subsection{Finding Solution for the Data-flow Equations}
         
-        \subsubsection*{Lattices.}
+        \subsubsection*{Lattices}
         The algorithm for finding a solution to a set of data-flow 
         equations is based on algebraic structures called lattices. 
         A lattice is a partially ordered set in which every 
@@ -659,7 +663,8 @@
         of \emph{data-flow}, the $\textit{MEET}$ operations and the transfer 
         functions. 
         
-        \emph{Data-flow} often represents a subset of a set of possible values 
+        \emph{Data-flow} values often represent a subset of a set of 
+        all possible values of some kind 
         and the $\textit{MEET}$ operation is either union or intersection.
         For example, a subset of all possible types of a variable. 
         Furthermore, we want to calculate the information for all 
@@ -802,7 +807,7 @@
         the program state even from the local point of view 
         of the function we are analysing.
                 
-        \subsubsection*{Context Sensitive Intraprocedural Analysis}
+        \subsubsection*{Context Sensitive Interprocedural Analysis}
         
         The most precise solution is to analyse a function, 
         say \code{foo}, for each possible calling context. 
@@ -995,7 +1000,7 @@
             \item what the \emph{data-flow} values will be, 
             \item what data structures will be used to represent them efficiently, 
             \item how to deal with routines calls and their 
-                effects to the program state -- intraprocedural analysis.
+                effects to the program state -- interprocedural analysis.
         \end{itemize*}
         
         \subsection{Local Analysis: Data-flow Values}
@@ -1009,7 +1014,7 @@
         
         For an efficient representation of the \emph{data-flow}, 
         the routine's body is scanned for all local variables names 
-        referenced types prior to the analysis. After the scan, the 
+        and referenced types prior to the analysis. After the scan, the 
         number of variables and types is a known constant and the 
         \emph{data-flow}, being an array of subsets of a set 
         of all the types, can be represented as a bit-vector. 
@@ -1028,7 +1033,7 @@
         The basic \emph{data-flow} values for a single variable 
         and set of types $\left\{int, false, null\right\}$ are depicted 
         in the figure \ref{typeslattice1}. Aside the whole set of 
-        all types references within the routine's body, we have 
+        all types referenced within the routine's body, we have 
         another artificial value called \emph{Any}, which simply 
         designates any possible type, not restricted to the set 
         of known types. In the following paragraphs, we discuss 
@@ -1048,7 +1053,7 @@
         \code{true} and \code{false}, because it is a well 
         known pattern in PHP for routines to use \code{false} 
         return value as an indication of failure. 
-        Routines then can have, for example, have type 
+        Routines then can have, for example, type 
         \code{false|object} meaning that this routine returns either 
         object or value \code{false}, never value \code{true}.
         
@@ -1089,7 +1094,9 @@
         we call ``type hint''. It is a single flag for the 
         whole set of possible types, so we cannot have a 
         set of two possible types where one is ``type hint'' 
-        and the other is not. 
+        and the other is not. This is a deliberate 
+        over-approximation in order to enable more 
+        efficient implementation.
         
         We can think of all the sets with ``type hint'' flag 
         as a parallel lattice to the lattice of sets without 
@@ -1143,7 +1150,7 @@
         which works similarly to ``any type'' flag: it holds or does 
         not hold for the whole set of class types. Also the upper bound 
         of two elements, where one of the has the flag ``subclasses'', 
-        will has the ``subclasses'' flag.
+        will have the ``subclasses'' flag.
         
         Moreover, we add one artificial value, which is \code{object}, 
         and it denotes arbitrary class instance, but it is not the 
@@ -1173,7 +1180,7 @@
         This lattice with class types can be amended with the ``type hint'' 
         flag the same way we did before we introduced classes.
         
-        \subsection{Intraprocedural Analysis}
+        \subsection{Interprocedural Analysis}
         
         The approach we described so far considers only local variables, 
         but we want to analyse object and class fields' types, and global 
@@ -1192,16 +1199,17 @@
         
         \subsubsection*{Routines Return Values}
         When the analysis encounters a routine invocation, it needs 
-        to know the routine's return type and possible other pieces 
+        to know the routine's return type and possibly other pieces 
         of information we discuss later.
         
         If the source code of the routine in question is available, 
         in other words, it is part of the analysed source, we 
         recursively trigger its analysis in order to infer its 
-        return type. When the analysis finished, we save the 
-        results to the \emph{globas table} so that we do not 
-        need to analyse the routine next time and resume the 
-        analysis of the original routine.
+        return type. Once the analysis of the routine 
+        is finished, we save the results to the \emph{globas table} 
+        so that we do not need to analyse the routine next time 
+        and we resume the analysis of the original routine, 
+        which invoked the ``nested'' routine.
         
         This approach, however, does not work for recursive 
         and mutually recursive routines. The solution we use 
@@ -1213,7 +1221,7 @@
         
         \subsubsection*{Heap}        
         Let us first provide an example, where heap abstraction and 
-        context sensitive intraprocedural analysis would be useful:
+        context sensitive interprocedural analysis would be useful:
         
 %pygmentize_begin php
 % function foo() {
@@ -1267,7 +1275,7 @@
         However, as we stated at the beginning of this \wsection{}, 
         the analysis of instance fields is meant for bug hunting 
         purposes and we can afford some imprecision. In addition, 
-        the type information inferred by means of \emph{globals table} 
+        any type information inferred by means of \emph{globals table} 
         is marked with the ``type hint'' flag.
         
         The global variables and static class field are analysed 
@@ -1322,7 +1330,7 @@
         can be pointed to by any reference are updated. Those variables 
         \textbf{may} only be pointed to, but do not \textbf{have to} 
         be pointed to, so we take their current type information 
-        and merge with type \code{T}, creating over approximation.
+        and merge with type \code{T}, creating an over-approximation.
         
         Moreover, any routine's invocation can change any local 
         variable from the can be pointed to set, because 

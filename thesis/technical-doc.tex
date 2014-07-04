@@ -1,0 +1,114 @@
+    \section{Tables}
+        Tables module responsibility is to maintain a database 
+        of global symbols that can be referenced from the code.
+        The most generic interface \code{ITypeTables} is used 
+        only for querying the database. The structure is shown 
+        in class diagram \ref{tablesifaces}.
+        
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[width=\textwidth,height=\textheight,keepaspectratio]{img/tables-ifaces.png}  
+    \caption{The Interface of Type Tables\label{tablesifaces}}
+\end{figure}
+
+        The tables need to know a context from which the 
+        query is made, because certain names can refer 
+        to different symbols in different namespaces 
+        for example. The \code{ContextManager} class maintains 
+        the current context and the consumers of the \code{ITypeTables} 
+        should invoke \code{EnterContext} and \code{LeaveContext} on its 
+        \code{ContextManager} to provide the correct context 
+        for their queries.
+
+        Global variables and fields provide two pieces type 
+        information: \code{ExpectedType} is checked when a 
+        value is assigned to that variable and the \code{Type} 
+        is used as the type of an expression that accesses 
+        the variable. Typically, the expected type is what 
+        the PHPDoc states and the ``type'' can be either what 
+        PHPDoc states or type inferred from all the assignments 
+        made to that variable.
+        
+        The fact that results of \code{ITypeTables} queries 
+        are only abstract type information not related to a 
+        concrete element in code, allows us to support built-in 
+        functions and classes and also to handle conditional 
+        declarations by merging the type information from 
+        all the occurrences found. However, this has not 
+        been implemented, but the design is prepared for it, 
+        shall it be considered an important feature in the future. 
+        At the moment, if two or more declarations are found, 
+        the Type Tables behave as if they did not know the 
+        element at all, which preserves correctness for the 
+        price of loosing precision.
+        
+        The basic implementation of \code{ITypeTables} is 
+        \code{Tables} class, which follows a variant of the 
+        composite design pattern. It gets a list of other 
+        \code{ITypeTables} implementations as its constructor 
+        parameter and queries those one by one until the 
+        symbol is found, or returns a value that indicates 
+        that the symbol was not found. The actual implementations 
+        of \code{ITypeTables} include Code Tables discussed 
+        later and can include user defined \code{ITypeTables} 
+        implementation that provides information about 
+        built-in functions and classes.
+    
+        \subsection{Code Tables}
+        Code Tables provide information related to concrete elements in 
+        the analysed code. So in this case not abstract type related 
+        information is provided, but a reference to the AST element 
+        with the declaration. Another difference to Type Tables is that 
+        Code Tables can return more results for one symbol name, 
+        which is because of conditional declarations. 
+        Other than that, the interface is similar to the one of 
+        Type Tables.
+        
+        \subsection{Dependency Resolver}
+        Dependency Resolver serves as an adapter of Code Tables interface 
+        to the Type Tables interface. However, in the case of routines, 
+        the routine's declaration AST element does not provide all the 
+        necessary type information straight away. Especially inferred 
+        return type, which is results of Type Analysis, will not be 
+        available if the analysis has not been performed yet.
+        
+        By convention, all the necessary information for analysing a 
+        routine and the results of the type analysis are stored in an 
+        instance of \code{RoutineContext} class in the additional attributes 
+        of the routine's declaration AST element. Since this AST element 
+        is returned by Code Tables, Dependency Resolver can check if 
+        the element has the annotation and if so return it as the result, 
+        and if not, it can start analysis of the routine. However, 
+        there can be cyclic references between routines, so Dependency 
+        Resolver also maintains a list of all the routines that are 
+        currently being analysed and if a routine is already in the list, 
+        default type information is returned as the query result instead 
+        of performing the analysis.
+        
+        \subsection{RoutineContext}
+        
+        \code{RoutineContext} class provides information about a routine 
+        needed for most of the analysis in order to analyse the routine. 
+        All the local variables, parameters and referenced global and 
+        static variables are numbered and accessed through their number 
+        instead of their name. The data \code{RoutineContext} provides are:
+        
+        \begin{itemize*}
+            \item Lists of
+                \begin{itemize*}
+                    \item all referenced types in the routine's body,
+                    \item all referenced variables (local, global, static).
+                \end{itemize*}
+            \item Results of the points-to analysis: lists of all variables that
+                \begin{itemize*}
+                    \item given variable can point to, 
+                    \item can be pointed to by another variable, 
+                    \item are captured by reference by some lambda function.
+                \end{itemize*}
+            \item Control Flow Graph.
+            \item Signature information -- implementation of \code{IRoutineTypesInfo} from Type Tables.
+            \item Results of Type Analysis:
+                \begin{itemize*}
+                    \item inferred return type.
+                \end{itemize*}
+        \end{itemize*}

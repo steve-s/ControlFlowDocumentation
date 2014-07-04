@@ -1,0 +1,58 @@
+\Framework\TestCase.php:1716:UnusedVariable
+\Framework\TestCase.php:1720:UnusedVariable
+\Framework\Assert.php:1862:FunctionParameterTypeMismatch
+\Framework\Assert.php:1863:FunctionParameterTypeMismatch
+\Util\XML.php:545:ReturnTypeMismatch
+\Util\XML.php:586:ReturnTypeMismatch
+\Util\XML.php:641:ReturnTypeMismatch
+\Util\XML.php:678:ReturnTypeMismatch
+\Util\XML.php:699:ReturnTypeMismatch
+\Util\XML.php:722:ReturnTypeMismatch
+\Util\XML.php:754:ReturnTypeMismatch
+\Util\XML.php:779:ReturnTypeMismatch
+\Util\XML.php:802:ReturnTypeMismatch
+\Framework\Assert.php:1961:ScalarWithArraySubscript
+\Framework\Assert.php:1961:ScalarWithArraySubscript
+\Framework\Assert.php:1962:ScalarWithArraySubscript
+\Framework\Assert.php:1962:ScalarWithArraySubscript
+\Framework\Assert.php:1897:FunctionParameterTypeMismatch
+\Util\Test.php:295:ReturnTypeMismatch
+\Framework\TestCase.php:1935:TypeMismatch
+\Framework\TestSuite.php:738:ReturnTypeMismatch
+\Framework\Constraint\Count.php:91:NotAllPathsReturnForNonVoidFunction
+\Framework\Constraint\Count.php:116:ReturnTypeMismatch
+\Util\ErrorHandler.php:133:UnusedVariable
+\Framework\Constraint\IsJson.php:89:FunctionParameterTypeMismatch
+\Framework\Constraint\IsType.php:128:NotAllPathsReturnForNonVoidFunction
+\TextUI\Command.php:340:FunctionParameterTypeMismatch
+\Util\Configuration.php:992:ReturnTypeMismatch
+\Util\DeprecatedFeature\Logger.php:199:TypeMismatch
+
+# -------------------------
+# False positives:
+
+# overload of built in object method
+\Util\GlobalState.php:352:MissingMandatoryParameters
+# global function re-declaration: unused argument (but its part of the original signature)
+\Util\Test.php:47:UnusedVariable
+
+# ------------------------
+# Control Flow errors:
+
+# something weird...
+\Framework\Constraint\ExceptionMessage.php:75:TypeMismatch
+# wrong handling of branching conditions
+\Framework\Constraint\Count.php:101:UninitializedVarUse
+\Util\TestDox\ResultPrinter.php:267:UninitializedVarUse
+# unused interface param
+\Framework\Constraint\IsAnything.php:77:UnusedVariable
+
+
+# ------------------------
+# PHP manual errors:
+
+# ReflectionClass::newInstance -> manual: mandatory parameter, reality: no mandatory params
+\Util\Test.php:361:MissingMandatoryParameters
+\TextUI\Command.php:792:MissingMandatoryParameters
+\TextUI\Command.php:746:MissingMandatoryParameters
+
