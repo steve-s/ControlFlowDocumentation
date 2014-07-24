@@ -40,7 +40,7 @@
     Section \nameref{overalldesign} provides an overview 
     of the architecture of Control Flow for Phalanger in 
     terms of high level modules and their interaction. 
-    Finally, the last section of this chapter describes 
+    Finally, the last section of this chapter \nameref{impl} describes 
     some of the interesting bits of the implementation.
     
     \section{Implementation Constraints}
@@ -53,7 +53,7 @@
     by the Phalanger back-end, which emits the 
     corresponding Microsoft Intermediate Language 
     (MSIL) instructions. Phalanger does not use any other 
-    intermediate representation than AST and so the back end 
+    intermediate representation than AST and so the back-end 
     transforms AST directly to MSIL.
     
 \begin{figure}[h]  
@@ -63,7 +63,7 @@
 \end{figure}      
     
     The classes that represent the AST nodes support extensible 
-    attributes, through which one can attach any additional 
+    attributes through which one can attach any additional 
     information to the nodes, or in other words, ``annotate'' the nodes. 
     This mechanism is used by Phalanger back-end and 
     Control Flow for Phalanger also uses the extensible 
@@ -90,6 +90,13 @@
     a definition of, for instance, a field accessed 
     on some local variable. In order to provide more 
     precise results, type analysis is needed.
+    
+    \subsubsection*{Large PHP Projects}
+    The implementation of the analysis should be able to handle 
+    PHP projects with few thousands of files on a typical development 
+    PC configuration under 1 minute and with less than 2GB of memory, 
+    so that it can be integrated into the development process as a 
+    part of a compiler or IDE plugin.
     
     \section{Overall Design}
     \label{overalldesign}
@@ -121,19 +128,21 @@
     \caption{Control Flow for Phalanger Design Overview\label{overalldiagram}}
 \end{figure}
 
-    In case of analysis of a routine, the PHP source code is first 
+    In case of analysis of a single routine, the PHP source code is first 
     parsed by Phalanger front-end, then we construct a control 
     flow graph of the routine and start the Data-flow analysis. 
-    The Data-flow analysis module directs the generic algorithm of 
-    computing the data-flow equations, but when it needs to 
-    perform a \emph{transfer function} or an operation with 
-    a \emph{data-flow} value, it invokes the implementation of 
+    Each control flow graph node, called basic block, contains AST 
+    elements representing statements that are always executed 
+    sequentially. The Data-flow analysis module directs the 
+    generic algorithm of computing the data-flow equations, 
+    but when it needs to perform a \emph{transfer function} or 
+    an operation with a \emph{data-flow} value, it invokes the implementation of 
     those provided by the ``Concrete Data Flow Analysis''. 
     In order to make the implementation of \emph{transfer functions} 
-    easier, the AST is transformed into an intermediate 
-    language, which is simplified version of the AST and also 
-    includes some additional information useful for analysis 
-    implementation.
+    easier, the the list of basic block's AST elements is 
+    transformed into an intermediate language, which is simplified 
+    version of the AST elements and also includes some additional 
+    information useful for analysis implementation.
     
     The analysis results can be saved as annotations of 
     corresponding AST nodes or they can be saved into the 
@@ -143,12 +152,13 @@
     \emph{global symbols} database can be used by the 
     analysis to query the global symbols information.
     
-    The following paragraphs describe each of the 
+    The following paragraphs describe some of the 
     modules in detail.
 
     \subsection{Intermediate Representation}
-    The aim of the intermediate languages is to simplify the 
-    interface for concrete analyses implementations. 
+    The purpose of the intermediate representations is 
+    to aid the design of the concrete analyses by 
+    providing a simpler interface than full AST.
     However, at the same time, it was desirable to stay as 
     close to the original AST elements as possible in order 
     to easily propagate the results and to easily integrate 
@@ -158,9 +168,7 @@
     
     Control Flow for Phalanger uses two intermediate representations 
     on a conceptual level, however, they are usually not explicitly 
-    constructed, but transformed from AST on the fly. The purpose 
-    of the intermediate representations is to simplify the design 
-    of the concrete analyses.
+    constructed, but transformed from AST on the fly.
     
     \emph{Phil} stands for \emph{PHP Intermediate Language} and is 
     very abstract representations close to the original AST. 
@@ -200,7 +208,7 @@
     namely routines, object fields, static fields, constants 
     and global variables. Definitions of those symbols can be 
     part of the analysed code or they can, for example, refer 
-    to a built in functions or external libraries. 
+    to a built-in functions or external libraries. 
     For this reason, there are two interfaces 
     for the Global symbols database. 
     
@@ -219,7 +227,7 @@
     and similar. \emph{Type Tables} merge the data from 
     \emph{Code Tables}, which provide even more information 
     than needed, and any other user defined data source, 
-    which can be, for example, a database with built in symbols.    
+    which can be, for example, a database with built-in symbols.    
         
     \subsection{Extensibility}
     The whole project is designed as a class library and 
@@ -234,6 +242,7 @@
     analysis of a file or a given piece of code.
     
     \section{Implementation}
+    \label{impl}
     This section describes some of the interesting parts of the 
     implementation in more detail.
     
@@ -271,12 +280,15 @@
                 and is a special additional Phil element.
         \end{itemize*}
         
-        Because we have an object instance to represent every Phil element, 
-        we do not have to visit them on the fly while traversing the original AST, 
-        they can also be saved into and array, which enables us to perform the 
-        traversing of original AST only once, shall it be a performance issue 
-        in the future. Not saving Phil elements explicitly on the other hand 
-        saves memory.
+        Phil elements are processed on the fly as they are transformed from 
+        the original AST, therefore we do not have to explicitly save them 
+        in memory. This means that every time a piece of AST is to be processed, 
+        the transformation to Phil take place again, but in a fact, it is 
+        a very light process. Nonetheless, we have an object instance to 
+        represent every Phil element, so we do not have to process them 
+        on the fly, they can also be saved into an array, which enables 
+        us to perform the traversing of original AST only once, shall 
+        it be a performance issue in the future.
         
         It is also possible to crate accurate control flow 
         graphs when it comes to try-catch blocks, because a single AST element, 
@@ -355,11 +367,10 @@
         
     \subsection{Data Flow Analysis}
         A data flow analysis (DFA) in general can be performed on any graph, 
-        the implementation of Control 
         and so even in our case, we did not want it to be tied 
-        Flow Graph. For this purpose, our implementation of DFA is 
+        Control Flow Graph. For this purpose, our implementation of DFA is 
         performed on interfaces that Control Flow Graph implements, 
-        but they can be implemented, for example, by definition-use 
+        but they can be implemented, for example, by a definition-use 
         graph\cite{aho1985compilers} and DFA can be run on this graph too.
         The interfaces are depicted in figure \ref{graphifaces}.
         
@@ -383,7 +394,7 @@
         
         The operations with data flow objects could be carried out by the 
         objects themselves, but this would mean that already existing 
-        classes that happens to be suitable for being a data flow would 
+        classes that happen to be suitable for being a data flow would 
         have to be wrapped. And also one data flow representation, could 
         not have different operations for different analyses. An example 
         of this is \code{BitVector} class from .NET class library: it 
@@ -407,7 +418,7 @@
 
         A simple example of concrete Data Flow Analysis is the built-in 
         constant propagation analysis, which is discussed in the 
-        following section.        
+        following subsection.        
     
     \subsection{Analyses}
         \subsubsection*{Dead Code Elimination}
@@ -442,9 +453,7 @@
         The lattice for the data flow values of single variable is 
         depicted in figure \ref{constlattice}. The Data Flow type is class 
         \code{ConstantPropagationDataFlow}, which wraps an array 
-        that contains the value of each variable. Note 
-        that the variables names are already converted to numbers by 
-        \code{RoutineContext} and those numbers serve as indexes into this array.
+        that contains the value of each variable. 
         The value is an \code{object} instance, so it can be \code{null}, which 
         is the least element of the lattice, or its value can be concrete 
         singleton object instance that by convention represents 
@@ -468,13 +477,13 @@
         reference assignment statement and for function call, 
         because some local variables can be passed by reference, 
         which can change their value. The right hand side of 
-        the assignment is an expression, which should already by 
+        the assignment is an expression, which should already be 
         annotated with its value that is used for the data 
         flow value.
 
     \subsection{Type Information Representation}        
         The theoretical side of workings of the type analysis was 
-        discussed in \wsection{} Control Flow for Phalanger Approach.         
+        discussed in \wsection{} \nameref{phalapproach}.         
         In this paragraph we discuss representation of 
         type information for a single variable or a single expression. 
         The representation is based on the type information 

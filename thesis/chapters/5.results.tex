@@ -85,7 +85,7 @@ actual error.
 On the other hand, although being less precise, Control Flow for 
 Phalanger seems to have better ratio of false positives. 
 This could make it more suitable option for a day to day development, 
-which is what it was in fact focused on. 
+which is what it is focused on. 
 
 Due to this difference, the results for other PHP projects were 
 manually inspected only in the case of Control Flow for Phalanger.
@@ -93,8 +93,7 @@ manually inspected only in the case of Control Flow for Phalanger.
 
 \section{Evaluation on open source PHP code}
 
-For further evaluation, the following open source PHP frameworks and 
-websites were chosen:
+For further evaluation, the following open source PHP frameworks were chosen:
 
 \begin{description}
     \item[PHPUnit:] a port of JUnit unit testing framework for PHP; it is a mature 
@@ -128,7 +127,7 @@ git repository.
 
 Often one real issue in the source code caused several 
 warnings to be reported by the tool. For instance, if a documentation 
-of a type of a field was not correct, most the lines where 
+of a type of a field was not correct, most of the lines where 
 a value was assigned to that field were reported, however, the 
 root of the cause was actually the only one line with the 
 wrong type documentation. Such cases were counted as a 
@@ -155,8 +154,8 @@ coding style.
 \end{itemize}
 
 \paragraph*{Documentation:} inconsistency of the PHPDoc type 
-documentation and what the the code does. This category includes 
-only cases where it is clear that the documentation is wrong, not the code, 
+documentation with what the actual code does. This category includes 
+only cases where it is clear that the documentation is wrong, 
 for example, due to updates in the code that were not reflected 
 in the documentation. The inconsistency may also indicate 
 another problem, in which case it does not belong to this category. 
@@ -180,11 +179,7 @@ an unexpected exception or unexpected runtime error or notice.
 
 
 \paragraph*{False Positive:} problems reported by the tool that 
-are not in fact real problems. Includes only false positives 
-that cannot be eliminated because of fundamental design reasons 
-or are not intended to be eliminated, because it would 
-cause some actual positives to be missed.
-
+are not in fact real problems. 
 
 \begin{itemize}
     \item[] \textit{Unused routine arguments} -- when a method is an override of 
@@ -199,8 +194,8 @@ cause some actual positives to be missed.
         therefore this may or may not be considered a false positive.
     \item[] \textit{Amendable false positive} -- false positives 
         that are reported, although the algorithm the analyzer 
-        is using should not report them. Those indicate errors 
-        in the implementation.
+        is using should not report them. Those can indicate errors 
+        in the implementation of the analysis.
     \item[] \textit{Built-in documentation errors} -- false positives 
         due to the inaccuracy of the documentation of built-in 
         functions and classes that was used in the experiment.

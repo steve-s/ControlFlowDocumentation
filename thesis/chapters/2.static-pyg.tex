@@ -14,18 +14,19 @@
     PHP libraries and frameworks that by themselves do not contain 
     any PHP files that produce HTML or any other output for the user.
     
-    The following \wsection{} PHP Semantics describes some important parts 
+    The following \wsection{} \nameref{phpsem} describes some important parts 
     of the semantics of the PHP programming language, especially those 
     that represent a challenge for static analysis.
 
-    \wSection{} Static Code Analysis gives a brief overview of existing 
+    \wSection{} \nameref{statanal} gives a brief overview of existing 
     static analysis methods with references to relevant literature. 
     It is  not meant as a comprehensive description, but should provide a 
-    context for the following \wsection{} Control Flow for Phalanger Approach, 
+    context for the following \wsection{} \nameref{phalapproach}, 
     where we discuss how we used the existing techniques for the purposes 
     of our PHP code analysis.
     
     \section{PHP Semantics}
+    \label{phpsem}
 
     \subsection{Dynamic Typing}
     In PHP, local or global variables, object fields and function or 
@@ -365,6 +366,7 @@
 \end{Verbatim}
     
     \section{Static Code Analysis}       
+    \label{statanal}
         Static analysis of source code is an analysis that is performed without 
         executing the code. This means that we do not need to have a
         web server, for example, in order to analyse code of a web application. 
@@ -428,11 +430,11 @@
         construction \cite{mohnen2002graph}.
         
         Control flow graph nodes, also called basic blocks, 
-        are program statements that are always executed sequentially. 
-        Directed edges represent the control flow between basic blocks, 
-        for example, jumps in the control flow due to conditionals, 
-        \code{goto} statements or any other statements that can change 
-        the flow of the program.        
+        represent blocks of instructions that are always 
+        executed sequentially. Directed edges represent the control 
+        flow between basic blocks, for example, jumps in the control 
+        flow due to conditionals, \code{goto} statements or any 
+        other statements that can change the flow of the program.        
         Control flow graphs usually contain two special nodes: 
         entry node and exit node. The entry node does not have any 
         incoming edges and all the paths lead to the exit node.        
@@ -527,7 +529,7 @@
         is an integer. The conclusion says that given that statement 
         $a=b$ transforms the state $S_1$ to $S_2$, then 
         in state $S_2$ $b$ is an integer. We should also say that other 
-        facts in $S_2$ stay the same as in $S_1$, in other words they 
+        facts in $S_2$ stay the same as in $S_1$, in other words, they 
         are not changed by the transformation, but for the sake 
         of brevity, we will always assume that implicitly.
         
@@ -722,7 +724,7 @@
         its input \emph{data-flow} $IN(B_j)$ has changed or is not 
         initialized yet and computes $OUT(B_j)$, which might change 
         the input \emph{data-flow} of the ancestors of $B_j$. 
-        The process is repeated until a the system stabilizes. 
+        The process is repeated until the system stabilizes. 
         
         The algorithm can take basic blocks in any order, however, 
         the \emph{reverse post order} provides the best time complexity 
