@@ -14,6 +14,15 @@ Expression self::$instance is expected to be of type Null|NetteLoader, but it is
     		if (self::$instance === NULL) {
 >>>>			self::$instance = new static;
     		}
+
+            $a = new X;
+            $b = $a;
+            
+            $a->foo = 3;
+            $b->a;
+            
+            $a = 'asdas';
+
     		return self::$instance;
     	}
         
@@ -94,6 +103,7 @@ The routine PHP.Core.AST.InstanceOfEx expects type Object as its parameter numbe
     		if (!$this->latte) {
     			return NULL;
     		}
+
 >>>>		$latte = $this->latte instanceof Latte\Engine ? $this->latte : new Latte\Engine;
     
     		foreach ($this->helpers as $key => $callback) {

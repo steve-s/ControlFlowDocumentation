@@ -1,12 +1,15 @@
 %pygmentize_options: -O startinline=True
 \chapter{Results}
+\label{results}
 We evaluated Control Flow for Phalanger on several open source PHP projects. 
 In order to have a comparison to another established tool of similar type, 
 we analysed one of the PHP projects with both Control Flow for Phalanger and 
 Phantm. The discussion of the differences in results is provided in the 
 following section. The rest of the PHP projects were analysed only with 
 Control Flow for Phalanger and the reported problems were manually inspected 
-and categorized.
+and categorized. Moreover, we measured execution time and memory 
+consumption of the analysis with several PHP projects of 
+different sizes to investigate its scalability.
 
 
 \section{Comparison to Phantm\label{phantmresults}}
@@ -44,7 +47,7 @@ the following paragraphs.
 The uninitialized variable error appears to be genuine problem that would 
 generate a notice at runtime. It was discovered by both tools. Because the 
 variable in question is accessed as an array using the \code{[]} operator, 
-Phantm reported it twice.
+Phantm reported it twice, because it treats it as two variable accesses.
 
 All the prototype errors are false positives probably due to the fact 
 that Phantm does not distinguish mandatory and optional parameters. 
@@ -74,7 +77,7 @@ instead of cast or floor or ceiling functions.
 
 Those results can indicate that, although at first sight the aims of the
 two tools are the same, under closer inspection, they differ. 
-Phantm attempts to perform very precise analysis. For example, 
+Phantm attempts to more precise analysis. For example, 
 by modelling heap memory. Such precision is, in theory, more powerful 
 and can discover more actual problems; yet, it also yields
 many false positives. It would be possible to filter out the 
@@ -87,7 +90,7 @@ Phalanger seems to have better ratio of false positives.
 This could make it more suitable option for a day to day development, 
 which is what it is focused on. 
 
-Due to this difference, the results for other PHP projects were 
+Because of this difference, the results for other PHP projects were 
 manually inspected only in the case of Control Flow for Phalanger.
 
 
@@ -205,7 +208,7 @@ are not in fact real problems.
 
 The following table provides a summary of the problems found. 
 There is a table that lists concrete problems found PHPUnit 
-available in the appendix\ref{phpunittable}.
+available in \hyperref[phpunittable]{Appendix A}.
 
 \newcommand{\subcat}[1]{\hspace{0.5cm}\small{\textit{#1}}} 
 \newcommand{\reldefret}{\subcat{default return value}}
@@ -292,5 +295,45 @@ Note that if method \code{removeCharacterDataNodes} removed
 all the child nodes that are not instances of \code{DOMElement}, 
 the code would be correct, but the error would still be reported, 
 therefore it would be false positive.
+
+\section{Performance}
+
+Execution time and memory consumption were measured for real 
+world PHP projects of size from thousands to hundreds of thousands 
+of lines of code. In the charts, (K)LOC stands for (thousand) 
+lines of code. The experiments were conducted on 
+Intel Core i7-4600U, 2.70 GHz with 8GB of RAM memory.
+Note that we measured not only the analysis 
+itself, but the whole process needed to perform 
+the analysis including parsing the source code 
+by Phalanger.
+
+The execution time was measured using PowerShell 
+\code{Measure-Command} command, which is supposed 
+to measure wall clock time in a similar way as UNIX 
+\code{time} command. The chart in figure \ref{exectime} 
+shows mean values from 20 runs preceded by 2 warm up runs, 
+which were not counted. 
+
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[scale=0.5]{graphs/exectime.jpg}  
+    \caption{Execution time mean values for different sizes of analysed code. \label{exectime}}
+\end{figure}      
+
+For measuring the memory consumption, Visual Studio 2012 
+profiler was used and the results are shown in figure \ref{memusage}. 
+The graph shows total number of megabytes allocated.
+
+\begin{figure}[h]  
+  \centering
+    \includegraphics*[scale=0.55]{graphs/memusage.jpg}  
+    \caption{Memory usage for different sizes of analysed code.\label{memusage}}
+\end{figure}      
+
+This experiment suggests that the execution time 
+scales very well with the growing number of 
+lines of code and memory consumption scales 
+reasonably good.
 
 

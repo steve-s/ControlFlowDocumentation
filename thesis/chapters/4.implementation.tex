@@ -1,10 +1,11 @@
 \chapter{Design and Implementation}
+\label{designandimpl}
 
     \section{Introduction}
     
     In this chapter we provide an overview of the design and 
     implementation of the type analysis described in 
-    section \nameref{phalapproach}. Aside the type analysis 
+    section \ref{phalapproach}. Aside the type analysis 
     itself, the aim of Control Flow for Phalanger is to provide 
     a generic framework for implementation of any kind 
     of analysis, especially \emph{data-flow} based analyses.
@@ -37,10 +38,10 @@
     and it should also provide public interface useful 
     for the Phalanger PHP Visual Studio tools.
     
-    Section \nameref{overalldesign} provides an overview 
+    Section \ref{overalldesign} provides an overview 
     of the architecture of Control Flow for Phalanger in 
     terms of high level modules and their interaction. 
-    Finally, the last section of this chapter \nameref{impl} describes 
+    Finally, the last section of this chapter \ref{impl} describes 
     some of the interesting bits of the implementation.
     
     \section{Implementation Constraints}
@@ -190,7 +191,7 @@
     Phil can be viewed as a three address code.
     
     \emph{RPhil} stands for \emph{Resolved PHP Intermediate Language}. 
-    RPhil is basically a Phil with resolved symbols where possible. 
+    RPhil is essentially Phil with resolved symbols where possible. 
     In order to resolve the symbols, the module building RPhil 
     can use names explicitly expressed in the code, for example, 
     for direct local variable access \code{\$a}, or results of 
@@ -292,7 +293,7 @@
         
         It is also possible to crate accurate control flow 
         graphs when it comes to try-catch blocks, because a single AST element, 
-        can cause exception in any stage of its evaluation, therefore it should 
+        can cause an exception in any stage of its evaluation, therefore it should 
         be split into single execution steps and those put into separate 
         basic blocks so that an edge from each of them to the 
         catch block can be created. Note that the design is prepared 
@@ -356,7 +357,7 @@
         Control Flow Graph. For this purpose, our implementation of DFA is 
         performed on interfaces that Control Flow Graph implements, 
         but they can be implemented, for example, by a definition-use 
-        graph\cite{aho1985compilers} and DFA can be run on this graph too.
+        graph \cite{aho1985compilers} and DFA can be run on this graph too.
         The interfaces are depicted in figure \ref{graphifaces}.
         
 \begin{figure}[h]  
@@ -468,7 +469,7 @@
 
     \subsection{Type Information Representation}        
         The theoretical side of workings of the type analysis was 
-        discussed in \wsection{} \nameref{phalapproach}.         
+        discussed in \wsection{} \ref{phalapproach}.         
         In this paragraph we discuss representation of 
         type information for a single variable or a single expression. 
         The representation is based on the type information 

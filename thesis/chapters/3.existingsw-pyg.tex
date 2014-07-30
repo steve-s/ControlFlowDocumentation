@@ -1,9 +1,10 @@
 \chapter{Related Work}
+\label{relatedwork}
 
     A brief overview of the static analysis methods was presented 
     in the previous \wchapter{}. In this \wchapter{}, we focus on 
     tools that also use static analysis to analyse PHP code for 
-    different purposes. We also shortly mention interesting tools 
+    various purposes. We also shortly mention interesting tools 
     for other dynamic languages.
 
     \section{Security Vulnerabilities in Web Applications}
@@ -28,8 +29,8 @@
     application is to be compiled or interpreted.
     
     Some of the available tools for detecting taint-style 
-    vulnerabilities in PHP are Pixy\cite{jovanovic2006pixy} 
-    and recently released Weverca: Web Verification Tool\cite{hauzarhunting}.
+    vulnerabilities in PHP are Pixy \cite{jovanovic2006pixy} 
+    and recently released Weverca: Web Verification Tool \cite{hauzarhunting}.
     
     \subsection{Weverca: Web Verification Tool}
     
@@ -136,15 +137,15 @@
     the type information any further and fall backs to the dynamic typing.    
         
     There are implementations of type inference for other dynamic languages. 
-    Ecstatic\cite{madsen2007ecstatic} is type inference for Ruby 
+    Ecstatic \cite{madsen2007ecstatic} is type inference for Ruby 
     implemented using control flow insensitive cartesian product algorithm. 
-    Rubydust\cite{an2011dynamic} introduces a \emph{constraint based dynamic 
+    Rubydust \cite{an2011dynamic} introduces a \emph{constraint based dynamic 
     type inference} that infers static types based on dynamic program 
     executions.
 
     \subsection{Phantm}
     
-    Phantm\cite{kneuss2010phantm} is a tool for detection of type related 
+    Phantm \cite{kneuss2010phantm} is a tool for detection of type related 
     errors. From all the projects mentioned in this \wchapter{}, the aim of 
     Phantm is closest to our project, which is why we also used Phantm 
     for evaluation and compared its results with ours in 

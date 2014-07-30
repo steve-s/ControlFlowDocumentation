@@ -1,5 +1,5 @@
 \chapter{Conclusion}
-
+\label{conclusion}
     In this \wthesis{} we presented a project with code name 
     Control Flow for Phalanger, which can analyse PHP 
     source code in order to discover type related errors 
@@ -50,16 +50,16 @@
     \section{Future Work}
     
         \subsubsection*{Phalanger Integration}
-        The Control Flow for Phalanger has not yet been fully 
-        integrated into the Phalanger project. This includes 
-        integration with the compiler in order to enable 
-        code optimizations and evaluation of the possible 
-        performance gain when running PHP websites like WordPress.
+        The next step in integration with the Phalanger project 
+        is to run type analysis as part of the compilation 
+        process and update the compiler back-end so that it uses the 
+        available type information to emit more efficient code.
+        Finally, the possible performance gain when running 
+        PHP websites like WordPress should be evaluated.
         
         \subsubsection*{Arrays Support}
-        Array support has not been implemented yet. Variables 
-        that can be of type array are analysed properly, but 
-        the structure of the array is not analysed. Therefore 
+        Variables that can be of type array are analysed properly, 
+        but the structure of the array is not analysed. Therefore 
         any time an element of an array is accessed, we do not 
         have any type information for it and have to assume 
         the worst -- it can be any type.
@@ -73,26 +73,27 @@
         
         One of the possible concepts for local arrays 
         analysis we would like to investigate further 
-        is based on the fact that arrays in PHP have 
-        copy semantics as opposed to most of the other 
-        programming languages. We can model each constant 
+        and implement is based on the fact that arrays 
+        in PHP have copy semantics as opposed to most 
+        of the other programming languages. We can model each constant 
         index of an array as a separate local variable. 
         For example, for code \code{\$a['x']=3} we create 
         two local variables: \code{\$a} and \code{\$a@x} 
         and the type of \code{\$a} would be an array and 
         the type of \code{\$a@x} would be an integer. 
-        Such representation would still permit us to use 
+        Such representation would still permit us to easily use 
         bit-vectors as the \emph{data-flow} representation.
         
         \subsubsection*{Performance Evaluation and Tuning}
         Some of the design decisions in Control Flow for 
         Phalanger were made for performance reasons. The 
-        design is done an a way that permits further 
-        performance targeted improvements, but first 
-        an evaluation of the current performance is 
-        required.
+        design is done in a way that permits further 
+        performance targeted improvements, but firstly 
+        more advanced evaluation of the current performance 
+        needs to be done.
         
-        One of the possible enhancements is more efficient 
+        One of the possible enhancements we are 
+        planning to implement is more efficient 
         type information representation. Type information 
         is represented using a 64 bit value, however, 
         we can go even further and represent the type 

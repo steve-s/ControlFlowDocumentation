@@ -1,6 +1,7 @@
 %pygmentize_options: -O startinline=True
 
 \chapter{Analysing PHP Code}
+\label{analysingphpcode}
 
     The PHP programming language first appeared in 1995\cite{phphist}. Over the years 
     the language has evolved and so have the ways programmers use it. 
@@ -14,14 +15,14 @@
     PHP libraries and frameworks that by themselves do not contain 
     any PHP files that produce HTML or any other output for the user.
     
-    The following \wsection{} \nameref{phpsem} describes some important parts 
+    The following \wsection{} \ref{phpsem} describes some important parts 
     of the semantics of the PHP programming language, especially those 
     that represent a challenge for static analysis.
 
-    \wSection{} \nameref{statanal} gives a brief overview of existing 
+    \wSection{} \ref{statanal} gives a brief overview of existing 
     static analysis methods with references to relevant literature. 
     It is  not meant as a comprehensive description, but should provide a 
-    context for the following \wsection{} \nameref{phalapproach}, 
+    context for the following \wsection{} \ref{phalapproach}, 
     where we discuss how we used the existing techniques for the purposes 
     of our PHP code analysis.
     
@@ -41,7 +42,7 @@
     value assigned, then the interpreter generates a notice, 
     however the execution continues and value \code{null} is 
     used instead. A variable can get a value assigned to it when it 
-    appears on a left hand side of an assignment or when a 
+    appears on the left hand side of an assignment or when a 
     reference to that variable is created, in which case it gets value 
     \code{null}, but no notice is generated. References are 
     discussed in one of the following subsections.
@@ -88,7 +89,7 @@
     Global variables can be imported and used in any user defined 
     routine. This means that even if we know some type information 
     about a global variable's value at some point in the analysed 
-    code (e.g. straight after assignment to that variable), 
+    code (e.g. just after assignment to that variable), 
     any time another user defined routine is invoked, we 
     have to take into account that the other routine can 
     change the value of the global variable even if we do not 
@@ -115,7 +116,7 @@
     operator \code{=\&} (assign by reference) that turns 
     the variable on the 
     left hand side into a reference to the 
-    variable on right hand side. For example \code{\$a=\&\$b}, 
+    variable on the right hand side. For example \code{\$a=\&\$b}, 
     after this, any assignment 
     to \code{\$a} will in fact change the 
     value of \code{\$b} and wherever 
@@ -211,7 +212,7 @@
     the other \code{case} labels. This can be used for fall-back 
     to or from a \code{case} item as in the following code sample 
     that is abbreviated version of actual code taken from the 
-    WordPress\cite{wordpress} code base.
+    WordPress \cite{wordpress} code base.
     
 %pygmentize_begin php
 %switch ( $status ) {
@@ -276,7 +277,7 @@
     determine what file(s) to import, in fact, it can 
     execute arbitrary code. Typical 
     pattern used for example in 
-    Zend Framework\cite{zendframework} before namespaces were 
+    Zend Framework \cite{zendframework} before namespaces were 
     introduced to PHP is to have a file per class and use 
     class names in form of 
     \code{CodeFolder1\_SubFolderName\_FileName} for 
@@ -336,7 +337,7 @@
         
         In the rest of this \wsection{}, we provide a brief overview of 
         static analysis methods, especially 
-        Data Flow Analysis (DFA)\cite{aho1985compilers}\cite{nielson1999principles},
+        Data Flow Analysis (DFA) \cite{aho1985compilers}\cite{nielson1999principles},
         which has become a de-facto standard type of analysis for most of 
         the optimizing compilers and other more complex static analysis methods 
         are either directly based on DFA or on the ideas behind DFA.
